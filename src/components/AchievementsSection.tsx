@@ -2,21 +2,32 @@
 
 import { motion } from "framer-motion";
 
-const metrics = [
+export interface MetricItem {
+  id?: string;
+  value: string;
+  label: string;
+}
+
+const defaultMetrics: MetricItem[] = [
   { value: "120+", label: "Websites Delivered" },
   { value: "20k+", label: "USD Revenue Contribution" },
   { value: "Global", label: "International Client Projects" },
   { value: "Lead", label: "Shopify Team Lead" },
 ];
 
-export default function AchievementsSection() {
+export default function AchievementsSection({ achievementsData }: { achievementsData?: any }) {
+  const metrics: MetricItem[] =
+    achievementsData?.metrics && Array.isArray(achievementsData.metrics) && achievementsData.metrics.length > 0
+      ? achievementsData.metrics
+      : defaultMetrics;
+
   return (
     <section className="bg-[#0a0a0a] py-24 px-8 md:px-24 relative z-20">
       <div className="max-w-7xl mx-auto w-full">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 text-center">
           {metrics.map((metric, idx) => (
             <motion.div
-              key={idx}
+              key={metric.id || idx}
               initial={{ opacity: 0, scale: 0.8 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}

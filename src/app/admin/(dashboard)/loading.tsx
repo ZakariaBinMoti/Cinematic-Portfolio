@@ -1,8 +1,23 @@
+import { Skeleton } from "../_ui";
+
 export default function DashboardLoading() {
   return (
-    <div className="w-full h-full flex flex-col items-center justify-center min-h-[50vh]">
-      <div className="w-12 h-12 border-4 border-white/10 border-t-white rounded-full animate-spin"></div>
-      <p className="mt-4 text-gray-400 font-medium animate-pulse">Loading data...</p>
+    <div aria-busy="true" aria-label="Loading">
+      <div className="mb-8 space-y-3">
+        <Skeleton className="h-3 w-24" />
+        <Skeleton className="h-8 w-72" />
+        <Skeleton className="h-4 w-96 max-w-full" />
+      </div>
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <Skeleton key={i} className="h-28 rounded-[var(--a-radius)]" />
+        ))}
+      </div>
+      <div className="mt-6 space-y-3">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <Skeleton key={i} className="h-20 rounded-[var(--a-radius)]" />
+        ))}
+      </div>
     </div>
   );
 }

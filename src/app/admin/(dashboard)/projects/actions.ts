@@ -1,24 +1,34 @@
 "use server";
 
 import dbConnect from "@/lib/mongodb";
+import { requireAdmin } from "@/lib/admin-auth";
 import Project from "@/models/Project";
 import { uploadImage, deleteImage } from "@/lib/cloudinary";
 import { revalidatePath } from "next/cache";
 
 export async function getProjects() {
+  await requireAdmin();
   await dbConnect();
   const projects = await Project.find({}).sort({ order: 1 }).lean();
   return JSON.parse(JSON.stringify(projects));
 }
 
 export async function addProject(formData: FormData) {
+  await requireAdmin();
   await dbConnect();
-  
-  const title = formData.get("title") as string;
-  const description = formData.get("description") as string;
-  const techStack = (formData.get("techStack") as string).split(",").map(s => s.trim());
-  const liveLink = formData.get("liveLink") as string;
+
+  const title = (formData.get("title") as string)?.trim();
+  const description = (formData.get("description") as string)?.trim();
+  const techStackRaw = formData.get("techStack") as string;
+  const techStack = techStackRaw
+    ? techStackRaw.split(",").map((s) => s.trim()).filter(Boolean)
+    : [];
+  const liveLink = (formData.get("liveLink") as string)?.trim() || "";
   const file = formData.get("image") as File | null;
+
+  if (!title) {
+    throw new Error("Title is required");
+  }
 
   // Auto-assign order to end
   const lastProject = await Project.findOne({}).sort({ order: -1 }).lean();
@@ -36,28 +46,46 @@ export async function addProject(formData: FormData) {
     imagePublicId = result.publicId;
   }
 
-  await Project.create({ title, description, techStack, liveLink, order, imageUrl, imagePublicId });
+  const created = await Project.create({
+    title,
+    description,
+    techStack,
+    liveLink,
+    order,
+    imageUrl,
+    imagePublicId,
+  });
+
   revalidatePath("/admin/projects");
+  revalidatePath("/admin");
   revalidatePath("/");
-  return { success: true };
+  return { success: true, project: JSON.parse(JSON.stringify(created)) };
 }
 
 export async function updateProject(id: string, formData: FormData) {
+  await requireAdmin();
   await dbConnect();
-  
-  const title = formData.get("title") as string;
-  const description = formData.get("description") as string;
-  const techStack = (formData.get("techStack") as string).split(",").map(s => s.trim());
-  const liveLink = formData.get("liveLink") as string;
+
+  const title = (formData.get("title") as string)?.trim();
+  const description = (formData.get("description") as string)?.trim();
+  const techStackRaw = formData.get("techStack") as string;
+  const techStack = techStackRaw
+    ? techStackRaw.split(",").map((s) => s.trim()).filter(Boolean)
+    : [];
+  const liveLink = (formData.get("liveLink") as string)?.trim() || "";
   const file = formData.get("image") as File | null;
+  const removeImage = formData.get("removeImage") === "true";
 
   const existing = await Project.findById(id);
-  if (!existing) return { success: false };
+  if (!existing) return { success: false, error: "Project not found" };
 
   const updateData: any = { title, description, techStack, liveLink };
 
-  if (file && file.size > 0) {
-    // Delete old image from Cloudinary
+  if (removeImage && existing.imagePublicId) {
+    await deleteImage(existing.imagePublicId);
+    updateData.imageUrl = "";
+    updateData.imagePublicId = "";
+  } else if (file && file.size > 0) {
     if (existing.imagePublicId) {
       await deleteImage(existing.imagePublicId);
     }
@@ -69,45 +97,60 @@ export async function updateProject(id: string, formData: FormData) {
     updateData.imagePublicId = result.publicId;
   }
 
-  await Project.findByIdAndUpdate(id, updateData);
+  const updated = await Project.findByIdAndUpdate(id, updateData, { new: true });
   revalidatePath("/admin/projects");
+  revalidatePath("/admin");
   revalidatePath("/");
-  return { success: true };
+  return { success: true, project: JSON.parse(JSON.stringify(updated)) };
 }
 
 export async function deleteProject(id: string) {
+  await requireAdmin();
   await dbConnect();
   const project = await Project.findById(id);
-  if (!project) return { success: false };
-  
+  if (!project) return { success: false, error: "Project not found" };
+
+  const backupData = JSON.parse(JSON.stringify(project));
+
   if (project.imagePublicId) {
     await deleteImage(project.imagePublicId);
   }
-  
+
   await Project.findByIdAndDelete(id);
   revalidatePath("/admin/projects");
+  revalidatePath("/admin");
   revalidatePath("/");
-  return { success: true };
+  return { success: true, backup: backupData };
 }
 
-export async function reorderProject(id: string, direction: "up" | "down") {
+export async function restoreProject(data: any) {
+  await requireAdmin();
   await dbConnect();
-  const projects = await Project.find({}).sort({ order: 1 });
-  const index = projects.findIndex(p => p._id.toString() === id);
-  if (index === -1) return;
+  const { _id, ...fields } = data;
+  const restored = await Project.create(fields);
+  revalidatePath("/admin/projects");
+  revalidatePath("/admin");
+  revalidatePath("/");
+  return { success: true, project: JSON.parse(JSON.stringify(restored)) };
+}
 
-  const swapIndex = direction === "up" ? index - 1 : index + 1;
-  if (swapIndex < 0 || swapIndex >= projects.length) return;
+export async function reorderProjects(ids: string[]) {
+  await requireAdmin();
+  await dbConnect();
 
-  // Swap orders
-  const tempOrder = projects[index].order;
-  projects[index].order = projects[swapIndex].order;
-  projects[swapIndex].order = tempOrder;
+  if (!ids || ids.length === 0) return { success: true };
 
-  await projects[index].save();
-  await projects[swapIndex].save();
+  const bulkOps = ids.map((id, index) => ({
+    updateOne: {
+      filter: { _id: id },
+      update: { $set: { order: index } },
+    },
+  }));
+
+  await Project.bulkWrite(bulkOps);
 
   revalidatePath("/admin/projects");
+  revalidatePath("/admin");
   revalidatePath("/");
   return { success: true };
 }

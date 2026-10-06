@@ -19,12 +19,12 @@ export default async function Home() {
       
       <div className="bg-[#121212] relative z-20 shadow-[0_-20px_50px_rgba(18,18,18,1)]">
         <AboutSection aboutData={data.about} />
-        <AchievementsSection />
+        <AchievementsSection achievementsData={data.achievements} />
         <SkillsSection skills={data.skills} />
         <ExperienceSection experiences={data.experiences} />
         <ProjectsSection projects={data.projects} />
-        <EducationSection />
-        <ContactSection />
+        <EducationSection educationData={data.education} />
+        <ContactSection contactData={data.contact} />
       </div>
     </main>
   );

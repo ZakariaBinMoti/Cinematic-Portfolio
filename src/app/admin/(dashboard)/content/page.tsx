@@ -1,38 +1,31 @@
+import { Suspense } from "react";
 import { getContent } from "./actions";
-import ContentForm from "./ContentForm";
+import ContentStudio from "./ContentStudio";
 
+export const metadata = { title: "Content Studio" };
 export const dynamic = "force-dynamic";
 
 export default async function ContentPage() {
-  const heroContent = await getContent("hero") || {};
-  const aboutContent = await getContent("about") || {};
+  const [heroContent, aboutContent, achievementsContent, educationContent, contactContent] =
+    await Promise.all([
+      getContent("hero"),
+      getContent("about"),
+      getContent("achievements"),
+      getContent("education"),
+      getContent("contact"),
+    ]);
 
   return (
-    <div className="max-w-4xl space-y-12">
-      <h1 className="text-3xl font-bold mb-8">Manage Content</h1>
-      
-      <ContentForm
-        section="hero"
-        title="Hero Section"
-        initialData={heroContent}
-        fields={[
-          { name: "headline", label: "Headline" },
-          { name: "subheadline", label: "Subheadline", rows: 2 },
-          { name: "supporting", label: "Supporting Text", rows: 3 },
-        ]}
+    <Suspense fallback={<div className="p-8 text-sm text-[var(--a-text-subtle)]">Loading Content Studio...</div>}>
+      <ContentStudio
+        initialContent={{
+          hero: heroContent || {},
+          about: aboutContent || {},
+          achievements: achievementsContent || {},
+          education: educationContent || {},
+          contact: contactContent || {},
+        }}
       />
-
-      <ContentForm
-        section="about"
-        title="About Section"
-        initialData={aboutContent}
-        fields={[
-          { name: "p1", label: "Paragraph 1", rows: 2 },
-          { name: "p2", label: "Paragraph 2", rows: 2 },
-          { name: "p3", label: "Paragraph 3", rows: 2 },
-          { name: "p4", label: "Paragraph 4", rows: 2 },
-        ]}
-      />
-    </div>
+    </Suspense>
   );
 }

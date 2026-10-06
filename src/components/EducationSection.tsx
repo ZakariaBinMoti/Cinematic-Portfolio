@@ -2,7 +2,15 @@
 
 import { motion } from "framer-motion";
 
-const education = [
+export interface EducationItem {
+  id?: string;
+  degree: string;
+  school: string;
+  score: string;
+  years: string;
+}
+
+const defaultEducation: EducationItem[] = [
   {
     degree: "B.Sc. in Computer Science and Engineering",
     school: "East West University",
@@ -23,7 +31,15 @@ const education = [
   }
 ];
 
-export default function EducationSection() {
+export default function EducationSection({ educationData }: { educationData?: any }) {
+  const education: EducationItem[] =
+    educationData?.items && Array.isArray(educationData.items) && educationData.items.length > 0
+      ? educationData.items
+      : defaultEducation;
+
+  const title = educationData?.title || "Academic";
+  const subtitle = educationData?.subtitle || "Background.";
+
   return (
     <section className="bg-[#121212] py-24 px-8 md:px-24 border-t border-white/5 relative z-20">
       <div className="max-w-7xl mx-auto w-full grid grid-cols-1 md:grid-cols-12 gap-12">
@@ -35,14 +51,14 @@ export default function EducationSection() {
           transition={{ duration: 0.8 }}
         >
           <h2 className="text-4xl md:text-5xl font-bold tracking-tighter text-white">
-            Academic<br/><span className="text-gray-500">Background.</span>
+            {title}<br/><span className="text-gray-500">{subtitle}</span>
           </h2>
         </motion.div>
         
         <div className="md:col-span-8 flex flex-col gap-8">
           {education.map((edu, idx) => (
              <motion.div
-               key={idx}
+               key={edu.id || idx}
                initial={{ opacity: 0, y: 20 }}
                whileInView={{ opacity: 1, y: 0 }}
                viewport={{ once: true }}

@@ -8,9 +8,12 @@ export async function getPortfolioData() {
   try {
     await dbConnect();
     
-    const [hero, about, projects, experiences, skills] = await Promise.all([
+    const [hero, about, achievements, education, contact, projects, experiences, skills] = await Promise.all([
       Content.findOne({ section: "hero" }).lean(),
       Content.findOne({ section: "about" }).lean(),
+      Content.findOne({ section: "achievements" }).lean(),
+      Content.findOne({ section: "education" }).lean(),
+      Content.findOne({ section: "contact" }).lean(),
       Project.find({}).sort({ order: 1 }).lean(),
       Experience.find({}).sort({ order: 1 }).lean(),
       Skill.find({}).sort({ order: 1 }).lean()
@@ -19,6 +22,9 @@ export async function getPortfolioData() {
     return {
       hero: hero?.data || null,
       about: about?.data || null,
+      achievements: achievements?.data || null,
+      education: education?.data || null,
+      contact: contact?.data || null,
       projects: JSON.parse(JSON.stringify(projects)),
       experiences: JSON.parse(JSON.stringify(experiences)),
       skills: JSON.parse(JSON.stringify(skills)),
@@ -28,9 +34,13 @@ export async function getPortfolioData() {
     return {
       hero: null,
       about: null,
+      achievements: null,
+      education: null,
+      contact: null,
       projects: [],
       experiences: [],
       skills: [],
     };
   }
 }
+
