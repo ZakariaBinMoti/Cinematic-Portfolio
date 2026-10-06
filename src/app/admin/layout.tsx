@@ -16,6 +16,10 @@ export const metadata: Metadata = {
   },
   description: "Content management console for Zakaria Bin Moti's portfolio.",
   robots: { index: false, follow: false },
+  icons: {
+    icon: "/icon.png",
+    apple: "/apple-icon.png",
+  },
 };
 
 export default function AdminRootLayout({ children }: { children: React.ReactNode }) {
