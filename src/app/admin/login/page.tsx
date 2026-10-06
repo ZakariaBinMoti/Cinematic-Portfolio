@@ -80,9 +80,11 @@ function LoginForm() {
   // Capabilities
   const [authCapabilities, setAuthCapabilities] = useState<{
     googleConfigured: boolean;
+    smtpConfigured?: boolean;
     adminEmail: string;
   }>({
     googleConfigured: false,
+    smtpConfigured: false,
     adminEmail: "zakaria.binmoti@gmail.com",
   });
   const [showGoogleModal, setShowGoogleModal] = useState(false);
@@ -106,7 +108,6 @@ function LoginForm() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [forgotLoading, setForgotLoading] = useState(false);
-  const [devCodeHint, setDevCodeHint] = useState<string | null>(null);
 
   const controls = useAnimationControls();
 
@@ -180,11 +181,6 @@ function LoginForm() {
       return;
     }
 
-    if (res.devCode) {
-      setDevCodeHint(res.devCode);
-      setRecoveryCode(res.devCode); // Auto-fill for convenience
-    }
-
     setSuccessMsg(res.message || "A verification code has been dispatched.");
     setForgotStep(2);
   };
@@ -221,7 +217,6 @@ function LoginForm() {
     // Success! Return to login
     setEmail(forgotEmail.trim());
     setPassword("");
-    setDevCodeHint(null);
     setForgotStep(1);
     setView("login");
     setSuccessMsg("Password reset successfully! Please sign in with your new password.");
@@ -411,6 +406,12 @@ function LoginForm() {
                 <p className="text-[11px] text-[var(--a-text-subtle)] mt-1.5">
                   We will issue a secure 6-digit verification code to this address.
                 </p>
+
+                {!authCapabilities.smtpConfigured && (
+                  <div className="mt-2.5 p-2.5 rounded-lg border border-amber-500/25 bg-amber-500/10 text-[11px] text-amber-200/90 leading-relaxed">
+                    ⚠️ <strong>Email service not configured:</strong> To access your dashboard without SMTP, you can sign in directly using <strong>Continue with Google</strong> above.
+                  </div>
+                )}
               </div>
 
               <Button
@@ -437,17 +438,6 @@ function LoginForm() {
             </form>
           ) : (
             <form onSubmit={handleResetPassword} className="space-y-4">
-              {devCodeHint && (
-                <div className="p-3 rounded-xl border border-violet-500/30 bg-violet-500/10 text-xs text-violet-200">
-                  <span className="font-semibold block mb-0.5">Development Environment:</span>
-                  Recovery code generated:{" "}
-                  <code className="font-mono font-bold bg-white/10 px-1.5 py-0.5 rounded text-white">
-                    {devCodeHint}
-                  </code>{" "}
-                  (auto-filled below).
-                </div>
-              )}
-
               <div>
                 <Label htmlFor="recovery-code">6-Digit Verification Code</Label>
                 <Input

@@ -4,14 +4,21 @@ import bcrypt from "bcryptjs";
 import dbConnect from "@/lib/mongodb";
 import User from "@/models/User";
 
+import { sendPasswordRecoveryEmail } from "@/lib/mail";
+
 export async function getAuthCapabilities() {
   const adminEmail = (process.env.ADMIN_EMAIL || "zakaria.binmoti@gmail.com").toLowerCase().trim();
   const googleConfigured = Boolean(
     process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
   );
+  const smtpConfigured = Boolean(
+    (process.env.SMTP_USER || process.env.ADMIN_EMAIL) &&
+    (process.env.SMTP_PASS || process.env.GMAIL_APP_PASSWORD)
+  );
 
   return {
     googleConfigured,
+    smtpConfigured,
     adminEmail,
   };
 }
@@ -50,17 +57,21 @@ export async function requestPasswordReset(rawEmail: string) {
     user.resetTokenExpiry = expiry;
     await user.save();
 
-    // Check if custom SMTP exists; if not, return devCode for instant local verification
-    const hasSmtp = Boolean(process.env.SMTP_HOST && process.env.SMTP_USER);
+    // Dispatch recovery code via email (or dev terminal log in local development)
+    const mailResult = await sendPasswordRecoveryEmail(email, code);
+
+    if (!mailResult.sent) {
+      return {
+        success: false,
+        error: mailResult.error || "Failed to dispatch recovery email.",
+      };
+    }
 
     return {
       success: true,
-      hasSmtp,
-      // Provide devCode so the user can verify immediately without an external mail server setup
-      devCode: !hasSmtp ? code : undefined,
-      message: hasSmtp
-        ? `A 6-digit recovery code has been dispatched to ${email}.`
-        : `A 6-digit recovery code has been generated for ${email}.`,
+      message: mailResult.isDevMock
+        ? `[Dev Mode] Recovery code printed to your local server terminal.`
+        : `A 6-digit recovery code has been dispatched to ${email}.`,
     };
   } catch (error: any) {
     console.error("requestPasswordReset error:", error);
