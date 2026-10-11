@@ -41,38 +41,47 @@ export default function EducationSection({ educationData }: { educationData?: an
   const subtitle = educationData?.subtitle || "Background.";
 
   return (
-    <section className="bg-[#121212] py-24 px-8 md:px-24 border-t border-white/5 relative z-20">
-      <div className="max-w-7xl mx-auto w-full grid grid-cols-1 md:grid-cols-12 gap-12">
+    <section className="bg-[#07080b] py-32 px-6 md:px-20 relative z-20">
+      <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+        {/* Sticky Heading */}
         <motion.div 
-          className="md:col-span-4"
-          initial={{ opacity: 0, x: -50 }}
+          className="lg:col-span-4"
+          initial={{ opacity: 0, x: -30 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
+          transition={{ duration: 0.7 }}
         >
-          <h2 className="text-4xl md:text-5xl font-bold tracking-tighter text-white">
-            {title}<br/><span className="text-gray-500">{subtitle}</span>
-          </h2>
+          <div className="lg:sticky lg:top-32">
+            <span className="text-xs font-mono uppercase tracking-widest text-gray-500 mb-3 block">
+              05 // Education
+            </span>
+            <h2 className="text-4xl md:text-6xl font-bold tracking-tight text-white">
+              {title}<br /><span className="text-gray-500">{subtitle}</span>
+            </h2>
+          </div>
         </motion.div>
         
-        <div className="md:col-span-8 flex flex-col gap-8">
+        {/* Spatial Cards Container */}
+        <div className="lg:col-span-8 flex flex-col gap-6">
           {education.map((edu, idx) => (
-             <motion.div
-               key={edu.id || idx}
-               initial={{ opacity: 0, y: 20 }}
-               whileInView={{ opacity: 1, y: 0 }}
-               viewport={{ once: true }}
-               transition={{ duration: 0.6, delay: idx * 0.15 }}
-               className="border-l-2 border-white/10 pl-6"
-             >
-               <h3 className="text-2xl font-bold text-white mb-2">{edu.degree}</h3>
-               <p className="text-xl text-gray-400 mb-1">{edu.school}</p>
-               <div className="flex gap-4 text-sm text-gray-500 font-medium tracking-wide">
-                 <span>{edu.score}</span>
-                 <span>•</span>
-                 <span>{edu.years}</span>
-               </div>
-             </motion.div>
+            <motion.div
+              key={edu.id || idx}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: idx * 0.1 }}
+              className="p-8 rounded-2xl bg-white/[0.02] border border-white/[0.08] backdrop-blur-xl hover:border-white/20 transition-all duration-300 hover:-translate-y-1 shadow-[0_15px_35px_rgba(0,0,0,0.5)] group"
+            >
+              <h3 className="text-xl md:text-2xl font-bold text-white mb-2 group-hover:text-gray-200 transition-colors">
+                {edu.degree}
+              </h3>
+              <p className="text-base text-gray-300 mb-3 font-normal">{edu.school}</p>
+              <div className="flex gap-4 text-xs font-mono text-gray-400">
+                <span>{edu.score}</span>
+                <span>•</span>
+                <span>{edu.years}</span>
+              </div>
+            </motion.div>
           ))}
         </div>
       </div>
