@@ -69,10 +69,14 @@ export default function EducationSection({ educationData }: { educationData?: an
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: idx * 0.1 }}
-              className="p-8 rounded-2xl bg-white/[0.02] border border-white/[0.08] backdrop-blur-xl hover:border-white/20 transition-all duration-300 hover:-translate-y-1 shadow-[0_15px_35px_rgba(0,0,0,0.5)] group"
+              transition={{ duration: 0.5, delay: idx * 0.08 }}
+              className="p-8 rounded-3xl bg-white/[0.025] border border-white/[0.08] backdrop-blur-2xl hover:border-white/20 transition-all duration-300 hover:-translate-y-1 shadow-[0_15px_35px_rgba(0,0,0,0.5)] group relative overflow-hidden"
             >
-              <h3 className="text-xl md:text-2xl font-bold text-white mb-2 group-hover:text-gray-200 transition-colors">
+              <div 
+                aria-hidden="true" 
+                className="absolute top-0 inset-x-8 h-[1px] bg-gradient-to-r from-transparent via-cyan-400/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" 
+              />
+              <h3 className="text-xl md:text-2xl font-bold text-white mb-2 group-hover:text-gray-100 transition-colors">
                 {edu.degree}
               </h3>
               <p className="text-base text-gray-300 mb-3 font-normal">{edu.school}</p>

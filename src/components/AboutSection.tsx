@@ -48,12 +48,17 @@ export default function AboutSection({ aboutData }: { aboutData: any }) {
         
         {/* Spatial Glass Card Container */}
         <motion.div 
-          className="lg:col-span-8 p-8 md:p-12 rounded-3xl bg-white/[0.02] border border-white/[0.08] backdrop-blur-xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] flex flex-col space-y-6 text-lg md:text-2xl text-gray-300 font-light leading-relaxed"
+          className="lg:col-span-8 p-8 md:p-12 rounded-3xl bg-white/[0.025] border border-white/[0.09] backdrop-blur-2xl shadow-[0_25px_60px_rgba(0,0,0,0.6)] flex flex-col space-y-6 text-lg md:text-2xl text-gray-300 font-light leading-relaxed relative overflow-hidden"
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
         >
+          {/* 3D Spatial Dual Rim Top Highlight */}
+          <div 
+            aria-hidden="true" 
+            className="absolute top-0 inset-x-8 h-[1px] bg-gradient-to-r from-transparent via-cyan-400/40 via-white/20 to-amber-400/40 opacity-70" 
+          />
           <motion.p variants={itemVariants}>{p1}</motion.p>
           <motion.p variants={itemVariants}>{p2}</motion.p>
           <motion.p variants={itemVariants} className="text-white font-normal border-l-2 border-white/20 pl-6 py-1 my-2">

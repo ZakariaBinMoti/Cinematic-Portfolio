@@ -81,12 +81,18 @@ export default function ProjectsSection({ projects }: { projects: any[] }) {
         <div ref={containerRef} className="relative w-full">
           <motion.div
             key={activeProject._id || activeIndex}
-            className="w-full rounded-3xl bg-white/[0.02] border border-white/[0.08] backdrop-blur-2xl p-6 sm:p-10 md:p-12 shadow-[0_25px_60px_rgba(0,0,0,0.7)] mb-8 transition-all"
+            className="w-full rounded-3xl bg-white/[0.025] border border-white/[0.09] backdrop-blur-2xl p-6 sm:p-10 md:p-12 shadow-[0_25px_60px_rgba(0,0,0,0.7)] mb-8 transition-all relative overflow-hidden"
           >
+            {/* 3D Spatial Dual Rim Top Highlight */}
+            <div 
+              aria-hidden="true" 
+              className="absolute top-0 inset-x-12 h-[1px] bg-gradient-to-r from-transparent via-cyan-400/50 via-white/20 to-amber-400/50 opacity-70" 
+            />
+
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
               {/* Widescreen Media Display */}
               <div className="col-span-1 lg:col-span-7">
-                <div className="relative w-full aspect-[16/10] rounded-2xl overflow-hidden bg-black/50 border border-white/[0.06] shadow-2xl group">
+                <div className="relative w-full aspect-[16/10] rounded-2xl overflow-hidden bg-black/50 border border-white/[0.08] shadow-2xl group">
                   {activeProject.imageUrl ? (
                     <Image
                       src={activeProject.imageUrl}
@@ -110,7 +116,7 @@ export default function ProjectsSection({ projects }: { projects: any[] }) {
                   {activeProject.techStack?.map((tech: string) => (
                     <span
                       key={tech}
-                      className="text-xs font-medium text-gray-300 bg-white/[0.04] px-3 py-1 rounded-full border border-white/[0.08]"
+                      className="text-xs font-medium text-gray-300 bg-white/[0.04] px-3.5 py-1.5 rounded-full border border-white/[0.08]"
                     >
                       {tech}
                     </span>
@@ -121,7 +127,7 @@ export default function ProjectsSection({ projects }: { projects: any[] }) {
                   {activeProject.title}
                 </h3>
 
-                <p className="text-base text-gray-400 leading-relaxed mb-8 font-light">
+                <p className="text-base text-gray-300 leading-relaxed mb-8 font-light">
                   {activeProject.description}
                 </p>
 
@@ -131,7 +137,7 @@ export default function ProjectsSection({ projects }: { projects: any[] }) {
                       href={activeProject.liveLink}
                       target="_blank"
                       rel="noreferrer"
-                      className="inline-flex items-center gap-2 bg-white text-black px-7 py-3.5 rounded-full font-medium text-sm hover:bg-gray-200 transition-all shadow-lg hover:scale-105 group"
+                      className="inline-flex items-center gap-2 bg-white text-black px-7 py-3.5 rounded-full font-medium text-sm hover:bg-gray-100 transition-all shadow-lg hover:scale-105 group"
                     >
                       <span>View Live Project</span>
                       <svg className="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -153,18 +159,24 @@ export default function ProjectsSection({ projects }: { projects: any[] }) {
                   key={proj._id || idx}
                   type="button"
                   onClick={() => setActiveIndex(idx)}
-                  className={`text-left p-4 rounded-2xl border cursor-pointer transition-all duration-300 ${
+                  className={`text-left p-4 rounded-2xl border cursor-pointer transition-all duration-300 relative overflow-hidden ${
                     isSelected
-                      ? "bg-white/[0.08] border-white/30 shadow-lg -translate-y-1 text-white"
-                      : "bg-white/[0.015] border-white/[0.05] opacity-60 hover:opacity-100 hover:border-white/15 text-gray-400"
+                      ? "bg-white/[0.08] border-white/30 shadow-[0_10px_25px_rgba(0,0,0,0.5)] -translate-y-1 text-white"
+                      : "bg-white/[0.02] border-white/[0.06] opacity-70 hover:opacity-100 hover:border-white/15 text-gray-400"
                   }`}
                 >
+                  {isSelected && (
+                    <div 
+                      aria-hidden="true" 
+                      className="absolute top-0 inset-x-4 h-[1px] bg-gradient-to-r from-cyan-400 via-white to-amber-400" 
+                    />
+                  )}
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-[10px] font-mono text-gray-400">
                       #{String(idx + 1).padStart(2, "0")}
                     </span>
                     {isSelected && (
-                      <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.9)]" />
+                      <span className="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(6,182,212,0.9)]" />
                     )}
                   </div>
                   <h4 className="text-sm font-semibold text-white truncate mb-1">
