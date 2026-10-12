@@ -45,8 +45,8 @@ export default function Navbar() {
         <nav
           className={`pointer-events-auto flex items-center gap-1.5 p-1.5 rounded-full transition-all duration-300 ${
             scrolled
-              ? "bg-[#0b0c10]/85 backdrop-blur-2xl border border-white/[0.12] shadow-[0_10px_30px_rgba(0,0,0,0.8)]"
-              : "bg-[#0b0c10]/60 backdrop-blur-xl border border-white/[0.08] shadow-[0_8px_24px_rgba(0,0,0,0.5)]"
+              ? "bg-[#080a10]/85 backdrop-blur-2xl border border-white/[0.12] shadow-[0_10px_30px_rgba(0,0,0,0.8)]"
+              : "bg-[#080a10]/60 backdrop-blur-xl border border-white/[0.08] shadow-[0_8px_24px_rgba(0,0,0,0.5)]"
           }`}
         >
           {/* Brand Monogram */}
@@ -82,7 +82,7 @@ export default function Navbar() {
             href="#contact"
             className="hidden sm:inline-flex items-center gap-2 pl-3 pr-3.5 py-1.5 rounded-full bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-xs font-medium text-gray-300 transition-colors mr-1"
           >
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
+            <span className="w-1.5 h-1.5 rounded-full bg-[#3594bd] shadow-[0_0_8px_rgba(53,148,189,0.8)]" />
             <span>Available</span>
           </a>
 
@@ -111,7 +111,7 @@ export default function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -15 }}
             transition={{ duration: 0.2 }}
-            className="fixed top-20 inset-x-4 z-40 md:hidden bg-[#0b0c10]/95 backdrop-blur-2xl border border-white/10 rounded-2xl p-4 shadow-2xl"
+            className="fixed top-20 inset-x-4 z-40 md:hidden bg-[#080a10]/95 backdrop-blur-2xl border border-white/10 rounded-2xl p-4 shadow-2xl"
           >
             <div className="flex flex-col gap-1.5">
               {navLinks.map((link) => (

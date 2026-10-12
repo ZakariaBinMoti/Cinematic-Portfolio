@@ -15,11 +15,11 @@ export default async function Home() {
   const data = await getPortfolioData();
 
   return (
-    <main className="w-full bg-[#07080b] relative selection:bg-white/20 selection:text-white">
+    <main className="w-full bg-[#080a10] relative selection:bg-white/20 selection:text-white">
       <Navbar />
       <ScrollyContainer heroData={data.hero} />
       
-      <div className="bg-[#07080b] relative z-20">
+      <div className="bg-[#080a10] relative z-20">
         <AboutSection aboutData={data.about} />
         <AchievementsSection achievementsData={data.achievements} />
         <SkillsSection skills={data.skills} />

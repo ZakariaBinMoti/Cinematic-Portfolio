@@ -65,7 +65,7 @@ export default function ScrollyCanvas({ scrollYProgress }: ScrollyCanvasProps) {
     }
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "#07080b";
+    ctx.fillStyle = "#080a10";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(img, offsetX, offsetY, renderWidth, renderHeight);
   }, []);

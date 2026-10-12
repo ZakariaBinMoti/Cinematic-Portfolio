@@ -26,7 +26,7 @@ export default function AboutSection({ aboutData }: { aboutData: any }) {
   };
 
   return (
-    <section id="about" className="min-h-screen flex items-center bg-[#07080b] py-32 px-6 md:px-20 relative z-20">
+    <section id="about" className="min-h-screen flex items-center bg-[#080a10] py-32 px-6 md:px-20 relative z-20">
       <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
         {/* Sticky Section Heading */}
         <motion.div 
@@ -57,11 +57,11 @@ export default function AboutSection({ aboutData }: { aboutData: any }) {
           {/* 3D Spatial Dual Rim Top Highlight */}
           <div 
             aria-hidden="true" 
-            className="absolute top-0 inset-x-8 h-[1px] bg-gradient-to-r from-transparent via-cyan-400/40 via-white/20 to-amber-400/40 opacity-70" 
+            className="absolute top-0 inset-x-8 h-[1px] bg-gradient-to-r from-transparent via-[#3594bd]/50 via-white/20 to-[#f6602d]/50 opacity-80" 
           />
           <motion.p variants={itemVariants}>{p1}</motion.p>
           <motion.p variants={itemVariants}>{p2}</motion.p>
-          <motion.p variants={itemVariants} className="text-white font-normal border-l-2 border-white/20 pl-6 py-1 my-2">
+          <motion.p variants={itemVariants} className="text-white font-normal border-l-2 border-[#f6602d]/60 pl-6 py-1 my-2">
             {p3}
           </motion.p>
           <motion.p variants={itemVariants} className="text-gray-400">{p4}</motion.p>

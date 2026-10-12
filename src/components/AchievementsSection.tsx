@@ -22,7 +22,7 @@ export default function AchievementsSection({ achievementsData }: { achievements
       : defaultMetrics;
 
   return (
-    <section className="bg-[#07080b] py-20 px-6 md:px-20 relative z-20 overflow-hidden">
+    <section className="bg-[#080a10] py-20 px-6 md:px-20 relative z-20 overflow-hidden">
       <div className="max-w-7xl mx-auto w-full">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
           {metrics.map((metric, idx) => {
@@ -36,13 +36,13 @@ export default function AchievementsSection({ achievementsData }: { achievements
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: idx * 0.08 }}
-                className="relative flex flex-col items-center justify-center p-8 rounded-3xl bg-white/[0.025] border border-white/[0.08] backdrop-blur-2xl hover:border-white/20 transition-all duration-300 hover:-translate-y-1 shadow-[0_15px_35px_rgba(0,0,0,0.5)] group overflow-hidden"
+                className="relative flex flex-col items-center justify-center p-8 rounded-3xl bg-[#0b0f1a]/50 border border-white/[0.08] backdrop-blur-2xl hover:border-white/20 transition-all duration-300 hover:-translate-y-1 shadow-[0_15px_35px_rgba(0,0,0,0.5)] group overflow-hidden"
               >
                 {/* Subtle soft ambient aura behind number */}
                 <div 
                   aria-hidden="true" 
                   className={`absolute -top-12 w-24 h-24 rounded-full blur-2xl opacity-20 group-hover:opacity-40 transition-opacity ${
-                    isFirst ? "bg-amber-400" : isSecond ? "bg-cyan-400" : "bg-white"
+                    isFirst ? "bg-[#f6602d]" : isSecond ? "bg-[#3594bd]" : "bg-white/20"
                   }`} 
                 />
 

@@ -22,7 +22,7 @@ export default function ProjectsSection({ projects }: { projects: any[] }) {
 
   if (total === 0) {
     return (
-      <section id="projects" className="bg-[#07080b] py-32 px-6 md:px-20 relative z-20">
+      <section id="projects" className="bg-[#080a10] py-32 px-6 md:px-20 relative z-20">
         <div className="max-w-7xl mx-auto text-center py-20 text-gray-500">
           Projects are currently being curated.
         </div>
@@ -33,7 +33,7 @@ export default function ProjectsSection({ projects }: { projects: any[] }) {
   const activeProject = projects[activeIndex];
 
   return (
-    <section id="projects" className="min-h-screen bg-[#07080b] py-32 px-4 sm:px-8 md:px-16 relative z-20 overflow-hidden">
+    <section id="projects" className="min-h-screen bg-[#080a10] py-32 px-4 sm:px-8 md:px-16 relative z-20 overflow-hidden">
       <div className="max-w-7xl mx-auto w-full">
         {/* Section Header with Controls */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
@@ -86,7 +86,7 @@ export default function ProjectsSection({ projects }: { projects: any[] }) {
             {/* 3D Spatial Dual Rim Top Highlight */}
             <div 
               aria-hidden="true" 
-              className="absolute top-0 inset-x-12 h-[1px] bg-gradient-to-r from-transparent via-cyan-400/50 via-white/20 to-amber-400/50 opacity-70" 
+              className="absolute top-0 inset-x-12 h-[1px] bg-gradient-to-r from-transparent via-[#3594bd]/60 via-white/20 to-[#f6602d]/60 opacity-80" 
             />
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
@@ -168,7 +168,7 @@ export default function ProjectsSection({ projects }: { projects: any[] }) {
                   {isSelected && (
                     <div 
                       aria-hidden="true" 
-                      className="absolute top-0 inset-x-4 h-[1px] bg-gradient-to-r from-cyan-400 via-white to-amber-400" 
+                      className="absolute top-0 inset-x-4 h-[1px] bg-gradient-to-r from-[#3594bd] via-white to-[#f6602d]" 
                     />
                   )}
                   <div className="flex items-center justify-between mb-2">
@@ -176,7 +176,7 @@ export default function ProjectsSection({ projects }: { projects: any[] }) {
                       #{String(idx + 1).padStart(2, "0")}
                     </span>
                     {isSelected && (
-                      <span className="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(6,182,212,0.9)]" />
+                      <span className="w-2 h-2 rounded-full bg-[#3594bd] shadow-[0_0_8px_rgba(53,148,189,0.9)]" />
                     )}
                   </div>
                   <h4 className="text-sm font-semibold text-white truncate mb-1">

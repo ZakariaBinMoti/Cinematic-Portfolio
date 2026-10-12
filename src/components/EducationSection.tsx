@@ -41,7 +41,7 @@ export default function EducationSection({ educationData }: { educationData?: an
   const subtitle = educationData?.subtitle || "Background.";
 
   return (
-    <section className="bg-[#07080b] py-32 px-6 md:px-20 relative z-20">
+    <section className="bg-[#080a10] py-32 px-6 md:px-20 relative z-20">
       <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
         {/* Sticky Heading */}
         <motion.div 
@@ -74,7 +74,7 @@ export default function EducationSection({ educationData }: { educationData?: an
             >
               <div 
                 aria-hidden="true" 
-                className="absolute top-0 inset-x-8 h-[1px] bg-gradient-to-r from-transparent via-cyan-400/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" 
+                className="absolute top-0 inset-x-8 h-[1px] bg-gradient-to-r from-transparent via-[#3594bd]/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" 
               />
               <h3 className="text-xl md:text-2xl font-bold text-white mb-2 group-hover:text-gray-100 transition-colors">
                 {edu.degree}

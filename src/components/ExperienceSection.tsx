@@ -21,15 +21,15 @@ export default function ExperienceSection({ experiences }: { experiences: any[] 
   };
 
   return (
-    <section id="experience" className="bg-[#07080b] py-32 px-6 md:px-20 relative z-20 overflow-hidden">
-      {/* Subtle Spatial Horizon Glows */}
+    <section id="experience" className="bg-[#080a10] py-32 px-6 md:px-20 relative z-20 overflow-hidden">
+      {/* Exact Hero Sampled Ambient Horizon Glows */}
       <div
         aria-hidden="true"
-        className="absolute top-1/3 -left-72 w-96 h-96 bg-cyan-500/[0.03] rounded-full blur-[140px] pointer-events-none"
+        className="absolute top-1/3 -left-72 w-96 h-96 bg-[#3594bd]/[0.04] rounded-full blur-[140px] pointer-events-none"
       />
       <div
         aria-hidden="true"
-        className="absolute bottom-1/4 -right-72 w-96 h-96 bg-amber-500/[0.03] rounded-full blur-[140px] pointer-events-none"
+        className="absolute bottom-1/4 -right-72 w-96 h-96 bg-[#f6602d]/[0.04] rounded-full blur-[140px] pointer-events-none"
       />
 
       <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start relative z-10">
@@ -65,7 +65,7 @@ export default function ExperienceSection({ experiences }: { experiences: any[] 
           {/* Luminous Light Conduit Track */}
           <div 
             aria-hidden="true"
-            className="absolute left-3.5 sm:left-4 top-8 bottom-8 w-[2px] -translate-x-1/2 bg-gradient-to-b from-amber-400/80 via-cyan-400/60 to-white/10 rounded-full shadow-[0_0_10px_rgba(6,182,212,0.4)]"
+            className="absolute left-3.5 sm:left-4 top-8 bottom-8 w-[2px] -translate-x-1/2 bg-gradient-to-b from-[#f6602d]/80 via-[#3594bd]/60 to-white/10 rounded-full shadow-[0_0_12px_rgba(246,96,45,0.25)]"
           />
 
           <div className="flex flex-col gap-8">
@@ -83,26 +83,26 @@ export default function ExperienceSection({ experiences }: { experiences: any[] 
                     aria-hidden="true"
                     className={`absolute left-3.5 sm:left-4 top-8 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center w-7 h-7 rounded-full border transition-transform duration-300 group-hover:scale-125 z-10 ${
                       isCurrent
-                        ? "bg-amber-500/20 border-amber-400/90 shadow-[0_0_20px_rgba(245,158,11,0.6)]"
-                        : "bg-cyan-500/20 border-cyan-400/80 shadow-[0_0_15px_rgba(6,182,212,0.5)]"
+                        ? "bg-[#f6602d]/20 border-[#f6602d]/90 shadow-[0_0_20px_rgba(246,96,45,0.6)]"
+                        : "bg-[#3594bd]/20 border-[#3594bd]/80 shadow-[0_0_15px_rgba(53,148,189,0.5)]"
                     }`}
                   >
                     <div 
                       className={`w-2.5 h-2.5 rounded-full ${
-                        isCurrent ? "bg-amber-400 animate-pulse" : "bg-cyan-400"
+                        isCurrent ? "bg-[#f6602d] animate-pulse" : "bg-[#3594bd]"
                       }`}
                     />
                   </div>
 
                   {/* Floating Spatial Frosted Glass Card */}
-                  <div className="p-7 sm:p-8 rounded-3xl bg-white/[0.025] border border-white/[0.08] backdrop-blur-2xl hover:border-white/20 transition-all duration-300 hover:-translate-y-1 shadow-[0_15px_40px_rgba(0,0,0,0.5)] hover:shadow-[0_20px_50px_rgba(0,0,0,0.7)]">
+                  <div className="p-7 sm:p-8 rounded-3xl bg-[#0b0f1a]/50 border border-white/[0.08] backdrop-blur-2xl hover:border-[#3594bd]/40 transition-all duration-300 hover:-translate-y-1 shadow-[0_15px_40px_rgba(0,0,0,0.5)] hover:shadow-[0_20px_50px_rgba(0,0,0,0.7)]">
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-3 gap-2">
                       <h3 className="text-xl md:text-2xl font-bold text-white group-hover:text-gray-100 transition-colors">
                         {exp.title}
                       </h3>
                       <span className={`text-xs font-mono tracking-wider uppercase px-3.5 py-1.5 rounded-full border self-start sm:self-auto ${
                         isCurrent
-                          ? "bg-amber-500/10 text-amber-300 border-amber-500/30 shadow-[0_0_12px_rgba(245,158,11,0.2)]"
+                          ? "bg-[#f6602d]/10 text-[#ff915e] border-[#f6602d]/30 shadow-[0_0_12px_rgba(246,96,45,0.2)]"
                           : "bg-white/[0.04] text-gray-300 border-white/10"
                       }`}>
                         {exp.startDate} - {exp.endDate}

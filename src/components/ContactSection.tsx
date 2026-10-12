@@ -14,12 +14,12 @@ export default function ContactSection({ contactData }: { contactData?: any }) {
   const calendly = contactData?.calendly;
 
   return (
-    <section id="contact" className="bg-[#07080b] py-36 px-6 md:px-20 relative z-20 overflow-hidden">
+    <section id="contact" className="bg-[#080a10] py-36 px-6 md:px-20 relative z-20 overflow-hidden">
       <div className="max-w-4xl mx-auto text-center relative z-10 p-10 sm:p-14 md:p-16 rounded-3xl bg-white/[0.025] border border-white/[0.09] backdrop-blur-2xl shadow-[0_25px_60px_rgba(0,0,0,0.6)] relative overflow-hidden">
         {/* 3D Spatial Dual Rim Top Highlight */}
         <div 
           aria-hidden="true" 
-          className="absolute top-0 inset-x-12 h-[1px] bg-gradient-to-r from-transparent via-cyan-400/40 via-white/20 to-amber-400/40 opacity-70" 
+          className="absolute top-0 inset-x-12 h-[1px] bg-gradient-to-r from-transparent via-[#3594bd]/50 via-white/20 to-[#f6602d]/50 opacity-80" 
         />
 
         <motion.div
@@ -111,7 +111,7 @@ export default function ContactSection({ contactData }: { contactData?: any }) {
               href={calendly}
               target="_blank"
               rel="noreferrer"
-              className="border border-emerald-400/20 bg-emerald-950/20 text-emerald-300 hover:bg-emerald-950/40 px-6 py-3.5 rounded-full font-medium text-sm transition-all"
+              className="border border-[#3594bd]/30 bg-[#3594bd]/10 text-[#45abcb] hover:bg-[#3594bd]/20 px-6 py-3.5 rounded-full font-medium text-sm transition-all"
             >
               Book Call
             </a>

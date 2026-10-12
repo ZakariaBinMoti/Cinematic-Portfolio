@@ -4,15 +4,15 @@ import { motion } from "framer-motion";
 
 export default function SkillsSection({ skills }: { skills: any[] }) {
   return (
-    <section id="skills" className="bg-[#07080b] py-32 px-6 md:px-20 relative z-20 overflow-hidden">
-      {/* Subtle Spatial Horizon Glows */}
+    <section id="skills" className="bg-[#080a10] py-32 px-6 md:px-20 relative z-20 overflow-hidden">
+      {/* Exact Hero Sampled Ambient Horizon Glows */}
       <div
         aria-hidden="true"
-        className="absolute top-1/4 -right-72 w-96 h-96 bg-cyan-500/[0.03] rounded-full blur-[140px] pointer-events-none"
+        className="absolute top-1/4 -right-72 w-96 h-96 bg-[#3594bd]/[0.04] rounded-full blur-[140px] pointer-events-none"
       />
       <div
         aria-hidden="true"
-        className="absolute bottom-1/3 -left-72 w-96 h-96 bg-amber-500/[0.03] rounded-full blur-[140px] pointer-events-none"
+        className="absolute bottom-1/3 -left-72 w-96 h-96 bg-[#f6602d]/[0.04] rounded-full blur-[140px] pointer-events-none"
       />
 
       <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start relative z-10">
@@ -50,16 +50,16 @@ export default function SkillsSection({ skills }: { skills: any[] }) {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}
                 transition={{ duration: 0.5, delay: idx * 0.06 }}
-                className="bg-white/[0.025] border border-white/[0.08] p-7 md:p-8 rounded-3xl backdrop-blur-2xl hover:border-white/20 transition-all duration-300 hover:-translate-y-1 shadow-[0_15px_35px_rgba(0,0,0,0.5)] group relative overflow-hidden"
+                className="bg-[#0b0f1a]/50 border border-white/[0.08] p-7 md:p-8 rounded-3xl backdrop-blur-2xl hover:border-white/20 transition-all duration-300 hover:-translate-y-1 shadow-[0_15px_35px_rgba(0,0,0,0.5)] group relative overflow-hidden"
               >
                 {/* Subtle top rim light */}
                 <div 
                   aria-hidden="true" 
                   className={`absolute top-0 inset-x-8 h-[1px] opacity-40 group-hover:opacity-100 transition-opacity ${
                     isShopify 
-                      ? "bg-gradient-to-r from-transparent via-amber-400/80 to-transparent" 
+                      ? "bg-gradient-to-r from-transparent via-[#f6602d]/80 to-transparent" 
                       : isFrontend
-                      ? "bg-gradient-to-r from-transparent via-cyan-400/80 to-transparent"
+                      ? "bg-gradient-to-r from-transparent via-[#3594bd]/80 to-transparent"
                       : "bg-gradient-to-r from-transparent via-white/30 to-transparent"
                   }`} 
                 />
@@ -68,9 +68,9 @@ export default function SkillsSection({ skills }: { skills: any[] }) {
                   <span 
                     className={`w-2 h-2 rounded-full ${
                       isShopify 
-                        ? "bg-amber-400 shadow-[0_0_8px_rgba(245,158,11,0.8)]" 
+                        ? "bg-[#f6602d] shadow-[0_0_8px_rgba(246,96,45,0.8)]" 
                         : isFrontend
-                        ? "bg-cyan-400 shadow-[0_0_8px_rgba(6,182,212,0.8)]"
+                        ? "bg-[#3594bd] shadow-[0_0_8px_rgba(53,148,189,0.8)]"
                         : "bg-white/40"
                     }`} 
                   />
@@ -83,7 +83,7 @@ export default function SkillsSection({ skills }: { skills: any[] }) {
                   {skillGroup.items.map((item: string) => (
                     <span
                       key={item}
-                      className="text-xs sm:text-sm bg-white/[0.035] border border-white/[0.08] px-3.5 py-1.5 rounded-full text-gray-300 hover:border-white/25 hover:bg-white/[0.08] hover:text-white hover:shadow-[0_0_12px_rgba(255,255,255,0.06)] transition-all duration-200"
+                      className="text-xs sm:text-sm bg-white/[0.035] border border-white/[0.08] px-3.5 py-1.5 rounded-full text-gray-300 hover:border-[#3594bd]/35 hover:bg-[#3594bd]/10 hover:text-white hover:shadow-[0_0_12px_rgba(53,148,189,0.15)] transition-all duration-200"
                     >
                       {item}
                     </span>
