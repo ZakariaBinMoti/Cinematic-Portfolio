@@ -56,7 +56,7 @@ export default function ExperienceSection({ experiences }: { experiences: any[] 
         
         {/* 3D Spatial Timeline with Luminous Conduits & Nodes */}
         <motion.div 
-          className="lg:col-span-8 relative pl-6 sm:pl-10 md:pl-12"
+          className="lg:col-span-8 relative"
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
@@ -65,7 +65,7 @@ export default function ExperienceSection({ experiences }: { experiences: any[] 
           {/* Luminous Light Conduit Track */}
           <div 
             aria-hidden="true"
-            className="absolute left-2.5 sm:left-4 top-6 bottom-6 w-[2px] bg-gradient-to-b from-amber-400/70 via-cyan-400/50 to-white/10 rounded-full"
+            className="absolute left-3.5 sm:left-4 top-8 bottom-8 w-[2px] -translate-x-1/2 bg-gradient-to-b from-amber-400/80 via-cyan-400/60 to-white/10 rounded-full shadow-[0_0_10px_rgba(6,182,212,0.4)]"
           />
 
           <div className="flex flex-col gap-8">
@@ -76,15 +76,15 @@ export default function ExperienceSection({ experiences }: { experiences: any[] 
                 <motion.div
                   key={exp._id || idx}
                   variants={itemVariants}
-                  className="relative group"
+                  className="relative pl-10 sm:pl-12 group"
                 >
                   {/* Luminous Spatial Timeline Node */}
                   <div 
                     aria-hidden="true"
-                    className={`absolute -left-6 sm:-left-10 md:-left-12 top-6 -translate-x-1/2 flex items-center justify-center w-7 h-7 rounded-full border transition-transform duration-300 group-hover:scale-125 ${
+                    className={`absolute left-3.5 sm:left-4 top-8 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center w-7 h-7 rounded-full border transition-transform duration-300 group-hover:scale-125 z-10 ${
                       isCurrent
-                        ? "bg-amber-500/20 border-amber-400/80 shadow-[0_0_20px_rgba(245,158,11,0.5)]"
-                        : "bg-cyan-500/20 border-cyan-400/70 shadow-[0_0_15px_rgba(6,182,212,0.4)]"
+                        ? "bg-amber-500/20 border-amber-400/90 shadow-[0_0_20px_rgba(245,158,11,0.6)]"
+                        : "bg-cyan-500/20 border-cyan-400/80 shadow-[0_0_15px_rgba(6,182,212,0.5)]"
                     }`}
                   >
                     <div 
