@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -107,11 +108,16 @@ export default function Topbar({
             onClick={() => setMenuOpen((o) => !o)}
             aria-haspopup="menu"
             aria-expanded={menuOpen}
-            className="a-focus flex h-9 w-9 items-center justify-center rounded-full bg-[var(--a-gradient)] p-[1.5px]"
+            className="a-focus relative flex h-9 w-9 items-center justify-center rounded-full border border-white/20 overflow-hidden hover:scale-105 transition-transform shadow-[0_0_12px_rgba(53,148,189,0.3)]"
+            aria-label="User menu"
           >
-            <span className="flex h-full w-full items-center justify-center rounded-full bg-[var(--a-bg-elevated)] text-sm font-semibold">
-              {initial}
-            </span>
+            <Image
+              src="/favicon.png"
+              alt="Zakaria Bin Moti"
+              width={36}
+              height={36}
+              className="h-full w-full object-cover rounded-full"
+            />
           </button>
           <AnimatePresence>
             {menuOpen && (

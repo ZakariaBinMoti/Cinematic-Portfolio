@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import {
   Shield,
   KeyRound,
@@ -84,8 +85,14 @@ export default function SettingsClient({ email, system }: SettingsClientProps) {
         <Card className="p-6">
           <div className="flex items-center justify-between pb-4 border-b border-white/5">
             <div className="flex items-center gap-3">
-              <span className="p-2.5 rounded-xl bg-violet-500/10 text-violet-300 border border-violet-500/20">
-                <Mail className="h-5 w-5" />
+              <span className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full overflow-hidden border border-white/20 shadow-[0_0_12px_rgba(53,148,189,0.3)]">
+                <Image
+                  src="/favicon.png"
+                  alt="Zakaria Bin Moti"
+                  width={40}
+                  height={40}
+                  className="h-full w-full object-cover rounded-full"
+                />
               </span>
               <div>
                 <h3 className="text-base font-semibold text-white">Administrator Account</h3>

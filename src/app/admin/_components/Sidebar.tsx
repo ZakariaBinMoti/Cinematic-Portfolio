@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import { ExternalLink, PanelLeftClose, PanelLeftOpen } from "lucide-react";
@@ -31,8 +32,15 @@ export default function Sidebar({
           className="a-focus flex items-center gap-3 rounded-xl"
           aria-label="Admin home"
         >
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[var(--a-gradient)] shadow-[0_8px_20px_-8px_rgba(139,92,246,0.9)]">
-            <span className="text-sm font-bold text-white">Z</span>
+          <span className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full overflow-hidden border border-white/20 shadow-[0_0_15px_rgba(53,148,189,0.35)]">
+            <Image
+              src="/favicon.png"
+              alt="Zakaria Bin Moti"
+              width={36}
+              height={36}
+              priority
+              className="h-full w-full object-cover rounded-full"
+            />
           </span>
           {!compact && (
             <span className="leading-tight">

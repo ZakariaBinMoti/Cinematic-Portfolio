@@ -4,6 +4,7 @@ import { Suspense, useEffect, useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { motion, AnimatePresence, useAnimationControls } from "framer-motion";
 import {
   ArrowLeft,
@@ -238,8 +239,15 @@ function LoginForm() {
     <motion.div animate={controls} className="w-full max-w-[420px]">
       {/* ── Brand Header ── */}
       <div className="mb-6">
-        <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--a-gradient)] shadow-[0_10px_30px_-10px_rgba(139,92,246,0.8)]">
-          <span className="text-lg font-bold tracking-tight text-white">Z</span>
+        <div className="mb-4 inline-flex h-14 w-14 items-center justify-center rounded-full border border-white/20 overflow-hidden shadow-[0_0_20px_rgba(53,148,189,0.35)]">
+          <Image
+            src="/favicon.png"
+            alt="Zakaria Bin Moti"
+            width={56}
+            height={56}
+            priority
+            className="h-full w-full object-cover rounded-full"
+          />
         </div>
         <h1 className="text-[28px] font-semibold tracking-tight">
           {view === "login" ? "Welcome back" : "Reset Password"}
@@ -643,8 +651,16 @@ export default function LoginPage() {
         </div>
         <div className="a-grid-bg absolute inset-0" aria-hidden />
 
-        <div className="relative z-10 flex items-center gap-2.5 text-sm font-medium text-white/80">
-          <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.9)]" />
+        <div className="relative z-10 flex items-center gap-3 text-sm font-medium text-white/90">
+          <span className="relative flex h-7 w-7 rounded-full overflow-hidden border border-white/20 shadow-[0_0_10px_rgba(53,148,189,0.3)] shrink-0">
+            <Image
+              src="/favicon.png"
+              alt="Zakaria Bin Moti"
+              width={28}
+              height={28}
+              className="h-full w-full object-cover rounded-full"
+            />
+          </span>
           Portfolio Studio
         </div>
 

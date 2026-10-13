@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function Navbar() {
@@ -49,12 +50,20 @@ export default function Navbar() {
               : "bg-[#080a10]/60 backdrop-blur-xl border border-white/[0.08] shadow-[0_8px_24px_rgba(0,0,0,0.5)]"
           }`}
         >
-          {/* Brand Monogram */}
+          {/* Brand Avatar */}
           <a
             href="#"
-            className="flex items-center justify-center w-8 h-8 rounded-full bg-white/[0.06] hover:bg-white/[0.12] border border-white/10 text-white text-xs font-semibold tracking-wider transition-colors ml-1"
+            className="relative flex items-center justify-center w-8 h-8 rounded-full overflow-hidden border border-white/20 hover:border-white/40 transition-all ml-1 hover:scale-105 shadow-[0_0_12px_rgba(53,148,189,0.3)] shrink-0"
+            aria-label="Home"
           >
-            ZB
+            <Image
+              src="/favicon.png"
+              alt="Zakaria Bin Moti"
+              width={32}
+              height={32}
+              priority
+              className="w-full h-full object-cover rounded-full"
+            />
           </a>
 
           {/* Desktop Nav Items */}
