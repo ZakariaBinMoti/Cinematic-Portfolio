@@ -26,8 +26,9 @@ Whenever the user provides a website URL (e.g. `https://suitshark.ca/`) to add t
    - **NEVER** use AI image generators (`generate_image`) to fabricate fake websites or hallucinated mockups.
    - **ALWAYS** capture 100% genuine screenshots of the live website across Desktop, Tablet, and Mobile viewports using `browser_subagent`.
 
-3. **Multi-Device Studio Showcase (16:9 Canvas)**:
-   - Present the project on a dark luxury studio canvas (`1920x1080` or 16:9 aspect ratio) with three device mockups:
+3. **Multi-Device Studio Showcase (16:10 Canvas - 1920x1200)**:
+   - **CRITICAL RATIO RULE**: Zakaria's portfolio website image panel (`src/components/ProjectsSection.tsx`) uses an exact `aspect-[16/10]` container. Generating 16:9 images caused unwanted cropping on the left and right edges. **ALWAYS generate showcase images at 1920x1200 (16:10 aspect ratio)** so that the image fits the container with zero cropping!
+   - Present the project on a dark luxury studio canvas (`1920x1200`) with three device mockups:
      - **PC / Laptop (Center-Left / Back)**: MacBook Pro / Studio Display frame with macOS window header (🔴 🟡 🟢) and padlock URL bar showing the desktop landing page / hero banner.
      - **Tablet (Center-Right / Middle)**: iPad Pro frame showing a key interactive feature, custom configurator, collection grid, or product page.
      - **Mobile (Foreground-Right / Floating)**: iPhone 15 Pro frame with Dynamic Island and iOS status bar (`9:41`) showing the responsive mobile storefront.
@@ -44,7 +45,7 @@ Whenever the user provides a website URL (e.g. `https://suitshark.ca/`) to add t
 
 ### Step 1: Discover & Capture Live Storefront (Multi-Device)
 Use `browser_subagent` to navigate to the target URL:
-1. **Desktop View (`1920x1080`)**:
+1. **Desktop View (`1920x1080` or `1920x1200`)**:
    - Dismiss any newsletter popup, cookie banner, or region modal.
    - Smoothly scroll down so all lazy-loaded imagery renders.
    - Capture the desktop landing page (Header, navigation, search, and hero photography).
@@ -57,22 +58,22 @@ Use `browser_subagent` to navigate to the target URL:
 
 ### Step 2: Crop Clean Screens with Sharp
 Use Node.js with `sharp` to extract clean, widget-free crops:
-- **Desktop**: Extract top `1904x1080` (16:9 ratio) from the landing page.
+- **Desktop**: Extract top `1904x1080` from the landing page.
 - **Tablet**: Crop out bottom chat widget (height ~870px).
 - **Mobile**: Crop cleanly right after the hero image (height ~628px).
 
-### Step 3: Render the 1920x1080 Studio Canvas
+### Step 3: Render the 1920x1200 Studio Canvas (16:10 Ratio)
 1. Populate `resources/mockup_template.html` (or write a temporary canvas HTML) with:
    - `{{BRAND_NAME}}`: e.g. "Suitshark"
    - `{{SITE_URL}}`: e.g. "https://suitshark.ca/"
    - `{{TAG_ACCENT}}`, `{{TAG_2}}`, `{{TAG_3}}`: e.g. "⚡ Bespoke 3-Piece Suiting Configurator", "Shopify Architecture", "Responsive Multi-Device UX"
    - `{{DESKTOP_IMG_URL}}`, `{{TABLET_IMG_URL}}`, `{{MOBILE_IMG_URL}}`
    - `{{STAT_1_VAL}}`, `{{STAT_1_LABEL}}`, `{{STAT_2_VAL}}`, `{{STAT_2_LABEL}}`, `{{STAT_3_VAL}}`, `{{STAT_3_LABEL}}`
-2. Open the canvas in the browser at viewport `1920x1080`.
-3. Capture a full-viewport screenshot of the 1920x1080 canvas using `browser_subagent`.
+2. Open the canvas in the browser at viewport `1920x1200`.
+3. Capture a full-viewport screenshot of the 1920x1200 canvas using `browser_subagent`.
 
 ### Step 4: Upload to Cloudinary
-Upload the 1920x1080 studio showcase screenshot to Cloudinary using credentials from `.env.local`:
+Upload the 1920x1200 studio showcase screenshot to Cloudinary using credentials from `.env.local`:
 - Folder: `portfolio`
 - Public ID: `<brand_slug>_showcase_<timestamp>`
 
