@@ -178,8 +178,12 @@ export default function ProjectsSection({ projects }: { projects: ProjectItem[] 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (document.activeElement?.tagName === "INPUT" || document.activeElement?.tagName === "TEXTAREA") return;
-      if (e.key === "ArrowRight") nextSlide();
-      if (e.key === "ArrowLeft") prevSlide();
+      if (e.key === "ArrowRight") {
+        setActiveIndex((prev) => (total > 0 ? (prev + 1) % total : 0));
+      }
+      if (e.key === "ArrowLeft") {
+        setActiveIndex((prev) => (total > 0 ? (prev - 1 + total) % total : 0));
+      }
     };
 
     window.addEventListener("keydown", handleKeyDown);
