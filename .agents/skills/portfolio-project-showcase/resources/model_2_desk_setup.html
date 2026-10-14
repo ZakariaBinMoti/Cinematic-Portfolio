@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{{BRAND_NAME}} - Model 2: Apple Desk Setup Showcase</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      width: 1920px;
+      height: 1200px;
+      overflow: hidden;
+      background-color: #05070C;
+      background-image: 
+        radial-gradient(circle at 50% 20%, rgba(56, 189, 248, 0.10) 0%, transparent 55%),
+        radial-gradient(circle at 85% 45%, rgba(245, 158, 11, 0.08) 0%, transparent 45%),
+        radial-gradient(circle at 15% 55%, rgba(99, 102, 241, 0.08) 0%, transparent 50%),
+        linear-gradient(180deg, #090C15 0%, #030407 100%);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    /* Subtle Studio Grid */
+    .studio-grid {
+      position: absolute;
+      inset: 0;
+      background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 72px 72px;
+      pointer-events: none;
+      mask-image: radial-gradient(circle at 50% 40%, black 40%, transparent 85%);
+      -webkit-mask-image: radial-gradient(circle at 50% 40%, black 40%, transparent 85%);
+    }
+
+    /* Ambient Warm Desk Lamp / Studio Backlight */
+    .ambient-glow {
+      position: absolute;
+      width: 1300px;
+      height: 500px;
+      top: 250px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: radial-gradient(ellipse at center, rgba(56, 189, 248, 0.09) 0%, rgba(245, 158, 11, 0.04) 50%, transparent 75%);
+      filter: blur(80px);
+      pointer-events: none;
+    }
+
+    /* Top Header Bar */
+    .header-bar {
+      position: absolute;
+      top: 48px;
+      left: 68px;
+      right: 68px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 50;
+    }
+
+    .brand-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .logo-badge {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      padding: 7px 18px;
+      border-radius: 9999px;
+      backdrop-filter: blur(12px);
+    }
+
+    .logo-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #10B981;
+      box-shadow: 0 0 10px #10B981;
+    }
+
+    .logo-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      font-size: 15px;
+      text-transform: uppercase;
+      color: #F8FAFC;
+    }
+
+    .brand-url {
+      font-size: 13px;
+      color: #94A3B8;
+      letter-spacing: 0.04em;
+      font-weight: 500;
+    }
+
+    .tags-meta {
+      display: flex;
+      gap: 10px;
+    }
+
+    .tag-pill {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: #CBD5E1;
+      backdrop-filter: blur(8px);
+    }
+
+    .tag-pill.accent {
+      background: rgba(245, 158, 11, 0.14);
+      border-color: rgba(245, 158, 11, 0.35);
+      color: #FDE68A;
+    }
+
+    /* STAGE & DESK ENVIRONMENT */
+    .stage {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+
+    /* Realistic 3D Matte Obsidian Studio Desk Surface */
+    .desk-surface {
+      position: absolute;
+      bottom: 0;
+      left: -100px;
+      right: -100px;
+      height: 380px;
+      background: linear-gradient(180deg, #131722 0%, #0d1017 40%, #06080c 100%);
+      border-top: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 
+        inset 0 1px 0 rgba(255, 255, 255, 0.15),
+        inset 0 25px 50px rgba(0, 0, 0, 0.8),
+        0 -20px 40px rgba(0, 0, 0, 0.6);
+      transform: perspective(1000px) rotateX(12deg);
+      transform-origin: bottom center;
+      z-index: 5;
+    }
+
+    /* Desk Depth Line & Reflection Sheen */
+    .desk-edge-highlight {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent 5%, rgba(56, 189, 248, 0.3) 30%, rgba(255, 255, 255, 0.4) 50%, rgba(245, 158, 11, 0.25) 70%, transparent 95%);
+    }
+
+    .desk-reflection {
+      position: absolute;
+      top: 5px;
+      left: 10%;
+      right: 10%;
+      height: 120px;
+      background: radial-gradient(ellipse at 40% top, rgba(56, 189, 248, 0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    /* 1. APPLE STUDIO DISPLAY / PRO DISPLAY XDR */
+    .apple-display-unit {
+      position: absolute;
+      top: 160px;
+      left: 120px;
+      width: 1060px;
+      z-index: 15;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      filter: drop-shadow(0 30px 60px rgba(0, 0, 0, 0.95));
+    }
+
+    .display-enclosure {
+      width: 100%;
+      height: 640px;
+      background: #0A0D14;
+      border-radius: 20px;
+      border: 3px solid #232938;
+      box-shadow: 
+        inset 0 0 0 1px rgba(255, 255, 255, 0.12),
+        0 25px 60px rgba(0, 0, 0, 0.9);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .display-camera-hole {
+      position: absolute;
+      top: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #05060A;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      z-index: 25;
+    }
+
+    .display-screen-glass {
+      width: 100%;
+      height: 100%;
+      background: #000;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .display-screen-header {
+      height: 38px;
+      background: #141721;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      user-select: none;
+    }
+
+    .mac-dots {
+      display: flex;
+      gap: 7px;
+      width: 80px;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+    .dot-red { background: #EF4444; }
+    .dot-yellow { background: #F59E0B; }
+    .dot-green { background: #10B981; }
+
+    .browser-url-bar {
+      flex: 1;
+      max-width: 440px;
+      margin: 0 auto;
+      height: 24px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 11px;
+      color: #94A3B8;
+      font-weight: 500;
+    }
+
+    .browser-url-bar svg {
+      width: 11px;
+      height: 11px;
+      opacity: 0.7;
+    }
+
+    .screen-viewport {
+      flex: 1;
+      width: 100%;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .screen-viewport img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top center;
+      display: block;
+    }
+
+    .screen-gloss {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(130deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.01) 35%, transparent 60%);
+      pointer-events: none;
+    }
+
+    /* Aluminum Stand */
+    .display-stand-neck {
+      width: 90px;
+      height: 110px;
+      background: linear-gradient(180deg, #373E4D 0%, #202531 60%, #151822 100%);
+      border-left: 1px solid rgba(255, 255, 255, 0.15);
+      border-right: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.1);
+      z-index: 10;
+    }
+
+    .display-stand-foot {
+      width: 250px;
+      height: 14px;
+      background: linear-gradient(180deg, #444C5D 0%, #293040 40%, #171B24 100%);
+      border-radius: 8px 8px 3px 3px;
+      box-shadow: 
+        0 14px 28px rgba(0, 0, 0, 0.9),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+      position: relative;
+      z-index: 12;
+    }
+
+    /* 2. TABLET ON THE DESK (iPad Pro in Folio Stand) */
+    .tablet-desk-unit {
+      position: absolute;
+      top: 360px;
+      right: 250px;
+      width: 440px;
+      height: 580px;
+      z-index: 20;
+      background: #11141D;
+      border-radius: 28px;
+      border: 4px solid #2B3240;
+      padding: 9px;
+      box-shadow: 
+        0 40px 90px -10px rgba(0, 0, 0, 0.96),
+        0 15px 35px rgba(0, 0, 0, 0.8),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.15);
+      filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.8));
+      transform: perspective(900px) rotateY(-8deg) rotateX(10deg);
+    }
+
+    .tablet-screen {
+      width: 100%;
+      height: 100%;
+      border-radius: 18px;
+      overflow: hidden;
+      background: #fff;
+      position: relative;
+    }
+
+    .tablet-screen img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top center;
+      display: block;
+    }
+
+    .tablet-badge {
+      position: absolute;
+      top: -16px;
+      right: 20px;
+      background: #0F172A;
+      border: 1px solid rgba(56, 189, 248, 0.5);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.7);
+      padding: 5px 14px;
+      border-radius: 9999px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #38BDF8;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      z-index: 25;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .tablet-badge::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #38BDF8;
+      box-shadow: 0 0 8px #38BDF8;
+    }
+
+    /* 3. PHONE ON THE DESK (iPhone 15 Pro on Aluminum Desk Puck) */
+    .phone-desk-unit {
+      position: absolute;
+      bottom: 80px;
+      right: 60px;
+      width: 285px;
+      height: 590px;
+      z-index: 25;
+      background: #0D1017;
+      border-radius: 46px;
+      border: 5px solid #3A4150;
+      padding: 8px;
+      box-shadow: 
+        0 45px 100px -10px rgba(0, 0, 0, 0.98),
+        0 20px 45px rgba(0, 0, 0, 0.85),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+      filter: drop-shadow(0 25px 45px rgba(0, 0, 0, 0.85));
+      transform: perspective(800px) rotateY(-4deg) rotateX(14deg);
+    }
+
+    .phone-screen {
+      width: 100%;
+      height: 100%;
+      border-radius: 36px;
+      overflow: hidden;
+      background: #000;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .phone-status-bar {
+      height: 32px;
+      background: #000;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 18px;
+      position: relative;
+      z-index: 15;
+    }
+
+    .phone-time {
+      font-size: 11px;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .dynamic-island {
+      position: absolute;
+      top: 6px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 74px;
+      height: 20px;
+      background: #000;
+      border-radius: 20px;
+    }
+
+    .phone-viewport {
+      flex: 1;
+      width: 100%;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .phone-viewport img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top center;
+      display: block;
+    }
+
+    .phone-badge {
+      position: absolute;
+      bottom: -15px;
+      left: 18px;
+      background: #0F172A;
+      border: 1px solid rgba(16, 185, 129, 0.45);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.7);
+      padding: 5px 14px;
+      border-radius: 9999px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #34D399;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      z-index: 35;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .phone-badge::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #10B981;
+      box-shadow: 0 0 8px #10B981;
+    }
+
+    /* Desk Accessories Outline */
+    .magic-keyboard-shadow {
+      position: absolute;
+      bottom: 45px;
+      left: 380px;
+      width: 320px;
+      height: 110px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      transform: perspective(600px) rotateX(30deg);
+      box-shadow: 0 15px 30px rgba(0,0,0,0.8);
+      z-index: 8;
+      pointer-events: none;
+    }
+
+    /* Footer Information Bar */
+    .footer-bar {
+      position: absolute;
+      bottom: 48px;
+      left: 68px;
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      z-index: 50;
+    }
+
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .stat-value {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: #F1F5F9;
+      letter-spacing: -0.02em;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: #64748B;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .footer-divider {
+      width: 1px;
+      height: 26px;
+      background: rgba(255, 255, 255, 0.1);
+    }
+  </style>
+</head>
+<body>
+  <div class="studio-grid"></div>
+  <div class="ambient-glow"></div>
+
+  <!-- Header Bar -->
+  <header class="header-bar">
+    <div class="brand-meta">
+      <div class="logo-badge">
+        <span class="logo-dot"></span>
+        <span class="logo-title">{{BRAND_NAME}}</span>
+      </div>
+      <span class="brand-url">{{SITE_URL}}</span>
+    </div>
+
+    <div class="tags-meta">
+      <div class="tag-pill accent">{{TAG_ACCENT}}</div>
+      <div class="tag-pill">{{TAG_2}}</div>
+      <div class="tag-pill">{{TAG_3}}</div>
+    </div>
+  </header>
+
+  <!-- Stage Environment -->
+  <main class="stage">
+    <!-- 3D Studio Desk -->
+    <div class="desk-surface">
+      <div class="desk-edge-highlight"></div>
+      <div class="desk-reflection"></div>
+    </div>
+
+    <div class="magic-keyboard-shadow"></div>
+
+    <!-- 1. Apple Studio Display -->
+    <div class="apple-display-unit">
+      <div class="display-enclosure">
+        <div class="display-camera-hole"></div>
+        <div class="display-screen-glass">
+          <div class="display-screen-header">
+            <div class="mac-dots">
+              <span class="dot dot-red"></span>
+              <span class="dot dot-yellow"></span>
+              <span class="dot dot-green"></span>
+            </div>
+            <div class="browser-url-bar">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              </svg>
+              {{SITE_URL}}
+            </div>
+            <div style="width: 80px;"></div>
+          </div>
+          <div class="screen-viewport">
+            <img src="{{DESKTOP_IMG_URL}}" alt="{{BRAND_NAME}} Desktop View">
+            <div class="screen-gloss"></div>
+          </div>
+        </div>
+      </div>
+      <div class="display-stand-neck"></div>
+      <div class="display-stand-foot"></div>
+    </div>
+
+    <!-- 2. iPad Pro on the Desk -->
+    <div class="tablet-desk-unit">
+      <span class="tablet-badge">{{TABLET_BADGE}}</span>
+      <div class="tablet-screen">
+        <img src="{{TABLET_IMG_URL}}" alt="{{BRAND_NAME}} Tablet View">
+        <div class="screen-gloss"></div>
+      </div>
+    </div>
+
+    <!-- 3. iPhone on the Desk -->
+    <div class="phone-desk-unit">
+      <span class="phone-badge">{{MOBILE_BADGE}}</span>
+      <div class="phone-screen">
+        <div class="phone-status-bar">
+          <span class="phone-time">9:41</span>
+          <div class="dynamic-island"></div>
+          <div style="width: 14px;"></div>
+        </div>
+        <div class="phone-viewport">
+          <img src="{{MOBILE_IMG_URL}}" alt="{{BRAND_NAME}} Mobile View">
+          <div class="screen-gloss"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer Stats -->
+  <footer class="footer-bar">
+    <div class="stat-item">
+      <span class="stat-value">{{STAT_1_VAL}}</span>
+      <span class="stat-label">{{STAT_1_LABEL}}</span>
+    </div>
+    <div class="footer-divider"></div>
+    <div class="stat-item">
+      <span class="stat-value">{{STAT_2_VAL}}</span>
+      <span class="stat-label">{{STAT_2_LABEL}}</span>
+    </div>
+    <div class="footer-divider"></div>
+    <div class="stat-item">
+      <span class="stat-value">{{STAT_3_VAL}}</span>
+      <span class="stat-label">{{STAT_3_LABEL}}</span>
+    </div>
+  </footer>
+</body>
+</html>

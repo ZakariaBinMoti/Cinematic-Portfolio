@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{{BRAND_NAME}} Multi-Device Studio Showcase</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      width: 1920px;
+      height: 1200px;
+      overflow: hidden;
+      background-color: #05070C;
+      background-image: 
+        radial-gradient(circle at 50% 15%, rgba(56, 189, 248, 0.11) 0%, transparent 60%),
+        radial-gradient(circle at 82% 65%, rgba(217, 119, 6, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 16% 70%, rgba(99, 102, 241, 0.07) 0%, transparent 55%),
+        linear-gradient(180deg, #080B13 0%, #030407 100%);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .studio-grid {
+      position: absolute;
+      inset: 0;
+      background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+      background-size: 72px 72px;
+      pointer-events: none;
+      mask-image: radial-gradient(circle at 50% 48%, black 45%, transparent 88%);
+      -webkit-mask-image: radial-gradient(circle at 50% 48%, black 45%, transparent 88%);
+    }
+
+    .stage-glow {
+      position: absolute;
+      width: 1450px;
+      height: 600px;
+      top: 300px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: radial-gradient(ellipse at center, rgba(56, 189, 248, 0.09) 0%, rgba(30, 41, 59, 0.03) 55%, transparent 75%);
+      filter: blur(70px);
+      pointer-events: none;
+    }
+
+    .header-bar {
+      position: absolute;
+      top: 48px;
+      left: 68px;
+      right: 68px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 50;
+    }
+
+    .brand-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .logo-badge {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      padding: 7px 18px;
+      border-radius: 9999px;
+      backdrop-filter: blur(12px);
+    }
+
+    .logo-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #10B981;
+      box-shadow: 0 0 10px #10B981;
+    }
+
+    .logo-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      font-size: 15px;
+      text-transform: uppercase;
+      color: #F8FAFC;
+    }
+
+    .brand-url {
+      font-size: 13px;
+      color: #94A3B8;
+      letter-spacing: 0.04em;
+      font-weight: 500;
+    }
+
+    .tags-meta {
+      display: flex;
+      gap: 10px;
+    }
+
+    .tag-pill {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: #CBD5E1;
+      backdrop-filter: blur(8px);
+    }
+
+    .tag-pill.accent {
+      background: rgba(217, 119, 6, 0.14);
+      border-color: rgba(217, 119, 6, 0.35);
+      color: #FDE68A;
+    }
+
+    .stage {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* 1. DESKTOP / LAPTOP MOCKUP */
+    .device-laptop {
+      position: absolute;
+      top: 185px;
+      left: 65px;
+      width: 1090px;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      filter: drop-shadow(0 35px 70px rgba(0, 0, 0, 0.88));
+    }
+
+    .laptop-screen {
+      width: 100%;
+      height: 648px;
+      background: #11141B;
+      border-radius: 16px 16px 4px 4px;
+      border: 3px solid #282E3B;
+      box-shadow: 
+        inset 0 0 0 1px rgba(255, 255, 255, 0.12),
+        0 20px 45px rgba(0, 0, 0, 0.8);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .browser-header {
+      height: 38px;
+      background: #151821;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      align-items: center;
+      padding: 0 18px;
+      user-select: none;
+    }
+
+    .browser-dots {
+      display: flex;
+      gap: 7px;
+      width: 80px;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+    .dot-red { background: #EF4444; }
+    .dot-yellow { background: #F59E0B; }
+    .dot-green { background: #10B981; }
+
+    .browser-address {
+      flex: 1;
+      max-width: 420px;
+      margin: 0 auto;
+      height: 24px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 11px;
+      color: #94A3B8;
+      font-weight: 500;
+      letter-spacing: 0.03em;
+    }
+
+    .browser-address svg {
+      width: 11px;
+      height: 11px;
+      opacity: 0.7;
+    }
+
+    .browser-controls-right {
+      width: 80px;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .browser-content {
+      flex: 1;
+      width: 100%;
+      height: 607px;
+      overflow: hidden;
+      position: relative;
+      background: #000;
+    }
+
+    .browser-content img {
+      width: 100%;
+      height: 100%;
+      object-fit: fill;
+      display: block;
+    }
+
+    .screen-gloss {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(130deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.01) 32%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .laptop-base {
+      width: 1180px;
+      height: 18px;
+      background: linear-gradient(180deg, #373E4D 0%, #1E232E 55%, #131720 100%);
+      border-radius: 0 0 16px 16px;
+      position: relative;
+      box-shadow: 
+        0 14px 35px rgba(0, 0, 0, 0.95),
+        inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    }
+
+    .laptop-notch {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 140px;
+      height: 6px;
+      background: #10131A;
+      border-radius: 0 0 8px 8px;
+    }
+
+    /* 2. TABLET MOCKUP */
+    .device-tablet {
+      position: absolute;
+      top: 200px;
+      right: 290px;
+      width: 490px;
+      height: 650px;
+      z-index: 20;
+      background: #131720;
+      border-radius: 30px;
+      border: 4px solid #2F3644;
+      padding: 10px;
+      box-shadow: 
+        0 35px 80px -10px rgba(0, 0, 0, 0.94),
+        0 15px 35px rgba(0, 0, 0, 0.7),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.15);
+      filter: drop-shadow(0 25px 45px rgba(0, 0, 0, 0.7));
+      transform: rotate(2deg);
+    }
+
+    .tablet-screen {
+      width: 100%;
+      height: 100%;
+      border-radius: 20px;
+      overflow: hidden;
+      background: #fff;
+      position: relative;
+    }
+
+    .tablet-screen img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top center;
+      display: block;
+    }
+
+    .tablet-camera {
+      position: absolute;
+      top: 6px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #090B10;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      z-index: 5;
+    }
+
+    .tablet-badge {
+      position: absolute;
+      top: -16px;
+      right: 24px;
+      background: #0F172A;
+      border: 1px solid rgba(56, 189, 248, 0.45);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.7);
+      padding: 5px 14px;
+      border-radius: 9999px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #38BDF8;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      z-index: 25;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .tablet-badge::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #38BDF8;
+      box-shadow: 0 0 8px #38BDF8;
+    }
+
+    /* 3. MOBILE MOCKUP */
+    .device-mobile {
+      position: absolute;
+      bottom: 95px;
+      right: 45px;
+      width: 300px;
+      height: 625px;
+      z-index: 30;
+      background: #11141B;
+      border-radius: 48px;
+      border: 5px solid #3F4656;
+      padding: 9px;
+      box-shadow: 
+        0 40px 95px -10px rgba(0, 0, 0, 0.98),
+        0 20px 45px rgba(0, 0, 0, 0.8),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+      filter: drop-shadow(0 25px 50px rgba(0, 0, 0, 0.85));
+      transform: rotate(-3deg);
+    }
+
+    .mobile-screen {
+      width: 100%;
+      height: 100%;
+      border-radius: 38px;
+      overflow: hidden;
+      background: #000;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .mobile-status-bar {
+      height: 34px;
+      background: #000;
+      width: 100%;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      z-index: 15;
+    }
+
+    .status-time {
+      font-size: 11px;
+      font-weight: 600;
+      color: #fff;
+      letter-spacing: -0.01em;
+    }
+
+    .dynamic-island {
+      position: absolute;
+      top: 6px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 78px;
+      height: 22px;
+      background: #000;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: 8px;
+    }
+
+    .lens-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #191E2B;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .status-icons {
+      display: flex;
+      gap: 5px;
+      align-items: center;
+    }
+
+    .status-dot {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: #fff;
+    }
+
+    .mobile-content {
+      flex: 1;
+      width: 100%;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .mobile-content img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top center;
+      display: block;
+    }
+
+    .mobile-badge {
+      position: absolute;
+      bottom: -15px;
+      left: 20px;
+      background: #0F172A;
+      border: 1px solid rgba(16, 185, 129, 0.45);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.7);
+      padding: 5px 14px;
+      border-radius: 9999px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #34D399;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      z-index: 35;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .mobile-badge::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #10B981;
+      box-shadow: 0 0 8px #10B981;
+    }
+
+    /* Footer Information Bar */
+    .footer-bar {
+      position: absolute;
+      bottom: 48px;
+      left: 68px;
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      z-index: 50;
+    }
+
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .stat-value {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: #F1F5F9;
+      letter-spacing: -0.02em;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: #64748B;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .footer-divider {
+      width: 1px;
+      height: 26px;
+      background: rgba(255, 255, 255, 0.1);
+    }
+  </style>
+</head>
+<body>
+  <div class="studio-grid"></div>
+  <div class="stage-glow"></div>
+
+  <!-- Header Branding -->
+  <header class="header-bar">
+    <div class="brand-meta">
+      <div class="logo-badge">
+        <span class="logo-dot"></span>
+        <span class="logo-title">{{BRAND_NAME}}</span>
+      </div>
+      <span class="brand-url">{{SITE_URL}}</span>
+    </div>
+
+    <div class="tags-meta">
+      <div class="tag-pill accent">{{TAG_ACCENT}}</div>
+      <div class="tag-pill">{{TAG_2}}</div>
+      <div class="tag-pill">{{TAG_3}}</div>
+    </div>
+  </header>
+
+  <!-- Multi-Device Stage -->
+  <main class="stage">
+
+    <!-- 1. PC / Laptop Mockup (Desktop Storefront) -->
+    <div class="device-laptop">
+      <div class="laptop-screen">
+        <div class="browser-header">
+          <div class="browser-dots">
+            <span class="dot dot-red"></span>
+            <span class="dot dot-yellow"></span>
+            <span class="dot dot-green"></span>
+          </div>
+          <div class="browser-address">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+            {{SITE_URL}}
+          </div>
+          <div class="browser-controls-right"></div>
+        </div>
+        <div class="browser-content">
+          <img src="{{DESKTOP_IMG_URL}}" alt="{{BRAND_NAME}} Desktop Storefront">
+          <div class="screen-gloss"></div>
+        </div>
+      </div>
+      <div class="laptop-base">
+        <div class="laptop-notch"></div>
+      </div>
+    </div>
+
+    <!-- 2. Tablet Mockup (Interactive / Catalog View) -->
+    <div class="device-tablet">
+      <span class="tablet-badge">{{TABLET_BADGE}}</span>
+      <div class="tablet-camera"></div>
+      <div class="tablet-screen">
+        <img src="{{TABLET_IMG_URL}}" alt="{{BRAND_NAME}} Tablet View">
+        <div class="screen-gloss"></div>
+      </div>
+    </div>
+
+    <!-- 3. Mobile Mockup (Mobile Storefront) -->
+    <div class="device-mobile">
+      <span class="mobile-badge">{{MOBILE_BADGE}}</span>
+      <div class="mobile-screen">
+        <div class="mobile-status-bar">
+          <span class="status-time">9:41</span>
+          <div class="dynamic-island">
+            <span class="lens-dot"></span>
+          </div>
+          <div class="status-icons">
+            <span class="status-dot"></span>
+            <span class="status-dot"></span>
+          </div>
+        </div>
+        <div class="mobile-content">
+          <img src="{{MOBILE_IMG_URL}}" alt="{{BRAND_NAME}} Mobile Storefront">
+          <div class="screen-gloss"></div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Footer Project Highlights -->
+  <footer class="footer-bar">
+    <div class="stat-item">
+      <span class="stat-value">{{STAT_1_VAL}}</span>
+      <span class="stat-label">{{STAT_1_LABEL}}</span>
+    </div>
+    <div class="footer-divider"></div>
+    <div class="stat-item">
+      <span class="stat-value">{{STAT_2_VAL}}</span>
+      <span class="stat-label">{{STAT_2_LABEL}}</span>
+    </div>
+    <div class="footer-divider"></div>
+    <div class="stat-item">
+      <span class="stat-value">{{STAT_3_VAL}}</span>
+      <span class="stat-label">{{STAT_3_LABEL}}</span>
+    </div>
+  </footer>
+</body>
+</html>

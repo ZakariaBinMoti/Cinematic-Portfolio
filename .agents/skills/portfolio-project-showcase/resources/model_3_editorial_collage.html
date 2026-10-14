@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{{BRAND_NAME}} - Model 3: Editorial Multi-Page Collage</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      width: 1920px;
+      height: 1200px;
+      overflow: hidden;
+      background-color: #06080F;
+      background-image: 
+        radial-gradient(circle at 75% 25%, rgba(99, 102, 241, 0.12) 0%, transparent 55%),
+        radial-gradient(circle at 25% 65%, rgba(56, 189, 248, 0.10) 0%, transparent 50%),
+        radial-gradient(circle at 85% 85%, rgba(236, 72, 153, 0.06) 0%, transparent 45%),
+        linear-gradient(180deg, #0A0D18 0%, #030408 100%);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .studio-grid {
+      position: absolute;
+      inset: 0;
+      background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+      background-size: 64px 64px;
+      pointer-events: none;
+      mask-image: radial-gradient(circle at 50% 50%, black 50%, transparent 90%);
+      -webkit-mask-image: radial-gradient(circle at 50% 50%, black 50%, transparent 90%);
+    }
+
+    .ambient-glow {
+      position: absolute;
+      width: 1400px;
+      height: 600px;
+      top: 300px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: radial-gradient(ellipse at center, rgba(56, 189, 248, 0.08) 0%, rgba(99, 102, 241, 0.05) 50%, transparent 75%);
+      filter: blur(80px);
+      pointer-events: none;
+    }
+
+    /* Top Header Bar */
+    .header-bar {
+      position: absolute;
+      top: 48px;
+      left: 68px;
+      right: 68px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 50;
+    }
+
+    .brand-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .logo-badge {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      padding: 7px 18px;
+      border-radius: 9999px;
+      backdrop-filter: blur(12px);
+    }
+
+    .logo-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #38BDF8;
+      box-shadow: 0 0 10px #38BDF8;
+    }
+
+    .logo-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      font-size: 15px;
+      text-transform: uppercase;
+      color: #F8FAFC;
+    }
+
+    .brand-url {
+      font-size: 13px;
+      color: #94A3B8;
+      letter-spacing: 0.04em;
+      font-weight: 500;
+    }
+
+    .tags-meta {
+      display: flex;
+      gap: 10px;
+    }
+
+    .tag-pill {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: #CBD5E1;
+      backdrop-filter: blur(8px);
+    }
+
+    .tag-pill.accent {
+      background: rgba(99, 102, 241, 0.16);
+      border-color: rgba(99, 102, 241, 0.4);
+      color: #C7D2FE;
+    }
+
+    /* STAGE COLLAGE */
+    .stage {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Card 1: Primary Desktop Showcase Card (Left & Center) */
+    .collage-card-primary {
+      position: absolute;
+      top: 175px;
+      left: 70px;
+      width: 980px;
+      height: 610px;
+      background: #111420;
+      border-radius: 20px;
+      border: 2px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 
+        0 40px 90px rgba(0, 0, 0, 0.95),
+        0 15px 35px rgba(0, 0, 0, 0.7),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      z-index: 20;
+      transform: rotate(-1deg);
+      transition: transform 0.3s;
+    }
+
+    .card-header {
+      height: 38px;
+      background: #161A29;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      user-select: none;
+    }
+
+    .mac-dots {
+      display: flex;
+      gap: 7px;
+      width: 80px;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+    .dot-red { background: #EF4444; }
+    .dot-yellow { background: #F59E0B; }
+    .dot-green { background: #10B981; }
+
+    .card-address {
+      flex: 1;
+      max-width: 380px;
+      margin: 0 auto;
+      height: 24px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 11px;
+      color: #94A3B8;
+      font-weight: 500;
+    }
+
+    .card-address svg {
+      width: 11px;
+      height: 11px;
+      opacity: 0.7;
+    }
+
+    .card-body {
+      flex: 1;
+      width: 100%;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .card-body img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top center;
+      display: block;
+    }
+
+    .card-gloss {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(130deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.01) 35%, transparent 60%);
+      pointer-events: none;
+    }
+
+    /* Card 2: Secondary Feature / Product Card (Top-Right / Layered Behind) */
+    .collage-card-secondary {
+      position: absolute;
+      top: 190px;
+      right: 90px;
+      width: 820px;
+      height: 520px;
+      background: #131726;
+      border-radius: 20px;
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 
+        0 35px 80px rgba(0, 0, 0, 0.9),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      z-index: 10;
+      transform: rotate(2.5deg);
+    }
+
+    /* Card 3: Mobile Floating Card (Foreground Right) */
+    .collage-card-mobile {
+      position: absolute;
+      bottom: 100px;
+      right: 180px;
+      width: 320px;
+      height: 610px;
+      background: #0E111C;
+      border-radius: 46px;
+      border: 4px solid #2F364B;
+      padding: 9px;
+      box-shadow: 
+        0 45px 110px rgba(0, 0, 0, 0.98),
+        0 20px 45px rgba(0, 0, 0, 0.8),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+      z-index: 30;
+      transform: rotate(-3deg);
+    }
+
+    .mobile-inner {
+      width: 100%;
+      height: 100%;
+      border-radius: 36px;
+      overflow: hidden;
+      background: #000;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .mobile-status {
+      height: 32px;
+      background: #000;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 18px;
+      position: relative;
+      z-index: 15;
+    }
+
+    .mobile-time {
+      font-size: 11px;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .mobile-island {
+      position: absolute;
+      top: 6px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 74px;
+      height: 20px;
+      background: #000;
+      border-radius: 20px;
+    }
+
+    .mobile-viewport {
+      flex: 1;
+      width: 100%;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .mobile-viewport img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top center;
+      display: block;
+    }
+
+    /* Floating Interactive Callout Badges */
+    .chip-badge {
+      position: absolute;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(16px);
+      padding: 8px 18px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      z-index: 35;
+    }
+
+    .chip-badge.chip-primary {
+      top: 150px;
+      left: 120px;
+      color: #38BDF8;
+      border-color: rgba(56, 189, 248, 0.4);
+    }
+    .chip-badge.chip-primary::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #38BDF8;
+      box-shadow: 0 0 8px #38BDF8;
+    }
+
+    .chip-badge.chip-secondary {
+      top: 165px;
+      right: 140px;
+      color: #A78BFA;
+      border-color: rgba(167, 139, 250, 0.4);
+    }
+    .chip-badge.chip-secondary::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #A78BFA;
+      box-shadow: 0 0 8px #A78BFA;
+    }
+
+    .chip-badge.chip-mobile {
+      bottom: 75px;
+      right: 140px;
+      color: #34D399;
+      border-color: rgba(52, 211, 153, 0.4);
+    }
+    .chip-badge.chip-mobile::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #10B981;
+      box-shadow: 0 0 8px #10B981;
+    }
+
+    /* Footer Information Bar */
+    .footer-bar {
+      position: absolute;
+      bottom: 48px;
+      left: 68px;
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      z-index: 50;
+    }
+
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .stat-value {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: #F1F5F9;
+      letter-spacing: -0.02em;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: #64748B;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .footer-divider {
+      width: 1px;
+      height: 26px;
+      background: rgba(255, 255, 255, 0.1);
+    }
+  </style>
+</head>
+<body>
+  <div class="studio-grid"></div>
+  <div class="ambient-glow"></div>
+
+  <!-- Header Bar -->
+  <header class="header-bar">
+    <div class="brand-meta">
+      <div class="logo-badge">
+        <span class="logo-dot"></span>
+        <span class="logo-title">{{BRAND_NAME}}</span>
+      </div>
+      <span class="brand-url">{{SITE_URL}}</span>
+    </div>
+
+    <div class="tags-meta">
+      <div class="tag-pill accent">{{TAG_ACCENT}}</div>
+      <div class="tag-pill">{{TAG_2}}</div>
+      <div class="tag-pill">{{TAG_3}}</div>
+    </div>
+  </header>
+
+  <!-- Stage Collage -->
+  <main class="stage">
+    <!-- Callout Chips -->
+    <div class="chip-badge chip-primary">⚡ Primary Storefront Architecture</div>
+    <div class="chip-badge chip-secondary">🛍️ Custom Product Detail Page (PDP)</div>
+    <div class="chip-badge chip-mobile">📱 Responsive Mobile UX</div>
+
+    <!-- 1. Primary Desktop Window -->
+    <div class="collage-card-primary">
+      <div class="card-header">
+        <div class="mac-dots">
+          <span class="dot dot-red"></span>
+          <span class="dot dot-yellow"></span>
+          <span class="dot dot-green"></span>
+        </div>
+        <div class="card-address">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+          {{SITE_URL}}
+        </div>
+        <div style="width: 80px;"></div>
+      </div>
+      <div class="card-body">
+        <img src="{{DESKTOP_IMG_URL}}" alt="{{BRAND_NAME}} Primary View">
+        <div class="card-gloss"></div>
+      </div>
+    </div>
+
+    <!-- 2. Secondary Feature Card (Layered Behind Right) -->
+    <div class="collage-card-secondary">
+      <div class="card-header">
+        <div class="mac-dots">
+          <span class="dot dot-red"></span>
+          <span class="dot dot-yellow"></span>
+          <span class="dot dot-green"></span>
+        </div>
+        <div class="card-address">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+          {{SITE_URL}} · Featured Modules
+        </div>
+        <div style="width: 80px;"></div>
+      </div>
+      <div class="card-body">
+        <img src="{{TABLET_IMG_URL}}" alt="{{BRAND_NAME}} Feature View">
+        <div class="card-gloss"></div>
+      </div>
+    </div>
+
+    <!-- 3. Mobile Device (Floating Foreground Right) -->
+    <div class="collage-card-mobile">
+      <div class="mobile-inner">
+        <div class="mobile-status">
+          <span class="mobile-time">9:41</span>
+          <div class="mobile-island"></div>
+          <div style="width: 14px;"></div>
+        </div>
+        <div class="mobile-viewport">
+          <img src="{{MOBILE_IMG_URL}}" alt="{{BRAND_NAME}} Mobile View">
+          <div class="card-gloss"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer Stats -->
+  <footer class="footer-bar">
+    <div class="stat-item">
+      <span class="stat-value">{{STAT_1_VAL}}</span>
+      <span class="stat-label">{{STAT_1_LABEL}}</span>
+    </div>
+    <div class="footer-divider"></div>
+    <div class="stat-item">
+      <span class="stat-value">{{STAT_2_VAL}}</span>
+      <span class="stat-label">{{STAT_2_LABEL}}</span>
+    </div>
+    <div class="footer-divider"></div>
+    <div class="stat-item">
+      <span class="stat-value">{{STAT_3_VAL}}</span>
+      <span class="stat-label">{{STAT_3_LABEL}}</span>
+    </div>
+  </footer>
+</body>
+</html>

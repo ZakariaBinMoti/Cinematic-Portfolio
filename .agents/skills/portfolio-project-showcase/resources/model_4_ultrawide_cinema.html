@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{{BRAND_NAME}} - Model 4: Ultrawide Cinema Showcase</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      width: 1920px;
+      height: 1200px;
+      overflow: hidden;
+      background-color: #04060A;
+      background-image: 
+        radial-gradient(circle at 50% 10%, rgba(14, 165, 233, 0.14) 0%, transparent 60%),
+        radial-gradient(circle at 10% 40%, rgba(99, 102, 241, 0.09) 0%, transparent 50%),
+        radial-gradient(circle at 90% 70%, rgba(20, 184, 166, 0.08) 0%, transparent 50%),
+        linear-gradient(180deg, #070A12 0%, #020306 100%);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .studio-grid {
+      position: absolute;
+      inset: 0;
+      background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.022) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.022) 1px, transparent 1px);
+      background-size: 80px 80px;
+      pointer-events: none;
+      mask-image: radial-gradient(circle at 50% 45%, black 45%, transparent 88%);
+      -webkit-mask-image: radial-gradient(circle at 50% 45%, black 45%, transparent 88%);
+    }
+
+    .stage-glow {
+      position: absolute;
+      width: 1500px;
+      height: 550px;
+      top: 280px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: radial-gradient(ellipse at center, rgba(14, 165, 233, 0.12) 0%, rgba(15, 23, 42, 0.05) 55%, transparent 75%);
+      filter: blur(80px);
+      pointer-events: none;
+    }
+
+    /* Top Header Bar */
+    .header-bar {
+      position: absolute;
+      top: 48px;
+      left: 68px;
+      right: 68px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 50;
+    }
+
+    .brand-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .logo-badge {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      padding: 7px 18px;
+      border-radius: 9999px;
+      backdrop-filter: blur(12px);
+    }
+
+    .logo-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #0EA5E9;
+      box-shadow: 0 0 10px #0EA5E9;
+    }
+
+    .logo-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      font-size: 15px;
+      text-transform: uppercase;
+      color: #F8FAFC;
+    }
+
+    .brand-url {
+      font-size: 13px;
+      color: #94A3B8;
+      letter-spacing: 0.04em;
+      font-weight: 500;
+    }
+
+    .tags-meta {
+      display: flex;
+      gap: 10px;
+    }
+
+    .tag-pill {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: #CBD5E1;
+      backdrop-filter: blur(8px);
+    }
+
+    .tag-pill.accent {
+      background: rgba(14, 165, 233, 0.15);
+      border-color: rgba(14, 165, 233, 0.4);
+      color: #7DD3FC;
+    }
+
+    /* STAGE */
+    .stage {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* 1. Flagship Ultrawide Browser Frame */
+    .ultrawide-browser-unit {
+      position: absolute;
+      top: 175px;
+      left: 100px;
+      width: 1340px;
+      height: 690px;
+      background: #0E121B;
+      border-radius: 20px;
+      border: 3px solid #232938;
+      box-shadow: 
+        0 45px 100px rgba(0, 0, 0, 0.96),
+        0 20px 45px rgba(0, 0, 0, 0.8),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      z-index: 15;
+    }
+
+    .browser-header {
+      height: 40px;
+      background: #141824;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      align-items: center;
+      padding: 0 18px;
+      user-select: none;
+    }
+
+    .mac-dots {
+      display: flex;
+      gap: 7px;
+      width: 80px;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+    .dot-red { background: #EF4444; }
+    .dot-yellow { background: #F59E0B; }
+    .dot-green { background: #10B981; }
+
+    .browser-url {
+      flex: 1;
+      max-width: 520px;
+      margin: 0 auto;
+      height: 26px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 11px;
+      color: #94A3B8;
+      font-weight: 500;
+    }
+
+    .browser-url svg {
+      width: 11px;
+      height: 11px;
+      opacity: 0.7;
+    }
+
+    .browser-viewport {
+      flex: 1;
+      width: 100%;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .browser-viewport img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top center;
+      display: block;
+    }
+
+    .screen-gloss {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(130deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.01) 35%, transparent 60%);
+      pointer-events: none;
+    }
+
+    /* 2. Floating iPad / Feature Detail Window (Left Overlay) */
+    .feature-detail-card {
+      position: absolute;
+      bottom: 100px;
+      left: 70px;
+      width: 440px;
+      height: 380px;
+      background: #111522;
+      border-radius: 24px;
+      border: 3px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 
+        0 40px 90px rgba(0, 0, 0, 0.98),
+        0 15px 35px rgba(0, 0, 0, 0.8),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.15);
+      z-index: 25;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transform: rotate(-2deg);
+    }
+
+    .feature-card-header {
+      height: 34px;
+      background: #171C2E;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      align-items: center;
+      padding: 0 14px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #38BDF8;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      gap: 6px;
+    }
+
+    .feature-card-header::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #38BDF8;
+      box-shadow: 0 0 8px #38BDF8;
+    }
+
+    .feature-card-body {
+      flex: 1;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    .feature-card-body img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top center;
+    }
+
+    /* 3. Floating iPhone 15 Pro (Right Foreground) */
+    .mobile-cinema-unit {
+      position: absolute;
+      bottom: 90px;
+      right: 75px;
+      width: 310px;
+      height: 635px;
+      background: #0E111C;
+      border-radius: 48px;
+      border: 5px solid #363D4F;
+      padding: 9px;
+      box-shadow: 
+        0 45px 110px rgba(0, 0, 0, 0.98),
+        0 20px 45px rgba(0, 0, 0, 0.85),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+      z-index: 30;
+      transform: rotate(3deg);
+    }
+
+    .mobile-inner {
+      width: 100%;
+      height: 100%;
+      border-radius: 38px;
+      overflow: hidden;
+      background: #000;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .mobile-status {
+      height: 32px;
+      background: #000;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 18px;
+      position: relative;
+      z-index: 15;
+    }
+
+    .mobile-time {
+      font-size: 11px;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .mobile-island {
+      position: absolute;
+      top: 6px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 74px;
+      height: 20px;
+      background: #000;
+      border-radius: 20px;
+    }
+
+    .mobile-viewport {
+      flex: 1;
+      width: 100%;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .mobile-viewport img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top center;
+      display: block;
+    }
+
+    .mobile-badge {
+      position: absolute;
+      bottom: -15px;
+      left: 20px;
+      background: #0F172A;
+      border: 1px solid rgba(16, 185, 129, 0.45);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.7);
+      padding: 5px 14px;
+      border-radius: 9999px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #34D399;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      z-index: 35;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .mobile-badge::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #10B981;
+      box-shadow: 0 0 8px #10B981;
+    }
+
+    /* Footer Information Bar */
+    .footer-bar {
+      position: absolute;
+      bottom: 48px;
+      left: 68px;
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      z-index: 50;
+    }
+
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .stat-value {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: #F1F5F9;
+      letter-spacing: -0.02em;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: #64748B;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .footer-divider {
+      width: 1px;
+      height: 26px;
+      background: rgba(255, 255, 255, 0.1);
+    }
+  </style>
+</head>
+<body>
+  <div class="studio-grid"></div>
+  <div class="stage-glow"></div>
+
+  <!-- Header Bar -->
+  <header class="header-bar">
+    <div class="brand-meta">
+      <div class="logo-badge">
+        <span class="logo-dot"></span>
+        <span class="logo-title">{{BRAND_NAME}}</span>
+      </div>
+      <span class="brand-url">{{SITE_URL}}</span>
+    </div>
+
+    <div class="tags-meta">
+      <div class="tag-pill accent">{{TAG_ACCENT}}</div>
+      <div class="tag-pill">{{TAG_2}}</div>
+      <div class="tag-pill">{{TAG_3}}</div>
+    </div>
+  </header>
+
+  <!-- Stage -->
+  <main class="stage">
+    <!-- 1. Ultrawide Flagship Browser View -->
+    <div class="ultrawide-browser-unit">
+      <div class="browser-header">
+        <div class="mac-dots">
+          <span class="dot dot-red"></span>
+          <span class="dot dot-yellow"></span>
+          <span class="dot dot-green"></span>
+        </div>
+        <div class="browser-url">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+          {{SITE_URL}}
+        </div>
+        <div style="width: 80px;"></div>
+      </div>
+      <div class="browser-viewport">
+        <img src="{{DESKTOP_IMG_URL}}" alt="{{BRAND_NAME}} Desktop View">
+        <div class="screen-gloss"></div>
+      </div>
+    </div>
+
+    <!-- 2. Floating Feature Inspection Card -->
+    <div class="feature-detail-card">
+      <div class="feature-card-header">{{TABLET_BADGE}}</div>
+      <div class="feature-card-body">
+        <img src="{{TABLET_IMG_URL}}" alt="{{BRAND_NAME}} Feature Detail">
+      </div>
+    </div>
+
+    <!-- 3. Mobile Device (Right Foreground) -->
+    <div class="mobile-cinema-unit">
+      <span class="mobile-badge">{{MOBILE_BADGE}}</span>
+      <div class="mobile-inner">
+        <div class="mobile-status">
+          <span class="mobile-time">9:41</span>
+          <div class="mobile-island"></div>
+          <div style="width: 14px;"></div>
+        </div>
+        <div class="mobile-viewport">
+          <img src="{{MOBILE_IMG_URL}}" alt="{{BRAND_NAME}} Mobile View">
+          <div class="screen-gloss"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer Stats -->
+  <footer class="footer-bar">
+    <div class="stat-item">
+      <span class="stat-value">{{STAT_1_VAL}}</span>
+      <span class="stat-label">{{STAT_1_LABEL}}</span>
+    </div>
+    <div class="footer-divider"></div>
+    <div class="stat-item">
+      <span class="stat-value">{{STAT_2_VAL}}</span>
+      <span class="stat-label">{{STAT_2_LABEL}}</span>
+    </div>
+    <div class="footer-divider"></div>
+    <div class="stat-item">
+      <span class="stat-value">{{STAT_3_VAL}}</span>
+      <span class="stat-label">{{STAT_3_LABEL}}</span>
+    </div>
+  </footer>
+</body>
+</html>

@@ -3,16 +3,38 @@ name: portfolio-project-showcase
 description: >-
   Use this skill whenever the user provides a website URL to add as a portfolio project,
   or asks to add, showcase, or generate a showcase image for a website (especially Shopify or
-  eCommerce storefronts). Captures real multi-device screenshots (Desktop, Tablet, Mobile),
-  composes a professional 16:9 studio mockup canvas, extracts project business info & tech stack,
-  uploads the image to Cloudinary, and saves the project to MongoDB.
+  eCommerce storefronts). Supports 5 distinct creative showcase models (Model 1: Studio Trio,
+  Model 2: Desk Setup, Model 3: Editorial Collage, Model 4: Ultrawide Cinema, Model 5: 3D Isometric).
+  Captures real multi-device screenshots (Desktop, Tablet, Mobile), renders at exact 16:10 ratio
+  (1920x1200), uploads to Cloudinary, and syncs to MongoDB.
 ---
 
-# Portfolio Project Showcase Workflow
+# Portfolio Project Showcase Workflow & Design Models
 
-This skill standardizes the end-to-end pipeline for converting a client website into a top-tier featured portfolio project in Zakaria's Portfolio.
+This skill standardizes the end-to-end pipeline for converting client websites into top-tier featured portfolio projects in Zakaria's Portfolio.
 
-Whenever the user provides a website URL (e.g. `https://suitshark.ca/`) to add to their portfolio, you must execute the exact multi-device capture, composition, upload, and database update process defined below.
+Whenever the user specifies a website with an image model:
+```text
+1. example1.com - image 1
+2. example2.com - image 1
+3. example3.com - image 3
+4. example4.com - image 2
+```
+or asks to add any project, follow the corresponding model and execution runbook below.
+
+---
+
+## The 5 Showcase Image Models
+
+All models are engineered to the **exact 16:10 container aspect ratio (`1920x1200`)** matching `ProjectsSection.tsx` (`aspect-[16/10]`), ensuring zero cropping on left, right, top, or bottom.
+
+| Model / Command | Official Name | Visual Design Concept | Best Suited For | Template File |
+| :--- | :--- | :--- | :--- | :--- |
+| **`image 1`**<br>(`model 1`) | **Studio Trio**<br>*(Default)* | Three floating hardware devices: MacBook Pro (Center-Left), iPad Pro (Center-Right), iPhone 15 Pro (Foreground Right) with subtle studio floor glow, dynamic pill badges, and bottom stat counters. | High-tier flagships, full-store builds, continuous retainers | `resources/model_1_studio_trio.html` |
+| **`image 2`**<br>(`model 2`) | **Apple Desk Setup** | Realistic minimalist workspace: Apple Studio Display on aluminum stand, iPad Pro resting on desk surface, iPhone 15 Pro on aluminum desk puck, dark matte obsidian desk with subtle screen reflection. | Luxury brands, bespoke hardware & physical lifestyle stores | `resources/model_2_desk_setup.html` |
+| **`image 3`**<br>(`model 3`) | **Editorial Collage** | Modern multi-page mosaic: overlapping macOS browser windows (Desktop hero + PDP detail view) and floating mobile card with floating interactive callout chips pointing to custom code features. | Complex technical apps, multi-page architectures, custom PDPs | `resources/model_3_editorial_collage.html` |
+| **`image 4`**<br>(`model 4`) | **Ultrawide Cinema** | Expansive 1340px flagship browser frame taking center stage, accompanied by a floating feature inspection card (zooming into a custom configurator/sizing tool) and iPhone 15 Pro. | Stores with rich panoramic photography, lookbooks, or visual brand impact | `resources/model_4_ultrawide_cinema.html` |
+| **`image 5`**<br>(`model 5`) | **3D Spatial Isometric** | Futuristic 3D angled isometric plane stack: Desktop base layer, elevated Tablet mid-layer (+80px Z), and floating Mobile top-layer (+160px Z) with cybernetic ambient glows. | High-tech products, collectibles/TCG, crypto/web3, innovative logic | `resources/model_5_isometric_stack.html` |
 
 ---
 
@@ -26,18 +48,12 @@ Whenever the user provides a website URL (e.g. `https://suitshark.ca/`) to add t
    - **NEVER** use AI image generators (`generate_image`) to fabricate fake websites or hallucinated mockups.
    - **ALWAYS** capture 100% genuine screenshots of the live website across Desktop, Tablet, and Mobile viewports using `browser_subagent`.
 
-3. **Multi-Device Studio Showcase (16:10 Canvas - 1920x1200)**:
-   - **CRITICAL RATIO RULE**: Zakaria's portfolio website image panel (`src/components/ProjectsSection.tsx`) uses an exact `aspect-[16/10]` container. Generating 16:9 images caused unwanted cropping on the left and right edges. **ALWAYS generate showcase images at 1920x1200 (16:10 aspect ratio)** so that the image fits the container with zero cropping!
-   - Present the project on a dark luxury studio canvas (`1920x1200`) with three device mockups:
-     - **PC / Laptop (Center-Left / Back)**: MacBook Pro / Studio Display frame with macOS window header (🔴 🟡 🟢) and padlock URL bar showing the desktop landing page / hero banner.
-     - **Tablet (Center-Right / Middle)**: iPad Pro frame showing a key interactive feature, custom configurator, collection grid, or product page.
-     - **Mobile (Foreground-Right / Floating)**: iPhone 15 Pro frame with Dynamic Island and iOS status bar (`9:41`) showing the responsive mobile storefront.
-   - Clean luxury backdrop: `#05070C` to `#080B13` with subtle cyan/champagne ambient lighting, studio floor glow, and deep multi-layered drop shadows.
-   - Floating feature pill badges (e.g., "⚡ Bespoke Configurator", "Mobile Storefront").
-   - Bottom highlight metrics (e.g., "1+ Years Continuous Retainer", key engine highlight, localization/market).
+3. **Mandatory 16:10 Ratio (`1920x1200`)**:
+   - The website project card container in `src/components/ProjectsSection.tsx` has `aspect-[16/10]`.
+   - **ALWAYS** generate the final showcase at **`1920x1200`** using headless Chrome capture to prevent OS window clamping and avoid any cropping.
 
 4. **Widget & Chat Icon Sanitation**:
-   - Always crop or patch out floating third-party widgets (e.g., UserWay accessibility icons, Shopify Inbox / Tidio / Zendesk chat bubbles) from all screenshots before embedding them into device frames.
+   - Always crop or patch out floating third-party widgets (e.g., UserWay accessibility icons, Shopify Inbox / Tidio / Zendesk chat bubbles, Klaviyo popups) before embedding screenshots into mockup frames.
 
 ---
 
@@ -45,57 +61,55 @@ Whenever the user provides a website URL (e.g. `https://suitshark.ca/`) to add t
 
 ### Step 1: Discover & Capture Live Storefront (Multi-Device)
 Use `browser_subagent` to navigate to the target URL:
-1. **Desktop View (`1920x1080` or `1920x1200`)**:
+1. **Desktop View (`1920x1080`)**:
    - Dismiss any newsletter popup, cookie banner, or region modal.
    - Smoothly scroll down so all lazy-loaded imagery renders.
-   - Capture the desktop landing page (Header, navigation, search, and hero photography).
-2. **Key Feature / Product / Tablet View (`804x1005` or tablet viewport)**:
+   - Scroll back to top.
+   - Capture desktop landing page (Header, navigation, search, and hero photography).
+2. **Tablet View (`804x1005` or tablet viewport)**:
    - Navigate to the most complex, bespoke, or unique feature of the site (e.g. custom product bundle configurator, advanced filter collection, sizing calculator).
    - Capture the feature in portrait or landscape tablet view.
-3. **Mobile View (`390x844` or `500x800`)**:
+3. **Mobile View (`390x844` or `500x749`)**:
    - Switch to mobile viewport.
-   - Capture the responsive mobile view (hamburger menu, brand logo, search bar, and hero photography).
+   - Capture responsive mobile view (hamburger menu, brand logo, search bar, and hero photography).
 
-### Step 2: Crop Clean Screens with Sharp
+### Step 2: Clean Crop with Sharp
 Use Node.js with `sharp` to extract clean, widget-free crops:
-- **Desktop**: Extract top `1904x1080` from the landing page.
-- **Tablet**: Crop out bottom chat widget (height ~870px).
-- **Mobile**: Crop cleanly right after the hero image (height ~628px).
+- **Desktop**: Extract hero section (y: 0 to ~675 or ~860) and resize to `1920x1080` cover.
+- **Tablet**: Crop out bottom chat widget (height ~860-880px).
+- **Mobile**: Crop cleanly right after the hero image (height ~625-640px).
 
-### Step 3: Render the 1920x1200 Studio Canvas (16:10 Ratio)
-1. Populate `resources/mockup_template.html` (or write a temporary canvas HTML) with:
-   - `{{BRAND_NAME}}`: e.g. "Suitshark"
-   - `{{SITE_URL}}`: e.g. "https://suitshark.ca/"
-   - `{{TAG_ACCENT}}`, `{{TAG_2}}`, `{{TAG_3}}`: e.g. "⚡ Bespoke 3-Piece Suiting Configurator", "Shopify Architecture", "Responsive Multi-Device UX"
-   - `{{DESKTOP_IMG_URL}}`, `{{TABLET_IMG_URL}}`, `{{MOBILE_IMG_URL}}`
-   - `{{STAT_1_VAL}}`, `{{STAT_1_LABEL}}`, `{{STAT_2_VAL}}`, `{{STAT_2_LABEL}}`, `{{STAT_3_VAL}}`, `{{STAT_3_LABEL}}`
-2. Open the canvas in the browser at viewport `1920x1200`.
-3. Capture a full-viewport screenshot of the 1920x1200 canvas using `browser_subagent`.
+### Step 3: Compile Selected Model Template
+Select the template based on user command (`image 1`, `image 2`, `image 3`, `image 4`, `image 5`):
+- `model_1_studio_trio.html`
+- `model_2_desk_setup.html`
+- `model_3_editorial_collage.html`
+- `model_4_ultrawide_cinema.html`
+- `model_5_isometric_stack.html`
 
-### Step 4: Upload to Cloudinary
-Upload the 1920x1200 studio showcase screenshot to Cloudinary using credentials from `.env.local`:
-- Folder: `portfolio`
-- Public ID: `<brand_slug>_showcase_<timestamp>`
+Replace placeholders:
+- `{{BRAND_NAME}}`: e.g. "POKEPIXELS"
+- `{{SITE_URL}}`: e.g. "https://shop.pokepixels.com/"
+- `{{TAG_ACCENT}}`, `{{TAG_2}}`, `{{TAG_3}}`: e.g. "⚡ Authenticated PSA Vault & TCG Engine", "Real-Time Waitlist System", "US & Canadian Shipping"
+- `{{DESKTOP_IMG_URL}}`, `{{TABLET_IMG_URL}}`, `{{MOBILE_IMG_URL}}`
+- `{{TABLET_BADGE}}`, `{{MOBILE_BADGE}}`
+- `{{STAT_1_VAL}}`, `{{STAT_1_LABEL}}`, `{{STAT_2_VAL}}`, `{{STAT_2_LABEL}}`, `{{STAT_3_VAL}}`, `{{STAT_3_LABEL}}`
 
-### Step 5: Update MongoDB Database
-Connect to MongoDB Atlas using `MONGODB_URI` from `.env.local`.
-> **CRITICAL (Windows DNS Fix)**:
-> In Node.js on Windows, always execute `dns.setServers(['8.8.8.8', '1.1.1.1'])` before calling `mongoose.connect()` to prevent `querySrv ECONNREFUSED` errors.
+Save compiled HTML to `public/<project>_renderer.html`.
 
-Upsert the project record in the `Project` collection:
-```typescript
-{
-  title: "<Brand> - <Subtitle>",
-  description: "<Engineered highlights, custom code features, retainer duration, tech details>",
-  techStack: ["Shopify", "Liquid", "Custom Logic", "JavaScript", ...],
-  liveLink: "<Website URL>",
-  imageUrl: uploadRes.secure_url,
-  imagePublicId: uploadRes.public_id,
-  order: 0
-}
+### Step 4: Capture Headless 1920x1200 Screenshot
+Execute headless Chrome CLI to capture exact 1920x1200 screenshot:
+```bash
+"C:\Program Files\Google\Chrome\Application\chrome.exe" --headless=new --disable-gpu --window-size=1920,1200 --virtual-time-budget=3500 --screenshot="<outPath>" "http://localhost:3000/<project>_renderer.html"
 ```
+Verify with `sharp` that dimensions are `1920 x 1200` (Ratio `1.6000`).
+
+### Step 5: Upload to Cloudinary & Update MongoDB
+1. Upload to Cloudinary (`folder: 'portfolio'`).
+2. Connect to MongoDB Atlas using `dns.setServers(['8.8.8.8', '1.1.1.1'])`.
+3. Upsert into `projects` collection with title, description, techStack, liveLink, imageUrl, imagePublicId, and order.
 
 ### Step 6: Verify Live on Portfolio
-1. Clean up temporary files from `public/` and workspace root (`mockup_renderer.html`, temporary screenshots).
-2. Navigate to `http://localhost:3000/#projects`.
-3. Verify that the project card in the **Featured Projects** widescreen showcase renders the multi-device mockup cleanly with the correct title and tags.
+1. Clean up temporary files from `public/` and workspace root (`<project>_renderer.html`, temporary image folders).
+2. Navigate to `http://localhost:3000/?refresh=true#projects`.
+3. Verify that the project card renders edge-to-edge with zero cropping and crisp hardware frames.
