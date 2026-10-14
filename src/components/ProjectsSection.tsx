@@ -26,59 +26,17 @@ interface ProjectItem {
   order?: number;
 }
 
-// Categorization helper
+// Categorization helper with word-boundary regex for precision
 function getProjectCategory(project: ProjectItem): string {
   const text = `${project.title} ${project.description} ${project.techStack?.join(" ") || ""}`.toLowerCase();
   
-  if (
-    text.includes("jewel") || 
-    text.includes("diamond") || 
-    text.includes("fashion") || 
-    text.includes("suit") || 
-    text.includes("apparel") || 
-    text.includes("bag") || 
-    text.includes("couture") || 
-    text.includes("watch") || 
-    text.includes("luxury") ||
-    text.includes("ring") ||
-    text.includes("iced") ||
-    text.includes("gold")
-  ) {
-    return "Fashion & Luxury";
-  }
-  
-  if (
-    text.includes("coffee") || 
-    text.includes("food") || 
-    text.includes("diner") || 
-    text.includes("burger") || 
-    text.includes("restaurant") || 
-    text.includes("snack") || 
-    text.includes("gourmet") || 
-    text.includes("pasta") || 
-    text.includes("cinnamon") || 
-    text.includes("honey") || 
-    text.includes("bar") ||
-    text.includes("pantry") ||
-    text.includes("bakery") ||
-    text.includes("bread")
-  ) {
+  if (/\b(coffee|food|diner|burgers?|restaurants?|snacks?|gourmet|pasta|cinnamon|honey|pantry|bakery|bread|tea|culinary|beverages?|roastery|superfoods?|knives|kitchenware)\b/i.test(text)) {
     return "Food & Dining";
   }
-  
-  if (
-    text.includes("health") || 
-    text.includes("skin") || 
-    text.includes("beauty") || 
-    text.includes("pet") || 
-    text.includes("dog") || 
-    text.includes("canine") ||
-    text.includes("wellness") || 
-    text.includes("supplement") || 
-    text.includes("medical") || 
-    text.includes("pest") ||
-    text.includes("vitamin")
-  ) {
+  if (/\b(jewelry|jewels|jewellery|diamonds?|fashion|suits?|suiting|apparel|bags?|couture|watches?|rings?|earrings?|necklace|grillz|consignment|formalwear|streetwear|outfit|clothing|western)\b/i.test(text)) {
+    return "Fashion & Luxury";
+  }
+  if (!/\b(publishing|books?)\b/i.test(text) && /\b(health|skincare|skin|beauty|cosmetics|pets?|dogs?|canine|saunas?|wellness|supplements?|medical|pest|vitamins?|clinic|fitness|nutrition|oils|healthcare)\b/i.test(text)) {
     return "Health & Wellness";
   }
   
