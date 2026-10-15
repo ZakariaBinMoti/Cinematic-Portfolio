@@ -55,7 +55,7 @@ export default function ProjectsSection({ projects }: { projects: ProjectItem[] 
   const [activeIndex, setActiveIndex] = useState(0);
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
   const [searchQuery, setSearchQuery] = useState("");
-  const [viewMode, setViewMode] = useState<"dock" | "grid">("dock");
+  const [viewMode, setViewMode] = useState<"dock" | "grid">("grid");
   const [showFloatingDock, setShowFloatingDock] = useState(false);
   const [pageSize, setPageSize] = useState(9);
   const [currentPage, setCurrentPage] = useState(1);
