@@ -32,10 +32,12 @@ const defaultEducation: EducationItem[] = [
 ];
 
 export default function EducationSection({ educationData }: { educationData?: any }) {
-  const education: EducationItem[] =
+  const rawEducation: EducationItem[] =
     educationData?.items && Array.isArray(educationData.items) && educationData.items.length > 0
       ? educationData.items
       : defaultEducation;
+
+  const education = rawEducation.filter((e: any) => e.isVisible !== false);
 
   const title = educationData?.title || "Academic";
   const subtitle = educationData?.subtitle || "Background.";

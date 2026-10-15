@@ -24,6 +24,7 @@ interface ProjectItem {
   liveLink?: string;
   imageUrl?: string;
   order?: number;
+  isVisible?: boolean;
 }
 
 // Categorization helper with word-boundary regex for precision
@@ -69,6 +70,8 @@ export default function ProjectsSection({ projects }: { projects: ProjectItem[] 
   // Filter projects by category and search query
   const filteredProjects = useMemo(() => {
     return projects.filter((proj) => {
+      if (proj.isVisible === false) return false;
+
       const category = getProjectCategory(proj);
       const matchesCategory = selectedCategory === "All" || category === selectedCategory;
 

@@ -13,6 +13,8 @@ import {
   Plus,
   Sparkles,
   LoaderCircle,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Button, Input, Textarea, Label, Badge, Card, Kbd } from "../../_ui";
@@ -48,6 +50,7 @@ export default function ProjectDrawer({ open, onClose, project, onSaved }: Proje
   const [liveLink, setLiveLink] = useState("");
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState("");
+  const [isVisible, setIsVisible] = useState(true);
 
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -67,6 +70,7 @@ export default function ProjectDrawer({ open, onClose, project, onSaved }: Proje
       setImagePreview(project.imageUrl || null);
       setImageFile(null);
       setRemoveExistingImage(false);
+      setIsVisible(project.isVisible !== false);
     } else {
       setTitle("");
       setDescription("");
@@ -75,6 +79,7 @@ export default function ProjectDrawer({ open, onClose, project, onSaved }: Proje
       setImagePreview(null);
       setImageFile(null);
       setRemoveExistingImage(false);
+      setIsVisible(true);
     }
   }, [project, open]);
 
@@ -154,6 +159,7 @@ export default function ProjectDrawer({ open, onClose, project, onSaved }: Proje
       formData.set("description", description);
       formData.set("liveLink", liveLink);
       formData.set("techStack", tags.join(","));
+      formData.set("isVisible", String(isVisible));
 
       if (imageFile) {
         formData.set("image", imageFile);
@@ -231,6 +237,36 @@ export default function ProjectDrawer({ open, onClose, project, onSaved }: Proje
 
             {/* Scrollable Form Body */}
             <form id="project-drawer-form" onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-6">
+              {/* Live Portfolio Visibility Switch */}
+              <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/5 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className={`p-2 rounded-xl border ${
+                    isVisible 
+                      ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400" 
+                      : "bg-amber-500/10 border-amber-500/20 text-amber-400"
+                  }`}>
+                    {isVisible ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+                  </div>
+                  <div>
+                    <Label className="mb-0 cursor-pointer text-white font-medium">Visible on Live Portfolio</Label>
+                    <p className="text-xs text-[var(--a-text-muted)] mt-0.5">
+                      {isVisible 
+                        ? "Currently shown on your live portfolio website." 
+                        : "Hidden from live portfolio without deleting."}
+                    </p>
+                  </div>
+                </div>
+                <label className="relative inline-flex items-center cursor-pointer shrink-0">
+                  <input
+                    type="checkbox"
+                    checked={isVisible}
+                    onChange={(e) => setIsVisible(e.target.checked)}
+                    className="sr-only peer"
+                  />
+                  <div className="w-11 h-6 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-violet-600"></div>
+                </label>
+              </div>
+
               {/* Title */}
               <div>
                 <Label htmlFor="proj-title">Project Title *</Label>

@@ -2,7 +2,7 @@
 
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { GripVertical, Pencil, Trash2, Calendar, MapPin, Building2 } from "lucide-react";
+import { GripVertical, Pencil, Trash2, Calendar, MapPin, Building2, Eye, EyeOff } from "lucide-react";
 import { Card, Badge, Button } from "../../_ui";
 
 interface Experience {
@@ -14,16 +14,19 @@ interface Experience {
   endDate: string;
   description: string;
   order: number;
+  isVisible?: boolean;
 }
 
 export default function SortableExperienceCard({
   experience,
   onEdit,
   onDelete,
+  onToggleVisibility,
 }: {
   experience: Experience;
   onEdit: (exp: Experience) => void;
   onDelete: (exp: Experience) => void;
+  onToggleVisibility: (exp: Experience) => void;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: experience._id,
@@ -35,6 +38,7 @@ export default function SortableExperienceCard({
   };
 
   const isCurrent = experience.endDate?.toLowerCase() === "present";
+  const isHidden = experience.isVisible === false;
 
   return (
     <div
@@ -42,7 +46,11 @@ export default function SortableExperienceCard({
       style={style}
       className={`group relative ${isDragging ? "opacity-30 z-50 scale-98" : ""}`}
     >
-      <Card className="p-6 transition-all duration-300 hover:border-white/20 hover:shadow-xl bg-gradient-to-r from-white/[0.03] to-white/[0.01]">
+      <Card className={`p-6 transition-all duration-300 hover:border-white/20 hover:shadow-xl ${
+        isHidden
+          ? "bg-gradient-to-r from-amber-950/20 to-black/40 border-amber-500/20 opacity-80"
+          : "bg-gradient-to-r from-white/[0.03] to-white/[0.01]"
+      }`}>
         <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
           <div className="flex items-start gap-4">
             {/* Drag Handle */}
@@ -67,6 +75,7 @@ export default function SortableExperienceCard({
                   {experience.company}
                 </span>
                 {isCurrent && <Badge tone="green">Current Role</Badge>}
+                {isHidden && <Badge tone="amber">Hidden</Badge>}
               </div>
 
               <div className="flex flex-wrap items-center gap-3 text-xs text-[var(--a-text-muted)]">
@@ -86,6 +95,29 @@ export default function SortableExperienceCard({
 
           {/* Action buttons */}
           <div className="flex items-center gap-1.5 ml-auto sm:ml-0 shrink-0">
+            <button
+              type="button"
+              onClick={() => onToggleVisibility(experience)}
+              className={`h-8 px-2 rounded-lg text-xs flex items-center gap-1.5 transition-all ${
+                isHidden
+                  ? "bg-amber-500/15 border border-amber-500/30 text-amber-300 hover:bg-amber-500/25"
+                  : "bg-white/[0.04] border border-white/5 text-gray-300 hover:text-white hover:bg-white/[0.08]"
+              }`}
+              title={isHidden ? "Hidden from live site (click to show)" : "Visible on live site (click to hide)"}
+            >
+              {isHidden ? (
+                <>
+                  <EyeOff className="h-3.5 w-3.5 text-amber-400" />
+                  <span className="text-[11px] font-medium hidden sm:inline">Hidden</span>
+                </>
+              ) : (
+                <>
+                  <Eye className="h-3.5 w-3.5 text-emerald-400" />
+                  <span className="text-[11px] font-medium text-emerald-300 hidden sm:inline">Live</span>
+                </>
+              )}
+            </button>
+
             <Button
               variant="ghost"
               size="sm"

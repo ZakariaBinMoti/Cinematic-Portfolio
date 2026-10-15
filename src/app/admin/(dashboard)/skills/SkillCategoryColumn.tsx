@@ -11,6 +11,8 @@ import {
   Pencil,
   Check,
   Sparkles,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 import { Card, Badge, Button } from "../../_ui";
 import { updateSkillDirect } from "./actions";
@@ -21,16 +23,19 @@ interface SkillGroup {
   category: string;
   items: string[];
   order: number;
+  isVisible?: boolean;
 }
 
 export default function SkillCategoryColumn({
   group,
   onDeleteGroup,
   onGroupUpdated,
+  onToggleVisibility,
 }: {
   group: SkillGroup;
   onDeleteGroup: (group: SkillGroup) => void;
   onGroupUpdated: (updated: SkillGroup) => void;
+  onToggleVisibility: (group: SkillGroup) => void;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: group._id,
@@ -102,13 +107,19 @@ export default function SkillCategoryColumn({
     }
   };
 
+  const isHidden = group.isVisible === false;
+
   return (
     <div
       ref={setNodeRef}
       style={style}
       className={`group relative ${isDragging ? "opacity-30 z-50 scale-95" : ""}`}
     >
-      <Card className="h-full flex flex-col p-5 bg-gradient-to-b from-white/[0.04] to-white/[0.015] border-white/10 hover:border-white/20 transition-all duration-300">
+      <Card className={`h-full flex flex-col p-5 border transition-all duration-300 hover:border-white/20 ${
+        isHidden
+          ? "border-amber-500/20 bg-gradient-to-b from-amber-950/20 to-black/40 opacity-80"
+          : "bg-gradient-to-b from-white/[0.04] to-white/[0.015] border-white/10"
+      }`}>
         {/* Column Header */}
         <div className="flex items-center justify-between gap-2 pb-3.5 border-b border-white/5">
           <div className="flex items-center gap-2 flex-1 min-w-0">
@@ -145,6 +156,7 @@ export default function SkillCategoryColumn({
             ) : (
               <div className="flex items-center gap-2 truncate">
                 <h3 className="font-semibold text-white text-sm truncate">{group.category}</h3>
+                {isHidden && <Badge tone="amber">Hidden</Badge>}
                 <button
                   onClick={() => setIsEditingTitle(true)}
                   className="opacity-0 group-hover:opacity-100 p-0.5 text-gray-500 hover:text-gray-300 transition-opacity"
@@ -157,6 +169,20 @@ export default function SkillCategoryColumn({
           </div>
 
           <div className="flex items-center gap-1.5 shrink-0">
+            {/* Visibility Toggle Button */}
+            <button
+              type="button"
+              onClick={() => onToggleVisibility(group)}
+              className={`p-1.5 rounded-lg text-xs flex items-center gap-1 transition-all ${
+                isHidden
+                  ? "bg-amber-500/15 border border-amber-500/30 text-amber-300 hover:bg-amber-500/25"
+                  : "bg-white/[0.04] border border-white/5 text-gray-400 hover:text-white hover:bg-white/[0.08]"
+              }`}
+              title={isHidden ? "Category hidden from live site (click to show)" : "Category visible on live site (click to hide)"}
+            >
+              {isHidden ? <EyeOff className="h-3.5 w-3.5 text-amber-400" /> : <Eye className="h-3.5 w-3.5 text-emerald-400" />}
+            </button>
+
             <span className="text-xs font-mono text-[var(--a-text-subtle)] px-2 py-0.5 rounded bg-white/5">
               {group.items.length}
             </span>

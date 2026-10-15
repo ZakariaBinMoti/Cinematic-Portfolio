@@ -69,7 +69,7 @@ export default function ExperienceSection({ experiences }: { experiences: any[] 
           />
 
           <div className="flex flex-col gap-8">
-            {experiences.map((exp: any, idx: number) => {
+            {experiences.filter((exp: any) => exp.isVisible !== false).map((exp: any, idx: number) => {
               const isCurrent = exp.endDate?.toLowerCase().includes("present");
 
               return (

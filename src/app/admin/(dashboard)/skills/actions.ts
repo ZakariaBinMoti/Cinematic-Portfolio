@@ -28,8 +28,9 @@ export async function addSkill(formData: FormData) {
 
   const lastSkill = await Skill.findOne({}).sort({ order: -1 }).lean();
   const order = lastSkill ? (lastSkill as any).order + 1 : 0;
+  const isVisible = formData.has("isVisible") ? formData.get("isVisible") === "true" : true;
 
-  const created = await Skill.create({ category, items, order });
+  const created = await Skill.create({ category, items, order, isVisible });
   revalidatePath("/admin/skills");
   revalidatePath("/admin");
   revalidatePath("/");
@@ -46,11 +47,29 @@ export async function updateSkill(id: string, formData: FormData) {
     ? itemsRaw.split(",").map((s) => s.trim()).filter(Boolean)
     : [];
 
+  const updateData: any = { category, items };
+  if (formData.has("isVisible")) {
+    updateData.isVisible = formData.get("isVisible") === "true";
+  }
+
   const updated = await Skill.findByIdAndUpdate(
     id,
-    { category, items },
+    updateData,
     { new: true }
   );
+
+  revalidatePath("/admin/skills");
+  revalidatePath("/admin");
+  revalidatePath("/");
+  return { success: true, skill: JSON.parse(JSON.stringify(updated)) };
+}
+
+export async function toggleSkillVisibility(id: string, isVisible: boolean) {
+  await requireAdmin();
+  await dbConnect();
+
+  const updated = await Skill.findByIdAndUpdate(id, { isVisible }, { new: true });
+  if (!updated) return { success: false, error: "Skill category not found" };
 
   revalidatePath("/admin/skills");
   revalidatePath("/admin");

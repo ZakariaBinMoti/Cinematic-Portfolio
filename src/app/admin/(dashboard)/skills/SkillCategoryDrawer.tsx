@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { X, Check, Sparkles, Plus } from "lucide-react";
+import { X, Check, Sparkles, Plus, Eye, EyeOff } from "lucide-react";
 import { toast } from "sonner";
 import { Button, Input, Label, Kbd } from "../../_ui";
 import { addSkill } from "./actions";
@@ -29,6 +29,7 @@ export default function SkillCategoryDrawer({
   const [category, setCategory] = useState("");
   const [items, setItems] = useState<string[]>([]);
   const [itemInput, setItemInput] = useState("");
+  const [isVisible, setIsVisible] = useState(true);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -36,6 +37,7 @@ export default function SkillCategoryDrawer({
       setCategory("");
       setItems([]);
       setItemInput("");
+      setIsVisible(true);
     }
   }, [open]);
 
@@ -75,6 +77,7 @@ export default function SkillCategoryDrawer({
       const formData = new FormData();
       formData.set("category", category.trim());
       formData.set("items", items.join(","));
+      formData.set("isVisible", String(isVisible));
 
       const res = await addSkill(formData);
       if (res.success) {
@@ -128,6 +131,36 @@ export default function SkillCategoryDrawer({
 
             {/* Form */}
             <form id="skill-cat-form" onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-6">
+              {/* Live Portfolio Visibility Switch */}
+              <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/5 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className={`p-2 rounded-xl border ${
+                    isVisible 
+                      ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400" 
+                      : "bg-amber-500/10 border-amber-500/20 text-amber-400"
+                  }`}>
+                    {isVisible ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+                  </div>
+                  <div>
+                    <Label className="mb-0 cursor-pointer text-white font-medium">Visible on Live Portfolio</Label>
+                    <p className="text-xs text-[var(--a-text-muted)] mt-0.5">
+                      {isVisible 
+                        ? "Currently shown on your live portfolio." 
+                        : "Hidden from live portfolio without deleting."}
+                    </p>
+                  </div>
+                </div>
+                <label className="relative inline-flex items-center cursor-pointer shrink-0">
+                  <input
+                    type="checkbox"
+                    checked={isVisible}
+                    onChange={(e) => setIsVisible(e.target.checked)}
+                    className="sr-only peer"
+                  />
+                  <div className="w-11 h-6 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-violet-600"></div>
+                </label>
+              </div>
+
               <div>
                 <Label htmlFor="cat-name">Category Title *</Label>
                 <Input

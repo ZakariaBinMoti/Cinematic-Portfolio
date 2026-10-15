@@ -39,7 +39,7 @@ export default function SkillsSection({ skills }: { skills: any[] }) {
         
         {/* 3D Spatial Bento Grid */}
         <div className="lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-          {skills.map((skillGroup: any, idx: number) => {
+          {skills.filter((skillGroup: any) => skillGroup.isVisible !== false).map((skillGroup: any, idx: number) => {
             const isShopify = skillGroup.category?.toLowerCase().includes("shopify");
             const isFrontend = skillGroup.category?.toLowerCase().includes("front");
 

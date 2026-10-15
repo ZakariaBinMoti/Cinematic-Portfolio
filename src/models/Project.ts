@@ -8,6 +8,7 @@ export interface IProject extends Document {
   imageUrl: string;
   imagePublicId?: string;
   order: number;
+  isVisible?: boolean;
 }
 
 const ProjectSchema: Schema = new Schema({
@@ -18,6 +19,7 @@ const ProjectSchema: Schema = new Schema({
   imageUrl: { type: String },
   imagePublicId: { type: String },
   order: { type: Number, default: 0 },
+  isVisible: { type: Boolean, default: true },
 }, { timestamps: true });
 
 export default mongoose.models.Project || mongoose.model<IProject>('Project', ProjectSchema);

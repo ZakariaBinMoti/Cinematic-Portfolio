@@ -29,6 +29,7 @@ export async function addExperience(formData: FormData) {
 
   const lastExp = await Experience.findOne({}).sort({ order: -1 }).lean();
   const order = lastExp ? (lastExp as any).order + 1 : 0;
+  const isVisible = formData.has("isVisible") ? formData.get("isVisible") === "true" : true;
 
   const created = await Experience.create({
     title,
@@ -38,6 +39,7 @@ export async function addExperience(formData: FormData) {
     endDate,
     description,
     order,
+    isVisible,
   });
 
   revalidatePath("/admin/experience");
@@ -57,11 +59,29 @@ export async function updateExperience(id: string, formData: FormData) {
   const endDate = (formData.get("endDate") as string)?.trim() || "Present";
   const description = (formData.get("description") as string)?.trim();
 
+  const updateData: any = { title, company, location, startDate, endDate, description };
+  if (formData.has("isVisible")) {
+    updateData.isVisible = formData.get("isVisible") === "true";
+  }
+
   const updated = await Experience.findByIdAndUpdate(
     id,
-    { title, company, location, startDate, endDate, description },
+    updateData,
     { new: true }
   );
+
+  revalidatePath("/admin/experience");
+  revalidatePath("/admin");
+  revalidatePath("/");
+  return { success: true, experience: JSON.parse(JSON.stringify(updated)) };
+}
+
+export async function toggleExperienceVisibility(id: string, isVisible: boolean) {
+  await requireAdmin();
+  await dbConnect();
+
+  const updated = await Experience.findByIdAndUpdate(id, { isVisible }, { new: true });
+  if (!updated) return { success: false, error: "Experience not found" };
 
   revalidatePath("/admin/experience");
   revalidatePath("/admin");

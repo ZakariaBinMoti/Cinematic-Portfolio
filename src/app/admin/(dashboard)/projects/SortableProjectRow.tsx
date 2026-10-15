@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { GripVertical, Pencil, Trash2, ExternalLink, Image as ImageIcon } from "lucide-react";
+import { GripVertical, Pencil, Trash2, ExternalLink, Image as ImageIcon, Eye, EyeOff } from "lucide-react";
 import { Button } from "../../_ui";
 
 interface Project {
@@ -14,16 +14,19 @@ interface Project {
   liveLink?: string;
   imageUrl?: string;
   order: number;
+  isVisible?: boolean;
 }
 
 export default function SortableProjectRow({
   project,
   onEdit,
   onDelete,
+  onToggleVisibility,
 }: {
   project: Project;
   onEdit: (p: Project) => void;
   onDelete: (p: Project) => void;
+  onToggleVisibility: (p: Project) => void;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: project._id,
@@ -34,13 +37,17 @@ export default function SortableProjectRow({
     transition,
   };
 
+  const isHidden = project.isVisible === false;
+
   return (
     <div
       ref={setNodeRef}
       style={style}
-      className={`group flex items-center gap-4 p-3 rounded-xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.04] hover:border-white/10 transition-colors ${
-        isDragging ? "opacity-30 z-50 scale-98" : ""
-      }`}
+      className={`group flex items-center gap-4 p-3 rounded-xl border transition-colors ${
+        isHidden
+          ? "border-amber-500/20 bg-amber-950/10 hover:bg-amber-950/20 opacity-80"
+          : "border-white/5 bg-white/[0.02] hover:bg-white/[0.04] hover:border-white/10"
+      } ${isDragging ? "opacity-30 z-50 scale-98" : ""}`}
     >
       {/* Drag Handle */}
       <button
@@ -60,7 +67,12 @@ export default function SortableProjectRow({
       {/* Thumbnail */}
       <div className="relative h-12 w-16 rounded-lg overflow-hidden bg-black/40 border border-white/5 shrink-0">
         {project.imageUrl ? (
-          <Image src={project.imageUrl} alt={project.title} fill className="object-cover" />
+          <Image
+            src={project.imageUrl}
+            alt={project.title}
+            fill
+            className={`object-cover ${isHidden ? "grayscale-[30%]" : ""}`}
+          />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-gray-600">
             <ImageIcon className="h-5 w-5" />
@@ -72,6 +84,11 @@ export default function SortableProjectRow({
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
           <h4 className="text-sm font-semibold text-white truncate">{project.title}</h4>
+          {isHidden && (
+            <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wider bg-amber-500/20 border border-amber-500/30 text-amber-300">
+              Hidden
+            </span>
+          )}
           {project.liveLink && (
             <a
               href={project.liveLink.startsWith("http") ? project.liveLink : `https://${project.liveLink}`}
@@ -101,6 +118,29 @@ export default function SortableProjectRow({
 
       {/* Actions */}
       <div className="flex items-center gap-1.5 shrink-0 ml-auto">
+        <button
+          type="button"
+          onClick={() => onToggleVisibility(project)}
+          className={`h-8 px-2 rounded-lg text-xs flex items-center gap-1.5 transition-all ${
+            isHidden
+              ? "bg-amber-500/15 border border-amber-500/30 text-amber-300 hover:bg-amber-500/25"
+              : "bg-white/[0.04] border border-white/5 text-gray-300 hover:text-white hover:bg-white/[0.08]"
+          }`}
+          title={isHidden ? "Hidden from live site (click to show)" : "Visible on live site (click to hide)"}
+        >
+          {isHidden ? (
+            <>
+              <EyeOff className="h-3.5 w-3.5 text-amber-400" />
+              <span className="text-[11px] font-medium hidden sm:inline">Hidden</span>
+            </>
+          ) : (
+            <>
+              <Eye className="h-3.5 w-3.5 text-emerald-400" />
+              <span className="text-[11px] font-medium text-emerald-300 hidden sm:inline">Live</span>
+            </>
+          )}
+        </button>
+
         <Button
           variant="ghost"
           size="sm"

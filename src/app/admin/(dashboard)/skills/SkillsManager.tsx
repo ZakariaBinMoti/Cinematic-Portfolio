@@ -22,13 +22,14 @@ import { toast } from "sonner";
 import { Button, PageHeader, Card } from "../../_ui";
 import SkillCategoryColumn from "./SkillCategoryColumn";
 import SkillCategoryDrawer from "./SkillCategoryDrawer";
-import { deleteSkill, reorderSkills, restoreSkill } from "./actions";
+import { deleteSkill, reorderSkills, restoreSkill, toggleSkillVisibility } from "./actions";
 
 interface SkillGroup {
   _id: string;
   category: string;
   items: string[];
   order: number;
+  isVisible?: boolean;
 }
 
 export default function SkillsManager({
@@ -108,6 +109,33 @@ export default function SkillsManager({
     }
   };
 
+  const handleToggleVisibility = async (group: SkillGroup) => {
+    const newVisible = group.isVisible === false ? true : false;
+    const previous = [...skills];
+
+    setSkills((curr) =>
+      curr.map((s) => (s._id === group._id ? { ...s, isVisible: newVisible } : s))
+    );
+
+    try {
+      const res = await toggleSkillVisibility(group._id, newVisible);
+      if (res.success) {
+        toast.success(
+          newVisible
+            ? `"${group.category}" is now visible on live portfolio`
+            : `"${group.category}" is now hidden from live portfolio`,
+          { duration: 2500 }
+        );
+      } else {
+        setSkills(previous);
+        toast.error(res.error || "Failed to update category visibility");
+      }
+    } catch {
+      setSkills(previous);
+      toast.error("Error updating visibility");
+    }
+  };
+
   const handleGroupUpdated = (updatedGroup: SkillGroup) => {
     setSkills((curr) =>
       curr.map((s) => (s._id === updatedGroup._id ? updatedGroup : s))
@@ -158,6 +186,7 @@ export default function SkillsManager({
                   group={group}
                   onDeleteGroup={handleDeleteGroup}
                   onGroupUpdated={handleGroupUpdated}
+                  onToggleVisibility={handleToggleVisibility}
                 />
               ))}
             </div>

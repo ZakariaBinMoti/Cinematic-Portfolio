@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { GripVertical, Pencil, Trash2, ExternalLink, Image as ImageIcon } from "lucide-react";
+import { GripVertical, Pencil, Trash2, ExternalLink, Image as ImageIcon, Eye, EyeOff } from "lucide-react";
 import { Card, Badge, Button } from "../../_ui";
 
 interface Project {
@@ -14,16 +14,19 @@ interface Project {
   liveLink?: string;
   imageUrl?: string;
   order: number;
+  isVisible?: boolean;
 }
 
 export default function SortableProjectCard({
   project,
   onEdit,
   onDelete,
+  onToggleVisibility,
 }: {
   project: Project;
   onEdit: (p: Project) => void;
   onDelete: (p: Project) => void;
+  onToggleVisibility: (p: Project) => void;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: project._id,
@@ -34,13 +37,19 @@ export default function SortableProjectCard({
     transition,
   };
 
+  const isHidden = project.isVisible === false;
+
   return (
     <div
       ref={setNodeRef}
       style={style}
       className={`group relative ${isDragging ? "opacity-30 z-50 scale-95" : ""}`}
     >
-      <Card className="h-full flex flex-col overflow-hidden transition-all duration-300 hover:border-white/20 hover:shadow-xl bg-gradient-to-b from-white/[0.035] to-white/[0.01]">
+      <Card className={`h-full flex flex-col overflow-hidden transition-all duration-300 hover:border-white/20 hover:shadow-xl bg-gradient-to-b ${
+        isHidden
+          ? "from-amber-950/20 to-black/40 border-amber-500/20 opacity-80"
+          : "from-white/[0.035] to-white/[0.01]"
+      }`}>
         {/* Top Cover Thumbnail with Drag Handle Overlay */}
         <div className="relative aspect-[16/10] w-full bg-black/40 overflow-hidden border-b border-white/5">
           {project.imageUrl ? (
@@ -48,7 +57,9 @@ export default function SortableProjectCard({
               src={project.imageUrl}
               alt={project.title}
               fill
-              className="object-cover transition-transform duration-700 group-hover:scale-105"
+              className={`object-cover transition-transform duration-700 group-hover:scale-105 ${
+                isHidden ? "grayscale-[30%]" : ""
+              }`}
             />
           ) : (
             <div className="w-full h-full flex flex-col items-center justify-center text-gray-500 bg-white/[0.01]">
@@ -66,6 +77,13 @@ export default function SortableProjectCard({
           >
             <GripVertical className="h-4 w-4" />
           </button>
+
+          {/* Hidden status badge */}
+          {isHidden && (
+            <span className="absolute top-2.5 left-11 px-2 py-1 rounded-lg bg-black/70 backdrop-blur-md border border-amber-500/40 text-amber-300 text-[10px] font-semibold tracking-wider uppercase z-10 flex items-center gap-1 shadow-md">
+              <EyeOff className="h-3 w-3 text-amber-400" /> Hidden
+            </span>
+          )}
 
           {/* Live Link Button on top-right of image */}
           {project.liveLink && (
@@ -118,6 +136,30 @@ export default function SortableProjectCard({
           <div className="mt-5 pt-3.5 border-t border-white/5 flex items-center justify-between">
             <span className="text-[11px] font-mono text-[var(--a-text-subtle)]">#{project.order + 1}</span>
             <div className="flex items-center gap-1.5">
+              {/* Eye Visibility Toggle */}
+              <button
+                type="button"
+                onClick={() => onToggleVisibility(project)}
+                className={`h-8 px-2 rounded-lg text-xs flex items-center gap-1.5 transition-all ${
+                  isHidden
+                    ? "bg-amber-500/15 border border-amber-500/30 text-amber-300 hover:bg-amber-500/25"
+                    : "bg-white/[0.04] border border-white/5 text-gray-300 hover:text-white hover:bg-white/[0.08]"
+                }`}
+                title={isHidden ? "Hidden from live site (click to show)" : "Visible on live site (click to hide)"}
+              >
+                {isHidden ? (
+                  <>
+                    <EyeOff className="h-3.5 w-3.5 text-amber-400" />
+                    <span className="text-[11px] font-medium">Hidden</span>
+                  </>
+                ) : (
+                  <>
+                    <Eye className="h-3.5 w-3.5 text-emerald-400" />
+                    <span className="text-[11px] font-medium text-emerald-300">Live</span>
+                  </>
+                )}
+              </button>
+
               <Button
                 variant="ghost"
                 size="sm"

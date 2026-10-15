@@ -16,10 +16,12 @@ const defaultMetrics: MetricItem[] = [
 ];
 
 export default function AchievementsSection({ achievementsData }: { achievementsData?: any }) {
-  const metrics: MetricItem[] =
+  const rawMetrics: MetricItem[] =
     achievementsData?.metrics && Array.isArray(achievementsData.metrics) && achievementsData.metrics.length > 0
       ? achievementsData.metrics
       : defaultMetrics;
+
+  const metrics = rawMetrics.filter((m: any) => m.isVisible !== false);
 
   return (
     <section className="bg-[#080a10] py-20 px-6 md:px-20 relative z-20 overflow-hidden">

@@ -46,6 +46,8 @@ export async function addProject(formData: FormData) {
     imagePublicId = result.publicId;
   }
 
+  const isVisible = formData.has("isVisible") ? formData.get("isVisible") === "true" : true;
+
   const created = await Project.create({
     title,
     description,
@@ -54,6 +56,7 @@ export async function addProject(formData: FormData) {
     order,
     imageUrl,
     imagePublicId,
+    isVisible,
   });
 
   revalidatePath("/admin/projects");
@@ -81,6 +84,10 @@ export async function updateProject(id: string, formData: FormData) {
 
   const updateData: any = { title, description, techStack, liveLink };
 
+  if (formData.has("isVisible")) {
+    updateData.isVisible = formData.get("isVisible") === "true";
+  }
+
   if (removeImage && existing.imagePublicId) {
     await deleteImage(existing.imagePublicId);
     updateData.imageUrl = "";
@@ -98,6 +105,19 @@ export async function updateProject(id: string, formData: FormData) {
   }
 
   const updated = await Project.findByIdAndUpdate(id, updateData, { new: true });
+  revalidatePath("/admin/projects");
+  revalidatePath("/admin");
+  revalidatePath("/");
+  return { success: true, project: JSON.parse(JSON.stringify(updated)) };
+}
+
+export async function toggleProjectVisibility(id: string, isVisible: boolean) {
+  await requireAdmin();
+  await dbConnect();
+
+  const updated = await Project.findByIdAndUpdate(id, { isVisible }, { new: true });
+  if (!updated) return { success: false, error: "Project not found" };
+
   revalidatePath("/admin/projects");
   revalidatePath("/admin");
   revalidatePath("/");

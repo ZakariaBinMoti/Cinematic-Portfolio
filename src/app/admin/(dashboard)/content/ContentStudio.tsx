@@ -17,6 +17,8 @@ import {
   GripVertical,
   Plus,
   Trash2,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 import {
   DndContext,
@@ -43,6 +45,7 @@ export interface MetricItem {
   id: string;
   value: string;
   label: string;
+  isVisible?: boolean;
 }
 
 export interface EducationItem {
@@ -51,6 +54,7 @@ export interface EducationItem {
   school: string;
   score: string;
   years: string;
+  isVisible?: boolean;
 }
 
 interface ContentStudioProps {
@@ -134,7 +138,7 @@ function SortableMetricRow({
   onDelete,
 }: {
   metric: MetricItem;
-  onChange: (field: "value" | "label", val: string) => void;
+  onChange: (field: "value" | "label" | "isVisible", val: any) => void;
   onDelete: () => void;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
@@ -145,11 +149,17 @@ function SortableMetricRow({
     transition,
   };
 
+  const isHidden = metric.isVisible === false;
+
   return (
     <div
       ref={setNodeRef}
       style={style}
-      className={`flex items-center gap-3 p-3 rounded-xl border border-white/10 bg-white/[0.02] hover:bg-white/[0.04] transition-colors ${
+      className={`flex items-center gap-3 p-3 rounded-xl border transition-colors ${
+        isHidden
+          ? "border-amber-500/20 bg-amber-950/10 opacity-80"
+          : "border-white/10 bg-white/[0.02] hover:bg-white/[0.04]"
+      } ${
         isDragging ? "opacity-50 border-violet-500/50 shadow-xl" : ""
       }`}
     >
@@ -182,6 +192,19 @@ function SortableMetricRow({
 
       <button
         type="button"
+        onClick={() => onChange("isVisible", isHidden ? true : false)}
+        className={`p-2 rounded-lg transition-colors shrink-0 ${
+          isHidden
+            ? "text-amber-400 bg-amber-500/15 border border-amber-500/30"
+            : "text-gray-400 hover:text-white hover:bg-white/5"
+        }`}
+        title={isHidden ? "Hidden from live site (click to show)" : "Visible on live site (click to hide)"}
+      >
+        {isHidden ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4 text-emerald-400" />}
+      </button>
+
+      <button
+        type="button"
         onClick={onDelete}
         className="p-2 text-gray-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors shrink-0"
         title="Delete metric"
@@ -199,7 +222,7 @@ function SortableEducationRow({
   onDelete,
 }: {
   item: EducationItem;
-  onChange: (field: keyof EducationItem, val: string) => void;
+  onChange: (field: keyof EducationItem, val: any) => void;
   onDelete: () => void;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
@@ -210,11 +233,17 @@ function SortableEducationRow({
     transition,
   };
 
+  const isHidden = item.isVisible === false;
+
   return (
     <div
       ref={setNodeRef}
       style={style}
-      className={`p-4 rounded-xl border border-white/10 bg-white/[0.02] hover:bg-white/[0.04] transition-colors space-y-3 ${
+      className={`p-4 rounded-xl border transition-colors space-y-3 ${
+        isHidden
+          ? "border-amber-500/20 bg-amber-950/10 opacity-80"
+          : "border-white/10 bg-white/[0.02] hover:bg-white/[0.04]"
+      } ${
         isDragging ? "opacity-50 border-cyan-500/50 shadow-xl" : ""
       }`}
     >
@@ -232,15 +261,34 @@ function SortableEducationRow({
           <span className="text-xs font-semibold text-gray-300">
             {item.degree || "Academic Milestone"}
           </span>
+          {isHidden && (
+            <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wider bg-amber-500/20 border border-amber-500/30 text-amber-300">
+              Hidden
+            </span>
+          )}
         </div>
-        <button
-          type="button"
-          onClick={onDelete}
-          className="p-1.5 text-gray-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
-          title="Delete milestone"
-        >
-          <Trash2 className="h-3.5 w-3.5" />
-        </button>
+        <div className="flex items-center gap-1.5">
+          <button
+            type="button"
+            onClick={() => onChange("isVisible", isHidden ? true : false)}
+            className={`p-1.5 rounded-lg transition-colors ${
+              isHidden
+                ? "text-amber-400 bg-amber-500/15 border border-amber-500/30"
+                : "text-gray-400 hover:text-white hover:bg-white/5"
+            }`}
+            title={isHidden ? "Hidden from live site (click to show)" : "Visible on live site (click to hide)"}
+          >
+            {isHidden ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5 text-emerald-400" />}
+          </button>
+          <button
+            type="button"
+            onClick={onDelete}
+            className="p-1.5 text-gray-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+            title="Delete milestone"
+          >
+            <Trash2 className="h-3.5 w-3.5" />
+          </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">

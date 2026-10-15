@@ -35,7 +35,7 @@ import { Button, Input, Badge, PageHeader, Card } from "../../_ui";
 import SortableProjectCard from "./SortableProjectCard";
 import SortableProjectRow from "./SortableProjectRow";
 import ProjectDrawer from "./ProjectDrawer";
-import { deleteProject, reorderProjects, restoreProject } from "./actions";
+import { deleteProject, reorderProjects, restoreProject, toggleProjectVisibility } from "./actions";
 
 interface Project {
   _id: string;
@@ -45,6 +45,7 @@ interface Project {
   liveLink?: string;
   imageUrl?: string;
   order: number;
+  isVisible?: boolean;
 }
 
 export default function ProjectsManager({ initialProjects }: { initialProjects: Project[] }) {
@@ -181,6 +182,34 @@ export default function ProjectsManager({ initialProjects }: { initialProjects: 
     } catch {
       setProjects(previous);
       toast.error("Error deleting project");
+    }
+  };
+
+  const handleToggleVisibility = async (project: Project) => {
+    const newVisible = project.isVisible === false ? true : false;
+    const previous = [...projects];
+
+    // Optimistic UI update
+    setProjects((curr) =>
+      curr.map((p) => (p._id === project._id ? { ...p, isVisible: newVisible } : p))
+    );
+
+    try {
+      const res = await toggleProjectVisibility(project._id, newVisible);
+      if (res.success) {
+        toast.success(
+          newVisible
+            ? `"${project.title}" is now visible on live portfolio`
+            : `"${project.title}" is now hidden from live portfolio`,
+          { duration: 2500 }
+        );
+      } else {
+        setProjects(previous);
+        toast.error(res.error || "Failed to update project visibility");
+      }
+    } catch {
+      setProjects(previous);
+      toast.error("Error updating visibility");
     }
   };
 
@@ -324,6 +353,7 @@ export default function ProjectsManager({ initialProjects }: { initialProjects: 
                     project={project}
                     onEdit={handleEdit}
                     onDelete={handleDelete}
+                    onToggleVisibility={handleToggleVisibility}
                   />
                 ))}
               </div>
@@ -335,6 +365,7 @@ export default function ProjectsManager({ initialProjects }: { initialProjects: 
                     project={project}
                     onEdit={handleEdit}
                     onDelete={handleDelete}
+                    onToggleVisibility={handleToggleVisibility}
                   />
                 ))}
               </div>
@@ -349,6 +380,7 @@ export default function ProjectsManager({ initialProjects }: { initialProjects: 
                   project={activeProject}
                   onEdit={() => {}}
                   onDelete={() => {}}
+                  onToggleVisibility={() => {}}
                 />
               </div>
             ) : null}

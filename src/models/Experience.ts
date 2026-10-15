@@ -8,6 +8,7 @@ export interface IExperience extends Document {
   endDate: string;
   description: string;
   order: number;
+  isVisible?: boolean;
 }
 
 const ExperienceSchema: Schema = new Schema({
@@ -18,6 +19,7 @@ const ExperienceSchema: Schema = new Schema({
   endDate: { type: String, required: true },
   description: { type: String, required: true },
   order: { type: Number, default: 0 },
+  isVisible: { type: Boolean, default: true },
 }, { timestamps: true });
 
 export default mongoose.models.Experience || mongoose.model<IExperience>('Experience', ExperienceSchema);

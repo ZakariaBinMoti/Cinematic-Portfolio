@@ -4,12 +4,14 @@ export interface ISkill extends Document {
   category: string;
   items: string[];
   order: number;
+  isVisible?: boolean;
 }
 
 const SkillSchema: Schema = new Schema({
   category: { type: String, required: true },
   items: { type: [String], required: true },
   order: { type: Number, default: 0 },
+  isVisible: { type: Boolean, default: true },
 }, { timestamps: true });
 
 export default mongoose.models.Skill || mongoose.model<ISkill>('Skill', SkillSchema);

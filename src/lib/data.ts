@@ -14,9 +14,9 @@ export async function getPortfolioData() {
       Content.findOne({ section: "achievements" }).lean(),
       Content.findOne({ section: "education" }).lean(),
       Content.findOne({ section: "contact" }).lean(),
-      Project.find({}).sort({ order: 1 }).lean(),
-      Experience.find({}).sort({ order: 1 }).lean(),
-      Skill.find({}).sort({ order: 1 }).lean()
+      Project.find({ isVisible: { $ne: false } }).sort({ order: 1 }).lean(),
+      Experience.find({ isVisible: { $ne: false } }).sort({ order: 1 }).lean(),
+      Skill.find({ isVisible: { $ne: false } }).sort({ order: 1 }).lean()
     ]);
 
     return {

@@ -22,7 +22,7 @@ import { toast } from "sonner";
 import { Button, PageHeader, Card } from "../../_ui";
 import SortableExperienceCard from "./SortableExperienceCard";
 import ExperienceDrawer from "./ExperienceDrawer";
-import { deleteExperience, reorderExperiences, restoreExperience } from "./actions";
+import { deleteExperience, reorderExperiences, restoreExperience, toggleExperienceVisibility } from "./actions";
 
 interface Experience {
   _id: string;
@@ -33,6 +33,7 @@ interface Experience {
   endDate: string;
   description: string;
   order: number;
+  isVisible?: boolean;
 }
 
 export default function ExperienceManager({
@@ -124,6 +125,33 @@ export default function ExperienceManager({
     }
   };
 
+  const handleToggleVisibility = async (exp: Experience) => {
+    const newVisible = exp.isVisible === false ? true : false;
+    const previous = [...experiences];
+
+    setExperiences((curr) =>
+      curr.map((e) => (e._id === exp._id ? { ...e, isVisible: newVisible } : e))
+    );
+
+    try {
+      const res = await toggleExperienceVisibility(exp._id, newVisible);
+      if (res.success) {
+        toast.success(
+          newVisible
+            ? `"${exp.title}" is now visible on live timeline`
+            : `"${exp.title}" is now hidden from live timeline`,
+          { duration: 2500 }
+        );
+      } else {
+        setExperiences(previous);
+        toast.error(res.error || "Failed to update role visibility");
+      }
+    } catch {
+      setExperiences(previous);
+      toast.error("Error updating visibility");
+    }
+  };
+
   const handleSaved = (savedExp: Experience, isNew: boolean) => {
     if (isNew) {
       setExperiences((curr) => [...curr, savedExp]);
@@ -172,6 +200,7 @@ export default function ExperienceManager({
                   experience={exp}
                   onEdit={handleEdit}
                   onDelete={handleDelete}
+                  onToggleVisibility={handleToggleVisibility}
                 />
               ))}
             </div>
