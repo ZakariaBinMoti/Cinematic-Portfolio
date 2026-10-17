@@ -313,7 +313,7 @@ export default function ProjectsSection({ projects }: { projects: ProjectItem[] 
                     {activeProject.imageUrl ? (
                       <Image
                         src={activeProject.imageUrl}
-                        alt={activeProject.title}
+                        alt={`${activeProject.title} - eCommerce showcase project by Zakaria Bin Moti`}
                         fill
                         priority
                         className="object-cover transition-transform duration-700 group-hover:scale-[1.03]"
@@ -456,7 +456,7 @@ export default function ProjectsSection({ projects }: { projects: ProjectItem[] 
                       {proj.imageUrl ? (
                         <Image
                           src={proj.imageUrl}
-                          alt={proj.title}
+                          alt={`${proj.title} thumbnail - Zakaria Bin Moti portfolio`}
                           fill
                           sizes="256px"
                           className="object-cover group-hover:scale-105 transition-transform duration-500"
@@ -614,7 +614,7 @@ export default function ProjectsSection({ projects }: { projects: ProjectItem[] 
                         {proj.imageUrl ? (
                           <Image
                             src={proj.imageUrl}
-                            alt={proj.title}
+                            alt={`${proj.title} - eCommerce website engineered by Zakaria Bin Moti`}
                             fill
                             sizes="(max-width: 768px) 100vw, 33vw"
                             className="object-cover group-hover:scale-105 transition-transform duration-500"
@@ -777,7 +777,7 @@ export default function ProjectsSection({ projects }: { projects: ProjectItem[] 
                   {activeProject.imageUrl ? (
                     <Image
                       src={activeProject.imageUrl}
-                      alt={activeProject.title}
+                      alt={`${activeProject.title} preview`}
                       fill
                       sizes="44px"
                       className="object-cover group-hover:scale-110 transition-transform"
