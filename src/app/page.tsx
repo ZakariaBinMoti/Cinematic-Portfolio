@@ -14,8 +14,40 @@ export const dynamic = "force-dynamic";
 export default async function Home() {
   const data = await getPortfolioData();
 
+  // Project catalog structured data for search engine rich indexing
+  const visibleProjects = (data.projects || [])
+    .filter((p: any) => p.isVisible !== false)
+    .slice(0, 25);
+
+  const projectsJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "Featured Production eCommerce Projects by Zakaria Bin Moti",
+    description:
+      "Curated portfolio of production Shopify stores and custom eCommerce platforms engineered by Zakaria Bin Moti.",
+    itemListElement: visibleProjects.map((proj: any, idx: number) => ({
+      "@type": "ListItem",
+      position: idx + 1,
+      item: {
+        "@type": "CreativeWork",
+        name: proj.title,
+        description: proj.description,
+        url: proj.liveLink || undefined,
+        image: proj.imageUrl || undefined,
+        creator: {
+          "@type": "Person",
+          name: "Zakaria Bin Moti",
+        },
+      },
+    })),
+  };
+
   return (
     <main className="w-full bg-[#080a10] relative selection:bg-white/20 selection:text-white">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(projectsJsonLd) }}
+      />
       <Navbar />
       <ScrollyContainer heroData={data.hero} />
       

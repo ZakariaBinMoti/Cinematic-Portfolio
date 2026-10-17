@@ -86,6 +86,10 @@ export const metadata: Metadata = {
     ],
     shortcut: "/favicon.ico",
   },
+  verification: {
+    google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION,
+    yandex: process.env.NEXT_PUBLIC_YANDEX_VERIFICATION,
+  },
   category: "technology",
 };
 
@@ -124,6 +128,39 @@ export default function RootLayout({
           "Conversion Rate Optimization",
           "Web Performance Optimization",
         ],
+        hasOfferCatalog: {
+          "@type": "OfferCatalog",
+          name: "Software Engineering & Shopify Development Services",
+          itemListElement: [
+            {
+              "@type": "Offer",
+              itemOffered: {
+                "@type": "Service",
+                name: "Custom Shopify Theme & OS 2.0 Architecture",
+                description:
+                  "High-converting, performance-optimized Shopify eCommerce stores built with Liquid and modern standards.",
+              },
+            },
+            {
+              "@type": "Offer",
+              itemOffered: {
+                "@type": "Service",
+                name: "Headless eCommerce & Next.js Web Applications",
+                description:
+                  "Full-stack web applications, headless Shopify storefronts, and API integrations using React, Next.js, and TypeScript.",
+              },
+            },
+            {
+              "@type": "Offer",
+              itemOffered: {
+                "@type": "Service",
+                name: "Web Performance & Core Web Vitals Optimization",
+                description:
+                  "Speed optimization, code refactoring, and conversion rate enhancement for commercial web stores.",
+              },
+            },
+          ],
+        },
       },
       {
         "@type": "WebSite",
@@ -159,6 +196,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        <link rel="preconnect" href="https://res.cloudinary.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://res.cloudinary.com" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
