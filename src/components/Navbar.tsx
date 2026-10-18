@@ -13,18 +13,19 @@ export default function Navbar() {
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);
 
-      const sections = ["contact", "projects", "experience", "skills", "about"];
+      const sections = ["about", "skills", "experience", "projects", "contact"];
+      let currentSection = "hero";
+
       for (const section of sections) {
         const el = document.getElementById(section);
         if (el) {
           const rect = el.getBoundingClientRect();
-          if (rect.top <= 200) {
-            setActiveSection(section);
-            return;
+          if (rect.top <= 250) {
+            currentSection = section;
           }
         }
       }
-      setActiveSection("hero");
+      setActiveSection(currentSection);
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -53,7 +54,8 @@ export default function Navbar() {
           {/* Brand Avatar */}
           <a
             href="#"
-            className="relative flex items-center justify-center w-8 h-8 rounded-full overflow-hidden border border-white/20 hover:border-white/40 transition-all ml-1 hover:scale-105 shadow-[0_0_12px_rgba(53,148,189,0.3)] shrink-0"
+            onClick={() => setActiveSection("hero")}
+            className="relative flex items-center justify-center w-8 h-8 rounded-full overflow-hidden border border-white/20 hover:border-white/40 transition-all ml-1 hover:scale-105 shadow-[0_0_12px_rgba(53,148,189,0.3)] shrink-0 outline-none"
             aria-label="Home"
           >
             <Image
@@ -74,10 +76,11 @@ export default function Navbar() {
                 <a
                   key={link.id}
                   href={link.href}
-                  className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition-all duration-200 ${
+                  onClick={() => setActiveSection(link.id)}
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-medium border transition-colors duration-200 outline-none focus:outline-none ${
                     isActive
-                      ? "bg-white/[0.12] text-white shadow-[0_0_15px_rgba(255,255,255,0.08)] border border-white/15"
-                      : "text-gray-400 hover:text-gray-200 hover:bg-white/[0.04]"
+                      ? "bg-white/[0.12] text-white shadow-[0_0_15px_rgba(255,255,255,0.08)] border-white/15"
+                      : "border-white/0 text-gray-400 hover:text-gray-200 hover:bg-white/[0.04]"
                   }`}
                 >
                   {link.label}
@@ -89,7 +92,8 @@ export default function Navbar() {
           {/* Availability Pill */}
           <a
             href="#contact"
-            className="hidden sm:inline-flex items-center gap-2 pl-3 pr-3.5 py-1.5 rounded-full bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-xs font-medium text-gray-300 transition-colors mr-1"
+            onClick={() => setActiveSection("contact")}
+            className="hidden sm:inline-flex items-center gap-2 pl-3 pr-3.5 py-1.5 rounded-full bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-xs font-medium text-gray-300 transition-colors mr-1 outline-none"
           >
             <span className="w-1.5 h-1.5 rounded-full bg-[#3594bd] shadow-[0_0_8px_rgba(53,148,189,0.8)]" />
             <span>Available</span>
@@ -98,7 +102,7 @@ export default function Navbar() {
           {/* Mobile Menu Toggle */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden flex items-center justify-center w-8 h-8 rounded-full bg-white/[0.05] border border-white/10 text-white mr-1"
+            className="md:hidden flex items-center justify-center w-8 h-8 rounded-full bg-white/[0.05] border border-white/10 text-white mr-1 outline-none"
             aria-label="Toggle menu"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -127,7 +131,10 @@ export default function Navbar() {
                 <a
                   key={link.id}
                   href={link.href}
-                  onClick={() => setMobileMenuOpen(false)}
+                  onClick={() => {
+                    setActiveSection(link.id);
+                    setMobileMenuOpen(false);
+                  }}
                   className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
                     activeSection === link.id
                       ? "bg-white/10 text-white"
