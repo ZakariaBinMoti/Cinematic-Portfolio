@@ -13,21 +13,15 @@ export interface EducationItem {
 const defaultEducation: EducationItem[] = [
   {
     degree: "B.Sc. in Computer Science and Engineering",
-    school: "East West University",
+    school: "East West University, Dhaka",
     score: "CGPA: 3.22 / 4.00",
     years: "2020 - 2024",
   },
   {
-    degree: "HSC",
-    school: "Govt. Azizul Haque College",
-    score: "GPA 5.00",
-    years: "Pre-2020",
-  },
-  {
-    degree: "SSC",
-    school: "R.D.A Laboratory School and College",
-    score: "GPA 5.00",
-    years: "Pre-2018",
+    degree: "Complete Web Development Certification",
+    school: "Programming Hero",
+    score: "Credential ID: WEB7-4020",
+    years: "Jul 2024",
   }
 ];
 

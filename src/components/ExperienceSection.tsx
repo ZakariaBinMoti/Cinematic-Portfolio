@@ -43,7 +43,7 @@ export default function ExperienceSection({ experiences }: { experiences: any[] 
         >
           <div className="lg:sticky lg:top-32">
             <span className="text-xs font-mono uppercase tracking-widest text-gray-500 mb-3 block">
-              03 // Career Journey
+              04 // Career Journey
             </span>
             <h2 className="text-4xl md:text-6xl font-bold tracking-tight text-white mb-4">
               Experience<br /><span className="text-gray-500">Timeline.</span>

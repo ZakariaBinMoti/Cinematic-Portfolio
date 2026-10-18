@@ -217,7 +217,7 @@ export default function ProjectsSection({ projects }: { projects: ProjectItem[] 
             <div className="flex items-center gap-2 mb-3">
               <span className="text-xs font-mono uppercase tracking-widest text-[#3594bd] font-semibold flex items-center gap-1.5">
                 <Sparkles className="w-3.5 h-3.5" />
-                04 // Project Showcase
+                02 // Selected Works
               </span>
               <span className="text-gray-600 font-mono text-xs">•</span>
               <span className="text-xs font-mono text-gray-400">

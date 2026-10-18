@@ -54,9 +54,9 @@ export default async function Home() {
       <div className="bg-[#080a10] relative z-20">
         <AboutSection aboutData={data.about} />
         <AchievementsSection achievementsData={data.achievements} />
+        <ProjectsSection projects={data.projects} />
         <SkillsSection skills={data.skills} />
         <ExperienceSection experiences={data.experiences} />
-        <ProjectsSection projects={data.projects} />
         <EducationSection educationData={data.education} />
         <ContactSection contactData={data.contact} />
       </div>
