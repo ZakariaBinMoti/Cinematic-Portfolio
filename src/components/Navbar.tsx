@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
+import { FileText, ArrowUpRight } from "lucide-react";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -102,7 +103,7 @@ export default function Navbar() {
           {/* Mobile Menu Toggle */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden flex items-center justify-center w-8 h-8 rounded-full bg-white/[0.05] border border-white/10 text-white mr-1 outline-none"
+            className="md:hidden flex items-center justify-center w-8 h-8 rounded-full bg-white/[0.05] border border-white/10 text-white mr-1 outline-none pointer-events-auto cursor-pointer"
             aria-label="Toggle menu"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -124,7 +125,7 @@ export default function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -15 }}
             transition={{ duration: 0.2 }}
-            className="fixed top-20 inset-x-4 z-40 md:hidden bg-[#080a10]/95 backdrop-blur-2xl border border-white/10 rounded-2xl p-4 shadow-2xl"
+            className="fixed top-20 inset-x-4 z-50 md:hidden bg-[#080a10]/95 backdrop-blur-2xl border border-white/10 rounded-2xl p-4 shadow-2xl pointer-events-auto"
           >
             <div className="flex flex-col gap-1.5">
               {navLinks.map((link) => (
@@ -144,6 +145,24 @@ export default function Navbar() {
                   {link.label}
                 </a>
               ))}
+            </div>
+
+            {/* Direct Mobile Resume Access */}
+            <div className="pt-2.5 mt-2 border-t border-white/10">
+              <a
+                href="/Zakaria_Bin_Moti_Resume.pdf"
+                target="_blank"
+                rel="noreferrer"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center justify-between px-4 py-2.5 rounded-xl text-sm font-medium border border-[#3594bd]/40 bg-[#3594bd]/10 hover:bg-[#3594bd]/20 text-white transition-all shadow-[0_0_15px_rgba(53,148,189,0.15)] group"
+                title="Open or download Zakaria Bin Moti's Resume (PDF)"
+              >
+                <span className="flex items-center gap-2.5">
+                  <FileText className="w-4 h-4 text-[#3594bd] group-hover:scale-110 transition-transform" />
+                  <span>Download Resume (PDF)</span>
+                </span>
+                <ArrowUpRight className="w-4 h-4 text-gray-400 group-hover:text-white transition-colors" />
+              </a>
             </div>
           </motion.div>
         )}

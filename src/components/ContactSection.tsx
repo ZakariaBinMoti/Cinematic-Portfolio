@@ -93,7 +93,7 @@ export default function ContactSection({ contactData }: { contactData?: any }) {
               </div>
             )}
 
-            {/* Standout Resume / CV Button */}
+            {/* Standout Resume Button */}
             <a
               href="/Zakaria_Bin_Moti_Resume.pdf"
               target="_blank"
@@ -102,7 +102,7 @@ export default function ContactSection({ contactData }: { contactData?: any }) {
               title="Open or download Zakaria Bin Moti's Resume (PDF)"
             >
               <FileText className="w-4 h-4 text-[#3594bd] group-hover:scale-110 transition-transform" />
-              <span>Download CV (PDF)</span>
+              <span>Download Resume (PDF)</span>
               <ArrowUpRight className="w-3.5 h-3.5 text-gray-400 group-hover:text-white transition-colors" />
             </a>
 

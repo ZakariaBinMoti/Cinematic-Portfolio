@@ -113,6 +113,13 @@ export default function RootLayout({
           "https://www.linkedin.com/in/zakariabinmoti",
           "https://github.com/ZakariaBinMoti",
         ],
+        subjectOf: {
+          "@type": "DigitalDocument",
+          name: "Zakaria Bin Moti Resume",
+          url: `${siteUrl}/Zakaria_Bin_Moti_Resume.pdf`,
+          encodingFormat: "application/pdf",
+          description: "Official professional resume of Zakaria Bin Moti, Lead Software Engineer & Shopify Architect.",
+        },
         description:
           "Lead Software Engineer and Shopify Architect specializing in high-performance eCommerce development, modern frontend systems, and scalable digital architectures with 250+ delivered stores.",
         knowsAbout: [
