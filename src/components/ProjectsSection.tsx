@@ -15,6 +15,7 @@ import {
   Sparkles,
   ExternalLink
 } from "lucide-react";
+import { getOptimizedImageUrl } from "@/lib/media";
 
 interface ProjectItem {
   _id?: string;
@@ -312,7 +313,7 @@ export default function ProjectsSection({ projects }: { projects: ProjectItem[] 
                   <div className="relative w-full aspect-[16/10] rounded-2xl overflow-hidden bg-black/60 border border-white/[0.08] shadow-2xl group">
                     {activeProject.imageUrl ? (
                       <Image
-                        src={activeProject.imageUrl}
+                        src={getOptimizedImageUrl(activeProject.imageUrl)}
                         alt={`${activeProject.title} - eCommerce showcase project by Zakaria Bin Moti`}
                         fill
                         priority
@@ -455,7 +456,7 @@ export default function ProjectsSection({ projects }: { projects: ProjectItem[] 
                     <div className="relative w-full aspect-[16/10] rounded-xl overflow-hidden bg-black/40 mb-2 border border-white/[0.06]">
                       {proj.imageUrl ? (
                         <Image
-                          src={proj.imageUrl}
+                          src={getOptimizedImageUrl(proj.imageUrl, 550)}
                           alt={`${proj.title} thumbnail - Zakaria Bin Moti portfolio`}
                           fill
                           sizes="256px"
@@ -613,7 +614,7 @@ export default function ProjectsSection({ projects }: { projects: ProjectItem[] 
                       <div className="relative w-full aspect-[16/10] rounded-xl overflow-hidden bg-black/50 mb-3.5 border border-white/[0.06]">
                         {proj.imageUrl ? (
                           <Image
-                            src={proj.imageUrl}
+                            src={getOptimizedImageUrl(proj.imageUrl, 750)}
                             alt={`${proj.title} - eCommerce website engineered by Zakaria Bin Moti`}
                             fill
                             sizes="(max-width: 768px) 100vw, 33vw"
@@ -789,7 +790,7 @@ export default function ProjectsSection({ projects }: { projects: ProjectItem[] 
                 <div className="relative w-11 h-7 rounded-lg overflow-hidden bg-black/60 flex-shrink-0 border border-white/10">
                   {activeProject.imageUrl ? (
                     <Image
-                      src={activeProject.imageUrl}
+                      src={getOptimizedImageUrl(activeProject.imageUrl, 200)}
                       alt={`${activeProject.title} preview`}
                       fill
                       sizes="44px"

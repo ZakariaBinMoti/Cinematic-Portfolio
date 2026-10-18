@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Copy, Check, Mail } from "lucide-react";
+import { Copy, Check, Mail, FileDown } from "lucide-react";
 
 export default function ContactSection({ contactData }: { contactData?: any }) {
   const [copied, setCopied] = useState(false);
@@ -154,6 +154,16 @@ export default function ContactSection({ contactData }: { contactData?: any }) {
               Book Call
             </a>
           )}
+          <a
+            href="/resume.pdf"
+            target="_blank"
+            rel="noreferrer"
+            className="border border-[#3594bd]/30 bg-[#3594bd]/10 hover:bg-[#3594bd]/20 text-[#93c5fd] px-6 py-3.5 rounded-full font-medium text-sm transition-all flex items-center gap-2 shadow-sm hover:scale-105"
+            title="Download or view Zakaria Bin Moti's Resume (PDF)"
+          >
+            <FileDown className="w-4 h-4 text-[#3594bd]" />
+            <span>Resume / CV</span>
+          </a>
         </motion.div>
       </div>
       

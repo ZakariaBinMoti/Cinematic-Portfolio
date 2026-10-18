@@ -2,6 +2,7 @@
 
 import { useRef } from "react";
 import { MotionValue, useMotionValueEvent } from "framer-motion";
+import { FileDown } from "lucide-react";
 
 interface OverlayProps {
   scrollYProgress: MotionValue<number>;
@@ -75,7 +76,7 @@ export default function Overlay({ scrollYProgress, heroData }: OverlayProps) {
           {hSupport}
         </p>
 
-        <div className="flex flex-wrap items-center justify-center gap-4">
+        <div className="flex flex-wrap items-center justify-center gap-3.5">
           <a
             href="#projects"
             className="inline-flex items-center gap-2 bg-white text-black px-7 py-3.5 rounded-full font-medium text-sm hover:bg-gray-100 transition-transform hover:scale-105 shadow-lg"
@@ -87,6 +88,16 @@ export default function Overlay({ scrollYProgress, heroData }: OverlayProps) {
             className="inline-flex items-center gap-2 border border-white/15 bg-white/[0.04] backdrop-blur-md text-white px-7 py-3.5 rounded-full font-medium text-sm hover:bg-white/10 transition-colors"
           >
             <span>Contact Me</span>
+          </a>
+          <a
+            href="/resume.pdf"
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-2 border border-[#3594bd]/35 bg-[#3594bd]/10 hover:bg-[#3594bd]/20 backdrop-blur-md text-gray-200 hover:text-white px-6 py-3.5 rounded-full font-medium text-sm transition-all shadow-sm hover:scale-105"
+            title="Download or view Zakaria Bin Moti's Resume (PDF)"
+          >
+            <FileDown className="w-4 h-4 text-[#3594bd]" />
+            <span>Resume</span>
           </a>
         </div>
       </div>

@@ -14,6 +14,8 @@ import {
   Lock,
   Mail,
   Zap,
+  Download,
+  FileArchive,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Button, Input, Label, Card, Badge, PageHeader } from "../../_ui";
@@ -38,6 +40,33 @@ export default function SettingsClient({ email, system }: SettingsClientProps) {
   const [showCurrent, setShowCurrent] = useState(false);
   const [showNew, setShowNew] = useState(false);
   const [updating, setUpdating] = useState(false);
+  const [downloadingBackup, setDownloadingBackup] = useState(false);
+
+  const handleDownloadBackup = async () => {
+    setDownloadingBackup(true);
+    const toastId = toast.loading("Generating full database backup snapshot...");
+    try {
+      const res = await fetch("/api/admin/backup");
+      if (!res.ok) {
+        throw new Error("Backup generation failed. Please try again.");
+      }
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      const date = new Date().toISOString().split("T")[0];
+      a.download = `zakaria_portfolio_backup_${date}.json`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+      toast.success("Database backup successfully downloaded!", { id: toastId });
+    } catch (err: any) {
+      toast.error(err?.message || "Failed to download backup", { id: toastId });
+    } finally {
+      setDownloadingBackup(false);
+    }
+  };
 
   const handlePasswordSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -233,6 +262,39 @@ export default function SettingsClient({ email, system }: SettingsClientProps) {
               </div>
               <Badge tone="cyan">{system.nodeEnv}</Badge>
             </div>
+          </div>
+        </Card>
+
+        {/* Database Backup & Export Card */}
+        <Card className="p-6">
+          <div className="flex items-center justify-between pb-4 border-b border-white/5 flex-wrap gap-4">
+            <div className="flex items-center gap-3">
+              <span className="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">
+                <FileArchive className="h-5 w-5" />
+              </span>
+              <div>
+                <h3 className="text-base font-semibold text-white">Database Snapshot & Backup</h3>
+                <p className="text-xs text-[var(--a-text-muted)]">
+                  Export all 45+ projects, career timeline, skill matrices, and site copy as a portable JSON snapshot
+                </p>
+              </div>
+            </div>
+
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={handleDownloadBackup}
+              loading={downloadingBackup}
+              className="gap-2 border-emerald-500/30 text-emerald-300 hover:bg-emerald-500/10 hover:border-emerald-500/50"
+            >
+              <Download className="h-4 w-4" /> Export Backup (.json)
+            </Button>
+          </div>
+
+          <div className="mt-4 flex items-center justify-between text-xs text-gray-400 bg-white/[0.02] p-3 rounded-xl border border-white/5">
+            <span>Includes: Projects (45+), Work Experience, Skills Arsenal, Content Metrics</span>
+            <Badge tone="green">Encrypted Transit</Badge>
           </div>
         </Card>
       </div>
