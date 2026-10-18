@@ -632,6 +632,19 @@ export default function ProjectsSection({ projects }: { projects: ProjectItem[] 
                             ACTIVE SHOWCASE
                           </div>
                         )}
+                        {proj.liveLink && (
+                          <a
+                            href={proj.liveLink}
+                            target="_blank"
+                            rel="noreferrer"
+                            onClick={(e) => e.stopPropagation()}
+                            className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-all bg-black/80 hover:bg-white hover:text-black text-gray-200 text-[10px] font-mono font-medium px-2 py-1 rounded-md backdrop-blur-md flex items-center gap-1 shadow-lg border border-white/10 hover:scale-105 active:scale-95 z-10"
+                            title="Open live website in new tab"
+                          >
+                            <span>Live</span>
+                            <ArrowUpRight className="w-2.5 h-2.5" />
+                          </a>
+                        )}
                       </div>
 
                       {/* Title & Category */}

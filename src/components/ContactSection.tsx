@@ -1,8 +1,12 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
+import { Copy, Check, Mail } from "lucide-react";
 
 export default function ContactSection({ contactData }: { contactData?: any }) {
+  const [copied, setCopied] = useState(false);
+
   const headline = contactData?.headline || "Let's build something exceptional.";
   const description =
     contactData?.description ||
@@ -12,6 +16,18 @@ export default function ContactSection({ contactData }: { contactData?: any }) {
   const github = contactData?.github || "https://github.com/ZakariaBinMoti";
   const twitter = contactData?.twitter;
   const calendly = contactData?.calendly;
+
+  const handleCopyEmail = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    try {
+      await navigator.clipboard.writeText(email);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2500);
+    } catch {
+      // Fallback
+    }
+  };
 
   return (
     <section id="contact" className="bg-[#080a10] py-36 px-6 md:px-20 relative z-20 overflow-hidden">
@@ -69,12 +85,34 @@ export default function ContactSection({ contactData }: { contactData?: any }) {
           className="flex flex-wrap items-center justify-center gap-3.5"
         >
           {email && (
-            <a
-              href={`mailto:${email}`}
-              className="bg-white text-black px-8 py-3.5 rounded-full font-medium text-sm hover:bg-gray-100 hover:scale-105 transition-all shadow-lg"
-            >
-              {email}
-            </a>
+            <div className="inline-flex items-center bg-white text-black pl-6 pr-2 py-1.5 rounded-full font-medium text-sm shadow-xl hover:shadow-white/10 transition-all group">
+              <a
+                href={`mailto:${email}`}
+                className="hover:underline flex items-center gap-2 pr-2"
+                title="Send email via mail client"
+              >
+                <Mail className="w-4 h-4 text-gray-700" />
+                <span>{email}</span>
+              </a>
+              <button
+                type="button"
+                onClick={handleCopyEmail}
+                className="w-9 h-9 rounded-full bg-black/[0.06] hover:bg-black/[0.12] flex items-center justify-center text-black transition-all active:scale-90 relative"
+                title="Copy email to clipboard"
+                aria-label="Copy email address"
+              >
+                {copied ? (
+                  <Check className="w-4 h-4 text-emerald-600" />
+                ) : (
+                  <Copy className="w-4 h-4 text-gray-700 group-hover:scale-105 transition-transform" />
+                )}
+                {copied && (
+                  <span className="absolute -top-10 left-1/2 -translate-x-1/2 bg-black text-white text-[11px] font-mono px-2.5 py-1 rounded-md shadow-2xl whitespace-nowrap pointer-events-none animate-in fade-in zoom-in-95 duration-150">
+                    Copied to clipboard!
+                  </span>
+                )}
+              </button>
+            </div>
           )}
           {linkedin && (
             <a
@@ -121,7 +159,11 @@ export default function ContactSection({ contactData }: { contactData?: any }) {
       
       <div className="mt-28 text-center text-gray-600 text-xs">
         <p>© {new Date().getFullYear()} Zakaria Bin Moti. All rights reserved.</p>
-        <a href="/admin/login" className="hover:text-gray-400 transition-colors mt-2 inline-block">
+        <a 
+          href="/admin/login" 
+          rel="nofollow" 
+          className="hover:text-gray-400 transition-colors mt-2 inline-block opacity-60 hover:opacity-100"
+        >
           Admin Studio
         </a>
       </div>
