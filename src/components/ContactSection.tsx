@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
-import { Copy, Check, Mail, FileDown } from "lucide-react";
+import { Copy, Check, Mail, FileText, ArrowUpRight } from "lucide-react";
 
 export default function ContactSection({ contactData }: { contactData?: any }) {
   const [copied, setCopied] = useState(false);
@@ -38,25 +37,13 @@ export default function ContactSection({ contactData }: { contactData?: any }) {
           className="absolute top-0 inset-x-12 h-[1px] bg-gradient-to-r from-transparent via-[#3594bd]/50 via-white/20 to-[#f6602d]/50 opacity-80" 
         />
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="mb-6"
-        >
+        <div className="mb-6">
           <span className="text-xs font-mono uppercase tracking-widest text-gray-500">
             06 // Get in Touch
           </span>
-        </motion.div>
+        </div>
 
-        <motion.h2 
-          initial={{ opacity: 0, y: 25 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.7 }}
-          className="text-4xl sm:text-6xl md:text-7xl font-bold tracking-tight text-white mb-6"
-        >
+        <h2 className="text-4xl sm:text-6xl md:text-7xl font-bold tracking-tight text-white mb-6">
           {headline.includes("exceptional") ? (
             <>
               Let&apos;s build<br />something <span className="text-gray-500">exceptional.</span>
@@ -64,107 +51,114 @@ export default function ContactSection({ contactData }: { contactData?: any }) {
           ) : (
             headline
           )}
-        </motion.h2>
+        </h2>
         
-        <motion.p
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.7, delay: 0.15 }}
-          className="text-base sm:text-lg text-gray-400 mb-12 max-w-2xl mx-auto font-light leading-relaxed"
-        >
+        <p className="text-base sm:text-lg text-gray-400 mb-12 max-w-2xl mx-auto font-light leading-relaxed">
           {description}
-        </motion.p>
+        </p>
         
-        {/* Spatial Action Buttons */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.7, delay: 0.3 }}
-          className="flex flex-wrap items-center justify-center gap-3.5"
-        >
-          {email && (
-            <div className="inline-flex items-center bg-white text-black pl-6 pr-2 py-1.5 rounded-full font-medium text-sm shadow-xl hover:shadow-white/10 transition-all group">
+        {/* Spatial Action Buttons with Professional Hierarchy */}
+        <div className="flex flex-col items-center gap-5">
+          {/* Primary Row: High-Intent Actions (Direct Contact & Verified Credentials) */}
+          <div className="flex flex-wrap items-center justify-center gap-3.5">
+            {/* Email with 1-Click Copy */}
+            {email && (
+              <div className="inline-flex items-center bg-white text-black pl-6 pr-2 py-1.5 rounded-full font-medium text-sm shadow-xl hover:shadow-white/10 transition-all group">
+                <a
+                  href={`mailto:${email}`}
+                  className="hover:underline flex items-center gap-2 pr-2"
+                  title="Send email via mail client"
+                >
+                  <Mail className="w-4 h-4 text-gray-700" />
+                  <span>{email}</span>
+                </a>
+                <button
+                  type="button"
+                  onClick={handleCopyEmail}
+                  className="w-9 h-9 rounded-full bg-black/[0.06] hover:bg-black/[0.12] flex items-center justify-center text-black transition-all active:scale-90 relative"
+                  title="Copy email to clipboard"
+                  aria-label="Copy email address"
+                >
+                  {copied ? (
+                    <Check className="w-4 h-4 text-emerald-600" />
+                  ) : (
+                    <Copy className="w-4 h-4 text-gray-700 group-hover:scale-105 transition-transform" />
+                  )}
+                  {copied && (
+                    <span className="absolute -top-10 left-1/2 -translate-x-1/2 bg-black text-white text-[11px] font-mono px-2.5 py-1 rounded-md shadow-2xl whitespace-nowrap pointer-events-none animate-in fade-in zoom-in-95 duration-150">
+                      Copied to clipboard!
+                    </span>
+                  )}
+                </button>
+              </div>
+            )}
+
+            {/* Standout Resume / CV Button */}
+            <a
+              href="/Zakaria_Bin_Moti_Resume.pdf"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2.5 border border-[#3594bd]/45 bg-[#3594bd]/10 hover:bg-[#3594bd]/20 hover:border-[#3594bd]/70 text-white px-7 py-3.5 rounded-full font-medium text-sm transition-all shadow-[0_0_25px_rgba(53,148,189,0.2)] hover:scale-105 active:scale-95 group"
+              title="Open or download Zakaria Bin Moti's Resume (PDF)"
+            >
+              <FileText className="w-4 h-4 text-[#3594bd] group-hover:scale-110 transition-transform" />
+              <span>Download CV (PDF)</span>
+              <ArrowUpRight className="w-3.5 h-3.5 text-gray-400 group-hover:text-white transition-colors" />
+            </a>
+
+            {/* Book Call (Calendly if set) */}
+            {calendly && (
               <a
-                href={`mailto:${email}`}
-                className="hover:underline flex items-center gap-2 pr-2"
-                title="Send email via mail client"
+                href={calendly}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 border border-white/15 bg-white/[0.04] hover:bg-white/10 text-white px-6 py-3.5 rounded-full font-medium text-sm transition-all hover:scale-105"
               >
-                <Mail className="w-4 h-4 text-gray-700" />
-                <span>{email}</span>
+                <span>Book Call</span>
+                <ArrowUpRight className="w-3.5 h-3.5 text-gray-400" />
               </a>
-              <button
-                type="button"
-                onClick={handleCopyEmail}
-                className="w-9 h-9 rounded-full bg-black/[0.06] hover:bg-black/[0.12] flex items-center justify-center text-black transition-all active:scale-90 relative"
-                title="Copy email to clipboard"
-                aria-label="Copy email address"
-              >
-                {copied ? (
-                  <Check className="w-4 h-4 text-emerald-600" />
-                ) : (
-                  <Copy className="w-4 h-4 text-gray-700 group-hover:scale-105 transition-transform" />
-                )}
-                {copied && (
-                  <span className="absolute -top-10 left-1/2 -translate-x-1/2 bg-black text-white text-[11px] font-mono px-2.5 py-1 rounded-md shadow-2xl whitespace-nowrap pointer-events-none animate-in fade-in zoom-in-95 duration-150">
-                    Copied to clipboard!
-                  </span>
-                )}
-              </button>
+            )}
+          </div>
+
+          {/* Secondary Row: Social Profiles */}
+          {(linkedin || github || twitter) && (
+            <div className="flex flex-wrap items-center justify-center gap-2.5 pt-1">
+              {linkedin && (
+                <a
+                  href={linkedin}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="border border-white/10 bg-white/[0.03] text-gray-400 hover:text-white hover:bg-white/[0.08] hover:border-white/20 px-5 py-2.5 rounded-full font-medium text-xs transition-all flex items-center gap-1.5"
+                >
+                  <span>LinkedIn</span>
+                  <ArrowUpRight className="w-3 h-3 opacity-60" />
+                </a>
+              )}
+              {github && (
+                <a
+                  href={github}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="border border-white/10 bg-white/[0.03] text-gray-400 hover:text-white hover:bg-white/[0.08] hover:border-white/20 px-5 py-2.5 rounded-full font-medium text-xs transition-all flex items-center gap-1.5"
+                >
+                  <span>GitHub</span>
+                  <ArrowUpRight className="w-3 h-3 opacity-60" />
+                </a>
+              )}
+              {twitter && (
+                <a
+                  href={twitter}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="border border-white/10 bg-white/[0.03] text-gray-400 hover:text-white hover:bg-white/[0.08] hover:border-white/20 px-5 py-2.5 rounded-full font-medium text-xs transition-all flex items-center gap-1.5"
+                >
+                  <span>X / Twitter</span>
+                  <ArrowUpRight className="w-3 h-3 opacity-60" />
+                </a>
+              )}
             </div>
           )}
-          {linkedin && (
-            <a
-              href={linkedin}
-              target="_blank"
-              rel="noreferrer"
-              className="border border-white/10 bg-white/[0.03] text-gray-300 hover:text-white hover:bg-white/[0.08] px-6 py-3.5 rounded-full font-medium text-sm transition-all"
-            >
-              LinkedIn
-            </a>
-          )}
-          {github && (
-            <a
-              href={github}
-              target="_blank"
-              rel="noreferrer"
-              className="border border-white/10 bg-white/[0.03] text-gray-300 hover:text-white hover:bg-white/[0.08] px-6 py-3.5 rounded-full font-medium text-sm transition-all"
-            >
-              GitHub
-            </a>
-          )}
-          {twitter && (
-            <a
-              href={twitter}
-              target="_blank"
-              rel="noreferrer"
-              className="border border-white/10 bg-white/[0.03] text-gray-300 hover:text-white hover:bg-white/[0.08] px-6 py-3.5 rounded-full font-medium text-sm transition-all"
-            >
-              X / Twitter
-            </a>
-          )}
-          {calendly && (
-            <a
-              href={calendly}
-              target="_blank"
-              rel="noreferrer"
-              className="border border-[#3594bd]/30 bg-[#3594bd]/10 text-[#45abcb] hover:bg-[#3594bd]/20 px-6 py-3.5 rounded-full font-medium text-sm transition-all"
-            >
-              Book Call
-            </a>
-          )}
-          <a
-            href="/resume.pdf"
-            target="_blank"
-            rel="noreferrer"
-            className="border border-[#3594bd]/30 bg-[#3594bd]/10 hover:bg-[#3594bd]/20 text-[#93c5fd] px-6 py-3.5 rounded-full font-medium text-sm transition-all flex items-center gap-2 shadow-sm hover:scale-105"
-            title="Download or view Zakaria Bin Moti's Resume (PDF)"
-          >
-            <FileDown className="w-4 h-4 text-[#3594bd]" />
-            <span>Resume / CV</span>
-          </a>
-        </motion.div>
+        </div>
       </div>
       
       <div className="mt-28 text-center text-gray-600 text-xs">
