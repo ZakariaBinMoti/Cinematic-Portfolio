@@ -316,7 +316,7 @@ By enforcing fixed aspect-ratio image containers in Tailwind CSS and pre-allocat
     summary:
       "A deep engineering breakdown of how unoptimized Liquid loops, nested queries, and third-party script fatigue destroy store conversion rates—and how to fix them.",
     coverImage:
-      "https://res.cloudinary.com/daysiptql/image/upload/v1792390736/portfolio/blog/shopify_speed_liquid.jpg",
+      "https://res.cloudinary.com/daysiptql/image/upload/v1792400215/portfolio/blog/shopify_speed_liquid.jpg",
     category: "Shopify & Liquid",
     tags: ["Shopify Performance", "Liquid Optimization", "Core Web Vitals", "Web Architecture"],
     publishedAt: "2026-02-14T00:00:00.000Z",
@@ -403,7 +403,7 @@ High-converting eCommerce engineering is about **subtraction, not addition**. By
     summary:
       "Beyond generic chatbots: practical ways modern software engineers leverage AI for automated catalog enrichment, real-time visual search, and predictive personalized merchandising.",
     coverImage:
-      "https://res.cloudinary.com/daysiptql/image/upload/v1792390742/portfolio/blog/ecommerce_ai_future.jpg",
+      "https://res.cloudinary.com/daysiptql/image/upload/v1792400217/portfolio/blog/ecommerce_ai_future.jpg",
     category: "AI & Automation",
     tags: ["AI in Commerce", "Shopify API", "Automation", "Future of Web"],
     publishedAt: "2026-03-01T00:00:00.000Z",
@@ -459,7 +459,7 @@ AI shouldn't replace your brand identity—it should eliminate operational frict
     summary:
       "When does a brand actually need a Next.js headless storefront, and when is native Shopify Liquid the faster, more profitable choice? A realistic breakdown without the tech hype.",
     coverImage:
-      "https://res.cloudinary.com/daysiptql/image/upload/v1792390745/portfolio/blog/headless_vs_liquid.jpg",
+      "https://res.cloudinary.com/daysiptql/image/upload/v1792400219/portfolio/blog/headless_vs_liquid.jpg",
     category: "Full-Stack & Next.js",
     tags: ["Headless Commerce", "Next.js", "Shopify Storefront API", "Architecture"],
     publishedAt: "2026-01-20T00:00:00.000Z",
@@ -510,6 +510,189 @@ Choose headless architecture if:
 ## Conclusion
 
 Great software engineering is not about using the newest, most complex stack. It is about **choosing the highest-leverage tool that drives the greatest business profit with the lowest maintenance burden.**
+    `,
+  },
+
+  // 4. Shopify Technical SEO & Structured Data Guide
+  {
+    title: "The Ultimate Shopify Technical SEO Guide: Schema Markup, JSON-LD & Crawl Budget in 2026",
+    slug: "shopify-technical-seo-schema-markup-crawl-budget-guide",
+    type: "blog",
+    summary:
+      "A senior engineer's masterclass on Shopify technical SEO: fixing collection pagination canonicals, implementing rich JSON-LD Product & Review schemas, and optimizing crawl budget for 10,000+ SKU catalogs.",
+    coverImage:
+      "https://res.cloudinary.com/daysiptql/image/upload/v1792400220/portfolio/blog/shopify_technical_seo.jpg",
+    category: "Shopify SEO & Growth",
+    tags: ["Shopify SEO", "JSON-LD Schema", "Technical SEO", "Crawl Budget", "Rich Snippets", "eCommerce Growth"],
+    publishedAt: "2026-03-15T00:00:00.000Z",
+    isPublished: true,
+    readingTime: "8 min read",
+    authorName: "Zakaria Bin Moti",
+    authorRole: "Lead Software Engineer & Shopify Architect",
+    content: `
+Most eCommerce merchants believe SEO is just writing keyword-stuffed product descriptions and building backlinks.
+
+For modern 7-figure stores, **technical architecture is the true SEO battlefield**. If Googlebot cannot parse your collection hierarchies, wastes crawl budget on infinite faceted filter URLs, or encounters broken JSON-LD syntax, your organic rankings will continuously deteriorate regardless of content quality.
+
+Having engineered and audited over 250+ production Shopify storefronts, here is the complete technical SEO playbook I implement for enterprise clients.
+
+---
+
+## 1. The Duplicate Collection URL Flaw (And The 1-Line Liquid Fix)
+
+By default, Shopify links products within collections using the nested collection path:
+\`\`\`
+/collections/mens-leather-boots/products/timberland-pro-boot
+\`\`\`
+While the canonical tag points to \`/products/timberland-pro-boot\`, internal link equity is diluted across thousands of duplicate URLs, and Google's crawl budget is squandered crawling duplicate variants.
+
+### The Pure Liquid Fix
+In your collection grid product cards (\`product-card.liquid\` or \`card-product.liquid\`), update the product URL filter from \`product.url\` to \`product.url | within: nil\`:
+
+\`\`\`liquid
+{% comment %} ❌ BAD: Generates /collections/xyz/products/abc {% endcomment %}
+<a href="{{ product.url }}">{{ product.title }}</a>
+
+{% comment %} ✅ CORRECT: Always points directly to canonical root {% endcomment %}
+<a href="{{ product.url | within: nil }}">{{ product.title }}</a>
+\`\`\`
+This single architectural change consolidates 100% of internal link equity directly to your primary product canonicals.
+
+---
+
+## 2. Dynamic JSON-LD Structured Data for Google Rich Snippets
+
+Google Search Results with **star ratings, price in-stock badges, and merchant attributes** receive up to **35% higher click-through rates (CTR)** than plain text links.
+
+Do not rely on bloated SEO apps that inject render-blocking JavaScript to print schema markup. Instead, render pure JSON-LD server-side directly in Liquid:
+
+\`\`\`liquid
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org/",
+  "@type": "Product",
+  "name": {{ product.title | json }},
+  "image": [{{ product.featured_image | image_url: width: 1200 | json }}],
+  "description": {{ product.description | strip_html | truncatewords: 40 | json }},
+  "sku": {{ product.selected_or_first_available_variant.sku | json }},
+  "brand": {
+    "@type": "Brand",
+    "name": {{ product.vendor | json }}
+  },
+  "offers": {
+    "@type": "Offer",
+    "priceCurrency": {{ cart.currency.iso_code | json }},
+    "price": "{{ product.selected_or_first_available_variant.price | money_without_currency | remove: ',' }}",
+    "availability": "{% if product.available %}https://schema.org/InStock{% else %}https://schema.org/OutOfStock{% endif %}",
+    "url": "{{ shop.url }}{{ product.url }}",
+    "priceValidUntil": "{{ 'now' | date: '%s' | plus: 31536000 | date: '%Y-%m-%d' }}"
+  }
+}
+</script>
+\`\`\`
+
+---
+
+## 3. Preserving Crawl Budget on Faceted Filter URLs
+
+When stores enable search and discovery filters (color, size, price, availability), Shopify generates endless URL permutations:
+\`\`\`
+/collections/jackets?filter.v.option.color=Black&filter.v.price.gte=100
+\`\`\`
+Googlebot can get trapped crawling millions of parameter variations. 
+
+### How We Handle Faceted Indexation:
+1. Ensure your \`robots.txt.liquid\` disallows query strings with \`filter.v.\` parameters.
+2. In your \`theme.liquid\`, dynamically inject \`<meta name="robots" content="noindex, follow">\` whenever collection filter parameters are detected. This allows search engines to follow links to individual products while preventing thin filter archives from polluting Google's index.
+
+---
+
+## 4. Sub-Second Core Web Vitals as a Direct Ranking Signal
+
+Google's Page Experience ranking algorithm explicitly penalizes slow mobile storefronts. If your **Largest Contentful Paint (LCP)** exceeds 2.5 seconds or **Cumulative Layout Shift (CLS)** exceeds 0.1, your rankings are suppressed against faster competitors.
+
+By keeping third-party tracking scripts deferred and pre-allocating aspect-ratio dimensions on media containers, your store secures the elusive green **90+ mobile Lighthouse score**, giving you a direct competitive edge in organic search.
+    `,
+  },
+
+  // 5. Custom Shopify Theme vs Pre-Built Themes
+  {
+    title: "Custom Shopify Theme vs. Pre-Built Themes: Why 7-Figure Brands Outgrow Off-the-Shelf Templates",
+    slug: "custom-shopify-theme-vs-prebuilt-themes-architect-guide",
+    type: "blog",
+    summary:
+      "Why relying on $350 ThemeForest or app-bloated templates destroys long-term profitability. A financial and architectural analysis of when and why high-growth DTC brands invest in bespoke Shopify development.",
+    coverImage:
+      "https://res.cloudinary.com/daysiptql/image/upload/v1792400221/portfolio/blog/custom_vs_prebuilt_theme.jpg",
+    category: "Shopify & Liquid",
+    tags: ["Custom Shopify Theme", "Shopify Development", "eCommerce ROI", "Web Architecture", "CRO"],
+    publishedAt: "2026-03-22T00:00:00.000Z",
+    isPublished: true,
+    readingTime: "7 min read",
+    authorName: "Zakaria Bin Moti",
+    authorRole: "Lead Software Engineer & Shopify Architect",
+    content: `
+When launching a brand on Shopify, buying a $350 off-the-shelf theme from the Shopify Theme Store or ThemeForest is the standard recommendation.
+
+For early-stage stores doing under $10,000 a month, pre-built themes are adequate. But once a brand scales past **$50,000 to $500,000+ a month**, that pre-built theme shifts from an asset into your largest commercial bottleneck.
+
+Here is an architectural and financial breakdown of why 7-figure eCommerce brands outgrow pre-built themes, and the exact mathematical ROI of bespoke engineering.
+
+---
+
+## 1. The "Feature Bloat" Tax of Multi-Purpose Themes
+
+Commercial theme marketplaces compete on feature lists. To appeal to fashion stores, electronics retailers, and pet supply brands simultaneously, a single pre-built theme includes:
+* 50+ unused mega-menu variations
+* Redundant jQuery animation libraries
+* Heavy slider scripts (Slick, Swiper, Flickity bundled together)
+* 5,000+ lines of uncompressed generic CSS
+
+**Over 80% of the code downloaded by a mobile shopper's phone is never used.** This unneeded bloat drags mobile Google Lighthouse scores down to 30-45/100, which according to Google, slashes mobile conversion rates by 20% to 35%.
+
+---
+
+## 2. The Third-Party App Trap ($3,000+ / Year in Hidden Costs)
+
+Because off-the-shelf themes cannot accommodate brand-specific business logic, founders install an app for every missing feature:
+* An app for countdown timers ($15/mo)
+* An app for product tabs ($10/mo)
+* An app for slide-out cart upsells ($30/mo)
+* An app for swatch selectors ($20/mo)
+* An app for size charts ($10/mo)
+
+Within 12 months, the merchant is paying **$2,500 – $5,000 annually** in recurring app fees. More critically, each app injects separate tracking scripts that conflict with one another, causing random checkout crashes and layout shifts.
+
+### The Bespoke Alternative
+In a custom-built Shopify OS 2.0 theme, every single one of these components is built **100% natively in pure Liquid and modern Vanilla JavaScript**. The store achieves sub-second performance, zero third-party subscription overhead, and complete brand control.
+
+---
+
+## 3. The Financial Mathematics of Custom Development
+
+Consider a Shopify store generating **$150,000 / month** on a generic theme with a 2.1% conversion rate and a 4.2-second load time.
+
+\`\`\`
+Current Store Performance:
+• Monthly Revenue: $150,000
+• Conversion Rate: 2.1%
+• Page Load Time: 4.2s (Lighthouse: 39/100)
+
+After Custom Architecture Overhaul:
+• Page Load Time: 0.8s (Lighthouse: 97/100)
+• Conservative CRO Lift (+0.5%): New CVR 2.6%
+• Monthly Revenue Lift: +$35,700 / month
+• Annual Incremental Profit: +$428,400 / year
+\`\`\`
+
+A bespoke theme engineering engagement ($8k – $20k) pays for itself within **30 to 60 days**. From that point forward, the lift in conversion rate is pure profit compounding every month.
+
+---
+
+## Conclusion: When Should You Invest in a Custom Theme?
+
+* **Stay with pre-built if:** You are pre-revenue, validating product-market fit, or doing under $15k/month.
+* **Invest in bespoke engineering if:** You are scaling paid ads (Meta/Google), your mobile Lighthouse score is below 60, you are bleeding thousands in app subscriptions, or your brand identity requires a bespoke luxury experience that pre-built templates cannot replicate.
     `,
   },
 ];
