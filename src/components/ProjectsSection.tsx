@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
+import Link from "next/link";
 import { 
   Search, 
   ChevronLeft, 
@@ -16,6 +17,16 @@ import {
   ExternalLink
 } from "lucide-react";
 import { getOptimizedImageUrl } from "@/lib/media";
+
+// Match project titles to detailed case studies
+function getCaseStudySlug(title?: string): string | null {
+  if (!title) return null;
+  const t = title.toLowerCase();
+  if (t.includes("becca")) return "beccas-bags-luxury-consignment-rental-shopify";
+  if (t.includes("organic wonder")) return "organic-wonders-uk-superfood-cro-optimization";
+  if (t.includes("k-zone") || t.includes("kzone")) return "k-zone-studio-global-lifestyle-ecommerce";
+  return null;
+}
 
 interface ProjectItem {
   _id?: string;
@@ -370,6 +381,17 @@ export default function ProjectsSection({ projects }: { projects: ProjectItem[] 
                       </a>
                     )}
 
+                    {getCaseStudySlug(activeProject.title) && (
+                      <Link
+                        href={`/case-studies/${getCaseStudySlug(activeProject.title)}`}
+                        className="inline-flex items-center gap-2 border border-[#3594bd]/45 bg-[#3594bd]/10 hover:bg-[#3594bd]/20 hover:border-[#3594bd]/70 text-white px-6 py-3 rounded-full font-medium text-sm transition-all shadow-[0_0_20px_rgba(53,148,189,0.2)] hover:scale-105 active:scale-95 group"
+                      >
+                        <Sparkles className="w-3.5 h-3.5 text-[#3594bd]" />
+                        <span>Case Study</span>
+                        <ArrowUpRight className="w-3.5 h-3.5 text-gray-400 group-hover:text-white transition-colors" />
+                      </Link>
+                    )}
+
                     <button
                       type="button"
                       onClick={() => {
@@ -678,6 +700,18 @@ export default function ProjectsSection({ projects }: { projects: ProjectItem[] 
                       </div>
 
                       <div className="flex items-center gap-2">
+                        {getCaseStudySlug(proj.title) && (
+                          <Link
+                            href={`/case-studies/${getCaseStudySlug(proj.title)}`}
+                            onClick={(e) => e.stopPropagation()}
+                            className="text-[10px] font-mono text-[#3594bd] hover:text-white bg-[#3594bd]/10 hover:bg-[#3594bd]/20 px-2 py-0.5 rounded border border-[#3594bd]/25 transition-colors flex items-center gap-1"
+                            title="Read in-depth case study"
+                          >
+                            <span>Study</span>
+                            <ArrowUpRight className="w-2.5 h-2.5" />
+                          </Link>
+                        )}
+
                         {proj.liveLink && (
                           <a
                             href={proj.liveLink}

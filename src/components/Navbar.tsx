@@ -1,16 +1,22 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { FileText, ArrowUpRight } from "lucide-react";
 
 export default function Navbar() {
+  const pathname = usePathname();
+  const isHome = pathname === "/";
+
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState("hero");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
+    if (!isHome) return;
+
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);
 
@@ -31,16 +37,25 @@ export default function Navbar() {
 
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [isHome]);
 
-  const navLinks = [
-    { id: "hero", label: "Overview", href: "#" },
-    { id: "about", label: "About", href: "#about" },
-    { id: "projects", label: "Projects", href: "#projects" },
-    { id: "skills", label: "Stack", href: "#skills" },
-    { id: "experience", label: "Experience", href: "#experience" },
-    { id: "contact", label: "Contact", href: "#contact" },
-  ];
+  const navLinks = isHome
+    ? [
+        { id: "hero", label: "Overview", href: "#" },
+        { id: "about", label: "About", href: "#about" },
+        { id: "projects", label: "Projects", href: "#projects" },
+        { id: "case-studies", label: "Case Studies", href: "/case-studies" },
+        { id: "skills", label: "Stack", href: "#skills" },
+        { id: "blog", label: "Blog", href: "/blog" },
+        { id: "contact", label: "Contact", href: "#contact" },
+      ]
+    : [
+        { id: "home", label: "Home", href: "/" },
+        { id: "projects", label: "Projects", href: "/#projects" },
+        { id: "case-studies", label: "Case Studies", href: "/case-studies" },
+        { id: "blog", label: "Blog", href: "/blog" },
+        { id: "contact", label: "Contact", href: "/#contact" },
+      ];
 
   return (
     <>
@@ -54,8 +69,10 @@ export default function Navbar() {
         >
           {/* Brand Avatar */}
           <a
-            href="#"
-            onClick={() => setActiveSection("hero")}
+            href={isHome ? "#" : "/"}
+            onClick={() => {
+              if (isHome) setActiveSection("hero");
+            }}
             className="relative flex items-center justify-center w-8 h-8 rounded-full overflow-hidden border border-white/20 hover:border-white/40 transition-all ml-1 hover:scale-105 shadow-[0_0_12px_rgba(53,148,189,0.3)] shrink-0 outline-none"
             aria-label="Home"
           >
@@ -72,12 +89,17 @@ export default function Navbar() {
           {/* Desktop Nav Items */}
           <div className="hidden md:flex items-center gap-1 px-1">
             {navLinks.map((link) => {
-              const isActive = activeSection === link.id;
+              const isActive = isHome
+                ? activeSection === link.id
+                : link.href === pathname || (link.href !== "/" && pathname.startsWith(link.href));
+
               return (
                 <a
                   key={link.id}
                   href={link.href}
-                  onClick={() => setActiveSection(link.id)}
+                  onClick={() => {
+                    if (isHome) setActiveSection(link.id);
+                  }}
                   className={`px-3.5 py-1.5 rounded-full text-xs font-medium border transition-colors duration-200 outline-none focus:outline-none ${
                     isActive
                       ? "bg-white/[0.12] text-white shadow-[0_0_15px_rgba(255,255,255,0.08)] border-white/15"
@@ -92,8 +114,10 @@ export default function Navbar() {
 
           {/* Availability Pill */}
           <a
-            href="#contact"
-            onClick={() => setActiveSection("contact")}
+            href={isHome ? "#contact" : "/#contact"}
+            onClick={() => {
+              if (isHome) setActiveSection("contact");
+            }}
             className="hidden sm:inline-flex items-center gap-2 pl-3 pr-3.5 py-1.5 rounded-full bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-xs font-medium text-gray-300 transition-colors mr-1 outline-none"
           >
             <span className="w-1.5 h-1.5 rounded-full bg-[#3594bd] shadow-[0_0_8px_rgba(53,148,189,0.8)]" />
@@ -128,23 +152,29 @@ export default function Navbar() {
             className="fixed top-20 inset-x-4 z-50 md:hidden bg-[#080a10]/95 backdrop-blur-2xl border border-white/10 rounded-2xl p-4 shadow-2xl pointer-events-auto"
           >
             <div className="flex flex-col gap-1.5">
-              {navLinks.map((link) => (
-                <a
-                  key={link.id}
-                  href={link.href}
-                  onClick={() => {
-                    setActiveSection(link.id);
-                    setMobileMenuOpen(false);
-                  }}
-                  className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
-                    activeSection === link.id
-                      ? "bg-white/10 text-white"
-                      : "text-gray-300 hover:text-white hover:bg-white/5"
-                  }`}
-                >
-                  {link.label}
-                </a>
-              ))}
+              {navLinks.map((link) => {
+                const isActive = isHome
+                  ? activeSection === link.id
+                  : link.href === pathname || (link.href !== "/" && pathname.startsWith(link.href));
+
+                return (
+                  <a
+                    key={link.id}
+                    href={link.href}
+                    onClick={() => {
+                      if (isHome) setActiveSection(link.id);
+                      setMobileMenuOpen(false);
+                    }}
+                    className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+                      isActive
+                        ? "bg-white/10 text-white"
+                        : "text-gray-300 hover:text-white hover:bg-white/5"
+                    }`}
+                  >
+                    {link.label}
+                  </a>
+                );
+              })}
             </div>
 
             {/* Direct Mobile Resume Access */}
