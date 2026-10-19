@@ -21,6 +21,7 @@ import {
   BarChart3,
   Calendar,
   Building,
+  FolderKanban,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Button, Input, Badge, PageHeader, Card } from "../../_ui";
@@ -44,6 +45,7 @@ interface CaseStudy {
   summary: string;
   content: string;
   coverImage?: string;
+  projectId?: string;
   clientName?: string;
   clientUrl?: string;
   projectYear?: string;
@@ -59,8 +61,10 @@ interface CaseStudy {
 
 export default function CaseStudiesManager({
   initialCaseStudies,
+  availableProjects = [],
 }: {
   initialCaseStudies: CaseStudy[];
+  availableProjects?: any[];
 }) {
   const searchParams = useSearchParams();
   const [caseStudies, setCaseStudies] = useState<CaseStudy[]>(initialCaseStudies);
@@ -623,6 +627,7 @@ export default function CaseStudiesManager({
           setEditingCaseStudy(null);
         }}
         caseStudy={editingCaseStudy}
+        availableProjects={availableProjects}
         onSaved={(saved, isNew) => {
           if (isNew) {
             setCaseStudies([saved, ...caseStudies]);

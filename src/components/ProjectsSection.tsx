@@ -18,16 +18,6 @@ import {
 } from "lucide-react";
 import { getOptimizedImageUrl } from "@/lib/media";
 
-// Match project titles to detailed case studies
-function getCaseStudySlug(title?: string): string | null {
-  if (!title) return null;
-  const t = title.toLowerCase();
-  if (t.includes("coppins") || t.includes("motorcycle")) return "josh-coppins-motorcycles-oem-catalog-workshop-shopify";
-  if (t.includes("swell")) return "swell-sport-luxury-saunas-consultation-engine-shopify";
-  if (t.includes("becca")) return "beccas-bags-luxury-consignment-rental-shopify";
-  return null;
-}
-
 interface ProjectItem {
   _id?: string;
   title: string;
@@ -37,6 +27,22 @@ interface ProjectItem {
   imageUrl?: string;
   order?: number;
   isVisible?: boolean;
+  caseStudySlug?: string;
+}
+
+// Match project to detailed case studies (dynamic caseStudySlug or fallback title match)
+function getCaseStudySlug(project?: ProjectItem | string): string | null {
+  if (!project) return null;
+  if (typeof project === "object" && project.caseStudySlug) {
+    return project.caseStudySlug;
+  }
+  const title = typeof project === "string" ? project : project.title;
+  if (!title) return null;
+  const t = title.toLowerCase();
+  if (t.includes("coppins") || t.includes("motorcycle")) return "josh-coppins-motorcycles-oem-catalog-workshop-shopify";
+  if (t.includes("swell")) return "swell-sport-luxury-saunas-consultation-engine-shopify";
+  if (t.includes("becca")) return "beccas-bags-luxury-consignment-rental-shopify";
+  return null;
 }
 
 // Categorization helper with word-boundary regex for precision
@@ -381,9 +387,9 @@ export default function ProjectsSection({ projects }: { projects: ProjectItem[] 
                       </a>
                     )}
 
-                    {getCaseStudySlug(activeProject.title) && (
+                    {getCaseStudySlug(activeProject) && (
                       <Link
-                        href={`/case-studies/${getCaseStudySlug(activeProject.title)}`}
+                        href={`/case-studies/${getCaseStudySlug(activeProject)}`}
                         className="inline-flex items-center gap-2 border border-[#3594bd]/45 bg-[#3594bd]/10 hover:bg-[#3594bd]/20 hover:border-[#3594bd]/70 text-white px-6 py-3 rounded-full font-medium text-sm transition-all shadow-[0_0_20px_rgba(53,148,189,0.2)] hover:scale-105 active:scale-95 group"
                       >
                         <Sparkles className="w-3.5 h-3.5 text-[#3594bd]" />
@@ -700,9 +706,9 @@ export default function ProjectsSection({ projects }: { projects: ProjectItem[] 
                       </div>
 
                       <div className="flex items-center gap-2">
-                        {getCaseStudySlug(proj.title) && (
+                        {getCaseStudySlug(proj) && (
                           <Link
-                            href={`/case-studies/${getCaseStudySlug(proj.title)}`}
+                            href={`/case-studies/${getCaseStudySlug(proj)}`}
                             onClick={(e) => e.stopPropagation()}
                             className="text-[10px] font-mono text-[#3594bd] hover:text-white bg-[#3594bd]/10 hover:bg-[#3594bd]/20 px-2 py-0.5 rounded border border-[#3594bd]/25 transition-colors flex items-center gap-1"
                             title="Read in-depth case study"

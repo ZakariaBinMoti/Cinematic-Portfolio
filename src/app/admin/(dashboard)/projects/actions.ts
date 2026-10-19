@@ -47,6 +47,7 @@ export async function addProject(formData: FormData) {
   }
 
   const isVisible = formData.has("isVisible") ? formData.get("isVisible") === "true" : true;
+  const caseStudySlug = (formData.get("caseStudySlug") as string)?.trim() || undefined;
 
   const created = await Project.create({
     title,
@@ -57,6 +58,7 @@ export async function addProject(formData: FormData) {
     imageUrl,
     imagePublicId,
     isVisible,
+    caseStudySlug,
   });
 
   revalidatePath("/admin/projects");
@@ -83,6 +85,10 @@ export async function updateProject(id: string, formData: FormData) {
   if (!existing) return { success: false, error: "Project not found" };
 
   const updateData: any = { title, description, techStack, liveLink };
+
+  if (formData.has("caseStudySlug")) {
+    updateData.caseStudySlug = (formData.get("caseStudySlug") as string)?.trim() || "";
+  }
 
   if (formData.has("isVisible")) {
     updateData.isVisible = formData.get("isVisible") === "true";

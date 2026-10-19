@@ -21,6 +21,7 @@ export interface IPost extends Document {
   authorName?: string;
   authorRole?: string;
   // Case study specific fields
+  projectId?: string;
   clientName?: string;
   clientUrl?: string;
   projectYear?: string;
@@ -48,6 +49,7 @@ const PostSchema: Schema = new Schema(
     authorName: { type: String, default: 'Zakaria Bin Moti' },
     authorRole: { type: String, default: 'Lead Software Engineer & Shopify Architect' },
     // Case study specific
+    projectId: { type: String },
     clientName: { type: String },
     clientUrl: { type: String },
     projectYear: { type: String },

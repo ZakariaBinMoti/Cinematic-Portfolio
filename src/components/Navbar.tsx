@@ -45,6 +45,7 @@ export default function Navbar() {
         { id: "projects", label: "Projects", href: "#projects" },
         { id: "case-studies", label: "Case Studies", href: "/case-studies" },
         { id: "skills", label: "Stack", href: "#skills" },
+        { id: "experience", label: "Experience", href: "#experience" },
         { id: "blog", label: "Blog", href: "/blog" },
         { id: "contact", label: "Contact", href: "#contact" },
       ]
@@ -52,6 +53,7 @@ export default function Navbar() {
         { id: "home", label: "Home", href: "/" },
         { id: "projects", label: "Projects", href: "/#projects" },
         { id: "case-studies", label: "Case Studies", href: "/case-studies" },
+        { id: "experience", label: "Experience", href: "/#experience" },
         { id: "blog", label: "Blog", href: "/blog" },
         { id: "contact", label: "Contact", href: "/#contact" },
       ];

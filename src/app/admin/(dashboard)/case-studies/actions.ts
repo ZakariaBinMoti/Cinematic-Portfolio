@@ -3,6 +3,7 @@
 import dbConnect from "@/lib/mongodb";
 import { requireAdmin } from "@/lib/admin-auth";
 import Post from "@/models/Post";
+import Project from "@/models/Project";
 import { FALLBACK_POSTS } from "@/lib/posts";
 import { uploadImage, deleteImage } from "@/lib/cloudinary";
 import { revalidatePath } from "next/cache";
@@ -35,6 +36,22 @@ export async function getAdminCaseStudies() {
     }
   }
 
+  // Ensure default showcase projects have their caseStudySlug mapped
+  await Promise.all([
+    Project.updateOne(
+      { title: { $regex: /coppins|motorcycle/i }, caseStudySlug: { $exists: false } },
+      { $set: { caseStudySlug: "josh-coppins-motorcycles-oem-catalog-workshop-shopify" } }
+    ),
+    Project.updateOne(
+      { title: { $regex: /swell/i }, caseStudySlug: { $exists: false } },
+      { $set: { caseStudySlug: "swell-sport-luxury-saunas-consultation-engine-shopify" } }
+    ),
+    Project.updateOne(
+      { title: { $regex: /becca/i }, caseStudySlug: { $exists: false } },
+      { $set: { caseStudySlug: "beccas-bags-luxury-consignment-rental-shopify" } }
+    ),
+  ]);
+
   const items = await Post.find({ type: "case-study" })
     .sort({ order: 1, createdAt: -1 })
     .lean();
@@ -64,6 +81,7 @@ export async function addCaseStudy(formData: FormData) {
     slug = `${slug}-${Date.now().toString().slice(-4)}`;
   }
 
+  const projectId = (formData.get("projectId") as string)?.trim() || "";
   const summary = (formData.get("summary") as string)?.trim() || "";
   const content = (formData.get("content") as string)?.trim() || "";
   const clientName = (formData.get("clientName") as string)?.trim() || "";
@@ -124,6 +142,7 @@ export async function addCaseStudy(formData: FormData) {
     content,
     coverImage,
     coverImagePublicId,
+    projectId: projectId || undefined,
     clientName,
     clientUrl,
     projectYear,
@@ -139,9 +158,15 @@ export async function addCaseStudy(formData: FormData) {
     order,
   });
 
+  // If a project was selected, link this case study slug directly to that project
+  if (projectId) {
+    await Project.findByIdAndUpdate(projectId, { caseStudySlug: slug });
+  }
+
   revalidatePath("/case-studies");
   revalidatePath(`/case-studies/${slug}`);
   revalidatePath("/admin/case-studies");
+  revalidatePath("/admin/projects");
   revalidatePath("/admin");
   revalidatePath("/sitemap.xml");
   revalidatePath("/");
@@ -176,6 +201,7 @@ export async function updateCaseStudy(id: string, formData: FormData) {
     slug = `${slug}-${Date.now().toString().slice(-4)}`;
   }
 
+  const projectId = (formData.get("projectId") as string)?.trim() || "";
   const summary = (formData.get("summary") as string)?.trim() || "";
   const content = (formData.get("content") as string)?.trim() || "";
   const clientName = (formData.get("clientName") as string)?.trim() || "";
@@ -210,6 +236,7 @@ export async function updateCaseStudy(id: string, formData: FormData) {
   const updateData: any = {
     title,
     slug,
+    projectId: projectId || undefined,
     summary,
     content,
     clientName,
@@ -247,12 +274,24 @@ export async function updateCaseStudy(id: string, formData: FormData) {
     updateData.coverImage = coverImageUrl;
   }
 
+  // Handle project linking synchronization:
+  // If previously linked to a different project or slug changed, unbind old project
+  if (existing.projectId && (existing.projectId !== projectId || existing.slug !== slug)) {
+    await Project.findByIdAndUpdate(existing.projectId, { $unset: { caseStudySlug: 1 } });
+  }
+
+  // If newly linked or slug changed on current project
+  if (projectId) {
+    await Project.findByIdAndUpdate(projectId, { caseStudySlug: slug });
+  }
+
   const updated = await Post.findByIdAndUpdate(id, updateData, { new: true });
 
   revalidatePath("/case-studies");
   revalidatePath(`/case-studies/${existing.slug}`);
   revalidatePath(`/case-studies/${slug}`);
   revalidatePath("/admin/case-studies");
+  revalidatePath("/admin/projects");
   revalidatePath("/admin");
   revalidatePath("/sitemap.xml");
   revalidatePath("/");
@@ -287,11 +326,17 @@ export async function deleteCaseStudy(id: string) {
     await deleteImage(existing.coverImagePublicId);
   }
 
+  // Unbind linked project
+  if (existing.projectId) {
+    await Project.findByIdAndUpdate(existing.projectId, { $unset: { caseStudySlug: 1 } });
+  }
+
   await Post.findByIdAndDelete(id);
 
   revalidatePath("/case-studies");
   revalidatePath(`/case-studies/${existing.slug}`);
   revalidatePath("/admin/case-studies");
+  revalidatePath("/admin/projects");
   revalidatePath("/admin");
   revalidatePath("/sitemap.xml");
   revalidatePath("/");

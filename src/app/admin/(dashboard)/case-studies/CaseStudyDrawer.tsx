@@ -22,6 +22,7 @@ import {
   List,
   Table as TableIcon,
   Quote,
+  FolderKanban,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Button, Input, Textarea, Label, Badge, Card, Kbd } from "../../_ui";
@@ -36,6 +37,7 @@ interface CaseStudyDrawerProps {
   open: boolean;
   onClose: () => void;
   caseStudy: any | null;
+  availableProjects?: any[];
   onSaved: (caseStudy: any, isNew: boolean) => void;
 }
 
@@ -65,11 +67,13 @@ export default function CaseStudyDrawer({
   open,
   onClose,
   caseStudy,
+  availableProjects = [],
   onSaved,
 }: CaseStudyDrawerProps) {
   const isEditing = Boolean(caseStudy?._id);
 
   // Form states
+  const [selectedProjectId, setSelectedProjectId] = useState<string>("");
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
   const [clientName, setClientName] = useState("");
@@ -106,6 +110,7 @@ export default function CaseStudyDrawer({
   // Sync state on open / caseStudy change
   useEffect(() => {
     if (caseStudy) {
+      setSelectedProjectId(caseStudy.projectId || "");
       setTitle(caseStudy.title || "");
       setSlug(caseStudy.slug || "");
       setClientName(caseStudy.clientName || "");
@@ -133,6 +138,7 @@ export default function CaseStudyDrawer({
       setImageFile(null);
       setRemoveExistingImage(false);
     } else {
+      setSelectedProjectId("");
       setTitle("");
       setSlug("");
       setClientName("");
@@ -191,6 +197,33 @@ Explain the core architectural solution and code structure.
       setRemoveExistingImage(false);
     }
   }, [caseStudy, open]);
+
+  const handleAutofillFromProject = (pId: string) => {
+    const proj = (availableProjects || []).find((p: any) => p._id === pId);
+    if (!proj) return;
+    if (!clientName || clientName === "Client") setClientName(proj.title);
+    if ((!clientUrl || clientUrl === "") && proj.liveLink) setClientUrl(proj.liveLink);
+    if (!coverImageUrl && proj.imageUrl) {
+      setCoverImageUrl(proj.imageUrl);
+      setImagePreview(proj.imageUrl);
+    }
+    if (!title || title.trim() === "") {
+      setTitle(`${proj.title}: Engineering Scalable eCommerce Architecture`);
+      const generated = proj.title
+        .toLowerCase()
+        .trim()
+        .replace(/\s+/g, "-")
+        .replace(/&/g, "-and-")
+        .replace(/[^\w\-]+/g, "")
+        .replace(/\-\-+/g, "-");
+      setSlug(generated);
+    }
+    if (proj.techStack && proj.techStack.length > 0) {
+      const combined = Array.from(new Set([...tags, ...proj.techStack]));
+      setTags(combined);
+    }
+    toast.success(`Autofilled details from "${proj.title}"`);
+  };
 
   // Handle escape & Ctrl+Enter
   useEffect(() => {
@@ -320,6 +353,7 @@ Explain the core architectural solution and code structure.
       const formData = new FormData();
       formData.set("title", title);
       formData.set("slug", slug);
+      formData.set("projectId", selectedProjectId);
       formData.set("clientName", clientName);
       formData.set("clientUrl", clientUrl);
       formData.set("projectYear", projectYear);
@@ -434,6 +468,54 @@ Explain the core architectural solution and code structure.
 
             {/* Scrollable Form Body */}
             <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-6">
+              {/* Linked Portfolio Showcase Project Selector */}
+              <Card className="p-5 space-y-3 border-emerald-500/25 bg-emerald-500/[0.03]">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <FolderKanban className="h-4 w-4 text-emerald-400" />
+                    <h3 className="text-xs font-semibold uppercase tracking-wider text-emerald-400">
+                      Linked Portfolio Showcase Project
+                    </h3>
+                  </div>
+                  {selectedProjectId && (
+                    <button
+                      type="button"
+                      onClick={() => handleAutofillFromProject(selectedProjectId)}
+                      className="text-[11px] text-emerald-300 hover:text-white flex items-center gap-1 font-medium bg-emerald-500/15 px-2.5 py-1 rounded-md border border-emerald-500/30 transition-colors"
+                      title="Sync title, live link, and cover image from selected project"
+                    >
+                      <Sparkles className="h-3 w-3" /> Auto-fill Details
+                    </button>
+                  )}
+                </div>
+
+                <div>
+                  <Label htmlFor="cs-project-select">Select Existing Showcase Project</Label>
+                  <select
+                    id="cs-project-select"
+                    value={selectedProjectId}
+                    onChange={(e) => {
+                      const pId = e.target.value;
+                      setSelectedProjectId(pId);
+                      if (pId && (!title || title.trim() === "")) {
+                        handleAutofillFromProject(pId);
+                      }
+                    }}
+                    className="w-full rounded-xl bg-white/[0.04] border border-[var(--a-border)] px-3.5 py-2.5 text-sm text-[var(--a-text)] outline-none hover:border-emerald-500/40 focus:border-emerald-400 focus:bg-white/[0.07] transition-colors"
+                  >
+                    <option value="" className="bg-[#0e0e14] text-white">None (Standalone Case Study)</option>
+                    {(availableProjects || []).map((proj: any) => (
+                      <option key={proj._id} value={proj._id} className="bg-[#0e0e14] text-white">
+                        {proj.title}
+                      </option>
+                    ))}
+                  </select>
+                  <p className="mt-1.5 text-xs text-white/50">
+                    Selecting a project connects this case study to that project card in your homepage showcase and enables the <span className="text-emerald-400 font-medium">&quot;Case Study&quot;</span> button.
+                  </p>
+                </div>
+              </Card>
+
               {/* Primary Details Card */}
               <Card className="p-5 space-y-4">
                 <div className="flex items-center justify-between">

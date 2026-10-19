@@ -48,6 +48,7 @@ export default function ProjectDrawer({ open, onClose, project, onSaved }: Proje
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [liveLink, setLiveLink] = useState("");
+  const [caseStudySlug, setCaseStudySlug] = useState("");
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState("");
   const [isVisible, setIsVisible] = useState(true);
@@ -66,6 +67,7 @@ export default function ProjectDrawer({ open, onClose, project, onSaved }: Proje
       setTitle(project.title || "");
       setDescription(project.description || "");
       setLiveLink(project.liveLink || "");
+      setCaseStudySlug(project.caseStudySlug || "");
       setTags(Array.isArray(project.techStack) ? [...project.techStack] : []);
       setImagePreview(project.imageUrl || null);
       setImageFile(null);
@@ -75,6 +77,7 @@ export default function ProjectDrawer({ open, onClose, project, onSaved }: Proje
       setTitle("");
       setDescription("");
       setLiveLink("");
+      setCaseStudySlug("");
       setTags(["Shopify", "React"]);
       setImagePreview(null);
       setImageFile(null);
@@ -158,6 +161,7 @@ export default function ProjectDrawer({ open, onClose, project, onSaved }: Proje
       formData.set("title", title);
       formData.set("description", description);
       formData.set("liveLink", liveLink);
+      formData.set("caseStudySlug", caseStudySlug);
       formData.set("techStack", tags.join(","));
       formData.set("isVisible", String(isVisible));
 
@@ -389,6 +393,20 @@ export default function ProjectDrawer({ open, onClose, project, onSaved }: Proje
                   value={liveLink}
                   onChange={(e) => setLiveLink(e.target.value)}
                 />
+              </div>
+
+              {/* Linked Case Study Slug */}
+              <div>
+                <Label htmlFor="proj-case-study">Linked Case Study Slug (Optional)</Label>
+                <Input
+                  id="proj-case-study"
+                  placeholder="e.g. josh-coppins-motorcycles-oem-catalog-workshop-shopify"
+                  value={caseStudySlug}
+                  onChange={(e) => setCaseStudySlug(e.target.value)}
+                />
+                <p className="mt-1 text-[11px] text-white/40">
+                  Enables the glowing &quot;Case Study&quot; button on this project card linking directly to /case-studies/{caseStudySlug || "[slug]"}.
+                </p>
               </div>
 
               {/* Tech Stack Interactive Tag Input */}
