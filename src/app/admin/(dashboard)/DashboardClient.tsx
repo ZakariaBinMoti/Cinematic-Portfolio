@@ -17,6 +17,8 @@ import {
   Activity,
   Zap,
   Layers,
+  Award,
+  BookOpen,
 } from "lucide-react";
 import { Card, Badge, Button, Kbd, PageHeader } from "../_ui";
 
@@ -32,7 +34,7 @@ interface StatItem {
 
 interface ActivityItem {
   id: string;
-  type: "project" | "experience" | "skill" | "content";
+  type: string;
   title: string;
   action: string;
   timeAgo: string;
@@ -50,6 +52,8 @@ interface DashboardClientProps {
   stats: {
     projectsCount: number;
     projectsWithImages: number;
+    caseStudiesCount: number;
+    blogsCount: number;
     experiencesCount: number;
     skillsCount: number;
     skillsGroupCount: number;
@@ -106,12 +110,30 @@ export default function DashboardClient({
       glow: "rgba(139,92,246,0.15)",
     },
     {
+      title: "Case Studies",
+      count: stats.caseStudiesCount,
+      sub: "Client benchmarks & metrics",
+      icon: Award,
+      href: "/admin/case-studies",
+      accent: "from-emerald-500/20 to-teal-500/5",
+      glow: "rgba(16,185,129,0.15)",
+    },
+    {
+      title: "Blog Articles",
+      count: stats.blogsCount,
+      sub: "Technical SEO guides",
+      icon: BookOpen,
+      href: "/admin/blog",
+      accent: "from-cyan-500/20 to-blue-500/5",
+      glow: "rgba(6,182,212,0.15)",
+    },
+    {
       title: "Experience",
       count: stats.experiencesCount,
       sub: "Career timeline milestones",
       icon: Briefcase,
       href: "/admin/experience",
-      accent: "from-blue-500/20 to-cyan-500/5",
+      accent: "from-blue-500/20 to-indigo-500/5",
       glow: "rgba(59,130,246,0.15)",
     },
     {
@@ -120,8 +142,8 @@ export default function DashboardClient({
       sub: `Across ${stats.skillsGroupCount} categories`,
       icon: Sparkles,
       href: "/admin/skills",
-      accent: "from-cyan-500/20 to-emerald-500/5",
-      glow: "rgba(6,182,212,0.15)",
+      accent: "from-amber-500/20 to-orange-500/5",
+      glow: "rgba(245,158,11,0.15)",
     },
     {
       title: "Content Studio",
@@ -139,16 +161,26 @@ export default function DashboardClient({
       <PageHeader
         eyebrow="Mission Control"
         title="Portfolio Overview"
-        description="Monitor portfolio health, update live showcases, and manage content in real time."
+        description="Monitor portfolio health, update live showcases, publish case studies, and manage SEO articles."
         actions={
-          <div className="flex items-center gap-2.5">
+          <div className="flex flex-wrap items-center gap-2">
+            <Link href="/admin/case-studies?new=1">
+              <Button size="sm" variant="secondary" className="gap-1.5 text-xs text-emerald-300 hover:text-white">
+                <Plus className="h-3.5 w-3.5" /> Case Study
+              </Button>
+            </Link>
+            <Link href="/admin/blog?new=1">
+              <Button size="sm" variant="secondary" className="gap-1.5 text-xs text-cyan-300 hover:text-white">
+                <Plus className="h-3.5 w-3.5" /> Blog Article
+              </Button>
+            </Link>
             <Link href="/admin/projects?new=1">
-              <Button size="sm" className="gap-1.5 shadow-lg">
-                <Plus className="h-4 w-4" /> New Project
+              <Button size="sm" className="gap-1.5 text-xs shadow-lg">
+                <Plus className="h-3.5 w-3.5" /> New Project
               </Button>
             </Link>
             <a href="/" target="_blank" rel="noreferrer">
-              <Button variant="outline" size="sm" className="gap-1.5">
+              <Button variant="outline" size="sm" className="gap-1.5 text-xs">
                 <ExternalLink className="h-3.5 w-3.5" /> View Live
               </Button>
             </a>
@@ -157,34 +189,38 @@ export default function DashboardClient({
       />
 
       {/* ── Stat Cards ── */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {statCards.map((card, i) => {
           const Icon = card.icon;
           return (
             <motion.div
               key={card.title}
-              initial={{ opacity: 0, y: 14 }}
+              initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.08, duration: 0.4 }}
+              transition={{ delay: i * 0.05, duration: 0.3 }}
             >
-              <Link href={card.href} className="block group">
-                <Card className="relative overflow-hidden p-5 transition-all duration-300 group-hover:-translate-y-1 group-hover:border-white/20">
-                  <div
-                    className="pointer-events-none absolute -right-6 -top-6 h-28 w-28 rounded-full blur-2xl transition-opacity duration-300 opacity-40 group-hover:opacity-100"
-                    style={{ background: card.glow }}
-                  />
-                  <div className="flex items-center justify-between">
-                    <span className="flex h-11 w-11 items-center justify-center rounded-xl border border-white/10 bg-white/[0.04] text-white transition-colors group-hover:bg-white/[0.08]">
+              <Link href={card.href} className="group block">
+                <Card
+                  className={`relative overflow-hidden p-5 transition-all duration-300 hover:-translate-y-1 hover:border-white/20 bg-gradient-to-br ${card.accent}`}
+                  style={{
+                    boxShadow: `0 0 0 1px rgba(255, 255, 255, 0.05), 0 10px 30px -10px ${card.glow}`,
+                  }}
+                >
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <p className="text-xs font-medium uppercase tracking-wider text-[var(--a-text-subtle)]">
+                        {card.title}
+                      </p>
+                      <h3 className="mt-2 text-3xl font-bold tracking-tight text-white">
+                        <AnimatedNumber value={card.count} />
+                      </h3>
+                      <p className="mt-1 text-xs text-[var(--a-text-muted)] group-hover:text-white/80 transition-colors">
+                        {card.sub}
+                      </p>
+                    </div>
+                    <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/[0.08] text-white shadow-inner group-hover:scale-110 transition-transform">
                       <Icon className="h-5 w-5" />
-                    </span>
-                    <ArrowUpRight className="h-4 w-4 text-[var(--a-text-subtle)] transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-white" />
-                  </div>
-                  <div className="mt-4">
-                    <p className="text-3xl font-bold tracking-tight text-white">
-                      <AnimatedNumber value={card.count} />
-                    </p>
-                    <p className="mt-1 text-sm font-medium text-[var(--a-text)]">{card.title}</p>
-                    <p className="text-xs text-[var(--a-text-muted)] mt-0.5">{card.sub}</p>
+                    </div>
                   </div>
                 </Card>
               </Link>
@@ -201,13 +237,13 @@ export default function DashboardClient({
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-5 border-b border-[var(--a-border)]">
               <div>
                 <div className="flex items-center gap-2">
-                  <h2 className="text-lg font-semibold text-white">Content Health</h2>
+                  <h2 className="text-lg font-semibold text-white">Content Health & SEO</h2>
                   <Badge tone={healthScore >= 80 ? "green" : healthScore >= 50 ? "amber" : "red"}>
                     {healthScore}% Ready
                   </Badge>
                 </div>
                 <p className="text-xs text-[var(--a-text-muted)] mt-1">
-                  Readiness score calculated across all showcase sections
+                  Readiness score calculated across all showcase, case study, and blog sections
                 </p>
               </div>
 
@@ -215,7 +251,7 @@ export default function DashboardClient({
               <div className="w-full sm:w-44">
                 <div className="h-2.5 w-full bg-white/5 rounded-full overflow-hidden border border-white/10">
                   <motion.div
-                    className="h-full bg-gradient-to-r from-violet-500 via-indigo-500 to-cyan-400 rounded-full"
+                    className="h-full bg-gradient-to-r from-violet-500 via-emerald-500 to-cyan-400 rounded-full"
                     initial={{ width: 0 }}
                     animate={{ width: `${healthScore}%` }}
                     transition={{ duration: 1, ease: "easeOut" }}
@@ -259,6 +295,36 @@ export default function DashboardClient({
               Quick Management Shortcuts
             </h3>
             <div className="grid gap-3 sm:grid-cols-2">
+              <Link href="/admin/case-studies" className="group">
+                <div className="p-3.5 rounded-xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.06] hover:border-emerald-500/30 transition-all flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <span className="p-2 rounded-lg bg-emerald-500/10 text-emerald-300">
+                      <Award className="h-4 w-4" />
+                    </span>
+                    <div>
+                      <p className="text-sm font-medium text-white group-hover:text-emerald-200">Case Studies</p>
+                      <p className="text-xs text-[var(--a-text-subtle)]">Manage client architectures</p>
+                    </div>
+                  </div>
+                  <Kbd>G K</Kbd>
+                </div>
+              </Link>
+
+              <Link href="/admin/blog" className="group">
+                <div className="p-3.5 rounded-xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.06] hover:border-cyan-500/30 transition-all flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <span className="p-2 rounded-lg bg-cyan-500/10 text-cyan-300">
+                      <BookOpen className="h-4 w-4" />
+                    </span>
+                    <div>
+                      <p className="text-sm font-medium text-white group-hover:text-cyan-200">SEO Blog Articles</p>
+                      <p className="text-xs text-[var(--a-text-subtle)]">Edit technical guides</p>
+                    </div>
+                  </div>
+                  <Kbd>G B</Kbd>
+                </div>
+              </Link>
+
               <Link href="/admin/projects" className="group">
                 <div className="p-3.5 rounded-xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.06] hover:border-white/15 transition-all flex items-center justify-between">
                   <div className="flex items-center gap-3">
@@ -266,41 +332,11 @@ export default function DashboardClient({
                       <FolderKanban className="h-4 w-4" />
                     </span>
                     <div>
-                      <p className="text-sm font-medium text-white group-hover:text-violet-200">Reorder Projects</p>
-                      <p className="text-xs text-[var(--a-text-subtle)]">Drag & drop selected work</p>
+                      <p className="text-sm font-medium text-white group-hover:text-violet-200">Projects Showcase</p>
+                      <p className="text-xs text-[var(--a-text-subtle)]">Reorder selected work</p>
                     </div>
                   </div>
                   <Kbd>G P</Kbd>
-                </div>
-              </Link>
-
-              <Link href="/admin/skills" className="group">
-                <div className="p-3.5 rounded-xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.06] hover:border-white/15 transition-all flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <span className="p-2 rounded-lg bg-cyan-500/10 text-cyan-300">
-                      <Sparkles className="h-4 w-4" />
-                    </span>
-                    <div>
-                      <p className="text-sm font-medium text-white group-hover:text-cyan-200">Organize Skills</p>
-                      <p className="text-xs text-[var(--a-text-subtle)]">Manage technical arsenal</p>
-                    </div>
-                  </div>
-                  <Kbd>G S</Kbd>
-                </div>
-              </Link>
-
-              <Link href="/admin/experience" className="group">
-                <div className="p-3.5 rounded-xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.06] hover:border-white/15 transition-all flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <span className="p-2 rounded-lg bg-blue-500/10 text-blue-300">
-                      <Briefcase className="h-4 w-4" />
-                    </span>
-                    <div>
-                      <p className="text-sm font-medium text-white group-hover:text-blue-200">Update Experience</p>
-                      <p className="text-xs text-[var(--a-text-subtle)]">Career milestones & roles</p>
-                    </div>
-                  </div>
-                  <Kbd>G E</Kbd>
                 </div>
               </Link>
 
@@ -338,8 +374,8 @@ export default function DashboardClient({
             </div>
 
             <p className="text-xs text-[var(--a-text-muted)] leading-relaxed mb-4">
-              Changes saved in the admin console are automatically compiled and reflected instantaneously on your live
-              domain.
+              Changes saved in the admin console are automatically compiled and reflected instantaneously across your live
+              routes (/case-studies, /blog, /sitemap.xml).
             </p>
 
             <div className="p-3 rounded-xl bg-black/40 border border-white/5 flex items-center justify-between mb-4">

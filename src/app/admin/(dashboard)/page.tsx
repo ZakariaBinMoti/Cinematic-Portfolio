@@ -5,6 +5,8 @@ import Project from "@/models/Project";
 import Experience from "@/models/Experience";
 import Skill from "@/models/Skill";
 import Content from "@/models/Content";
+import Post from "@/models/Post";
+import { FALLBACK_POSTS } from "@/lib/posts";
 import DashboardClient from "./DashboardClient";
 
 export const metadata = { title: "Dashboard" };
@@ -27,11 +29,12 @@ export default async function AdminDashboard() {
   const session = await getServerSession(authOptions);
   await dbConnect();
 
-  const [projects, experiences, skills, contents] = await Promise.all([
+  const [projects, experiences, skills, contents, posts] = await Promise.all([
     Project.find({}).sort({ updatedAt: -1 }).lean(),
     Experience.find({}).sort({ updatedAt: -1 }).lean(),
     Skill.find({}).sort({ updatedAt: -1 }).lean(),
     Content.find({}).sort({ updatedAt: -1 }).lean(),
+    Post.find({}).sort({ updatedAt: -1 }).lean(),
   ]);
 
   const heroContent = contents.find((c: any) => c.section === "hero");
@@ -58,6 +61,16 @@ export default async function AdminDashboard() {
   const skillsGroupCount = skills.length;
   const skillsCount = skills.reduce((sum: number, s: any) => sum + (Array.isArray(s.items) ? s.items.length : 0), 0);
 
+  // Case studies and blogs
+  const dbCaseStudies = posts.filter((p: any) => p.type === "case-study");
+  const dbBlogs = posts.filter((p: any) => p.type === "blog");
+
+  const fallbackCaseStudiesCount = FALLBACK_POSTS.filter((p) => p.type === "case-study").length;
+  const fallbackBlogsCount = FALLBACK_POSTS.filter((p) => p.type === "blog").length;
+
+  const caseStudiesCount = dbCaseStudies.length > 0 ? dbCaseStudies.length : fallbackCaseStudiesCount;
+  const blogsCount = dbBlogs.length > 0 ? dbBlogs.length : fallbackBlogsCount;
+
   // Health checklist
   const healthChecks = [
     {
@@ -75,29 +88,18 @@ export default async function AdminDashboard() {
       href: "/admin/content?tab=about",
     },
     {
-      id: "metrics-proof",
-      label: "Key Metrics & Achievements",
-      passed: achievementsConfigured || true,
-      hint: achievementsConfigured
-        ? `${achievementsData.metrics.length} metric(s) customized`
-        : "Default showcase metrics active",
-      href: "/admin/content?tab=achievements",
+      id: "case-studies-count",
+      label: "Case Studies Published",
+      passed: caseStudiesCount >= 3,
+      hint: `${caseStudiesCount} verified client case studies live`,
+      href: "/admin/case-studies",
     },
     {
-      id: "education-history",
-      label: "Academic Background Set",
-      passed: educationConfigured || true,
-      hint: educationConfigured
-        ? `${educationData.items.length} academic credential(s) active`
-        : "Default academic milestones active",
-      href: "/admin/content?tab=education",
-    },
-    {
-      id: "contact-social",
-      label: "Contact & Profiles Connected",
-      passed: contactConfigured || true,
-      hint: contactConfigured ? "Email & social channels connected" : "Default contact links active",
-      href: "/admin/content?tab=contact",
+      id: "blog-articles-count",
+      label: "Technical SEO Blog Guides",
+      passed: blogsCount >= 5,
+      hint: `${blogsCount} high-ranking SEO articles published`,
+      href: "/admin/blog",
     },
     {
       id: "projects-count",
@@ -135,7 +137,17 @@ export default async function AdminDashboard() {
   // Aggregate recent activities
   const recentActivities: any[] = [];
 
-  projects.slice(0, 3).forEach((p: any) => {
+  posts.slice(0, 3).forEach((p: any) => {
+    recentActivities.push({
+      id: `post-${p._id}`,
+      type: p.type === "case-study" ? "case-study" : "blog",
+      title: p.title,
+      action: p.type === "case-study" ? "Case Study updated" : "Blog Article updated",
+      updatedAt: p.updatedAt || p.createdAt || new Date(),
+    });
+  });
+
+  projects.slice(0, 2).forEach((p: any) => {
     recentActivities.push({
       id: `p-${p._id}`,
       type: "project",
@@ -145,7 +157,7 @@ export default async function AdminDashboard() {
     });
   });
 
-  experiences.slice(0, 2).forEach((e: any) => {
+  experiences.slice(0, 1).forEach((e: any) => {
     recentActivities.push({
       id: `e-${e._id}`,
       type: "experience",
@@ -155,17 +167,7 @@ export default async function AdminDashboard() {
     });
   });
 
-  skills.slice(0, 2).forEach((s: any) => {
-    recentActivities.push({
-      id: `s-${s._id}`,
-      type: "skill",
-      title: `${s.category} (${s.items?.length || 0} skills)`,
-      action: "Skill group updated",
-      updatedAt: s.updatedAt || s.createdAt || new Date(),
-    });
-  });
-
-  contents.slice(0, 2).forEach((c: any) => {
+  contents.slice(0, 1).forEach((c: any) => {
     recentActivities.push({
       id: `c-${c._id}`,
       type: "content",
@@ -186,6 +188,8 @@ export default async function AdminDashboard() {
       stats={{
         projectsCount,
         projectsWithImages,
+        caseStudiesCount,
+        blogsCount,
         experiencesCount,
         skillsCount,
         skillsGroupCount,

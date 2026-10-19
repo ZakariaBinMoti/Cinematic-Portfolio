@@ -5,6 +5,8 @@ import {
   LayoutDashboard,
   Sparkles,
   Settings,
+  Award,
+  BookOpen,
   type LucideIcon,
 } from "lucide-react";
 
@@ -20,6 +22,8 @@ export interface NavItem {
 export const navItems: NavItem[] = [
   { name: "Dashboard", path: "/admin", icon: LayoutDashboard, description: "Overview and quick actions", shortcut: "D" },
   { name: "Projects", path: "/admin/projects", icon: FolderKanban, description: "Selected work showcase", shortcut: "P" },
+  { name: "Case Studies", path: "/admin/case-studies", icon: Award, description: "Client transformations & metrics", shortcut: "K" },
+  { name: "Blog", path: "/admin/blog", icon: BookOpen, description: "SEO articles & guides", shortcut: "B" },
   { name: "Experience", path: "/admin/experience", icon: Briefcase, description: "Career timeline", shortcut: "E" },
   { name: "Skills", path: "/admin/skills", icon: Sparkles, description: "Technical arsenal", shortcut: "S" },
   { name: "Content", path: "/admin/content", icon: FileText, description: "Hero and about copy", shortcut: "C" },

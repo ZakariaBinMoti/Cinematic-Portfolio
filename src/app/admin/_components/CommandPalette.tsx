@@ -123,8 +123,20 @@ export default function CommandPalette({ open, onClose }: { open: boolean; onClo
                     </span>
                     <span className="flex-1 text-[var(--a-text)]">Add new project</span>
                   </Command.Item>
-                  <Command.Item value="Add experience role create" onSelect={() => run(() => router.push("/admin/experience?new=1"))}>
+                  <Command.Item value="Add new case study create" onSelect={() => run(() => router.push("/admin/case-studies?new=1"))}>
+                    <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500/15 text-emerald-300">
+                      <Plus className="h-4 w-4" />
+                    </span>
+                    <span className="flex-1 text-[var(--a-text)]">Add new case study</span>
+                  </Command.Item>
+                  <Command.Item value="Add new blog article create" onSelect={() => run(() => router.push("/admin/blog?new=1"))}>
                     <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-cyan-500/15 text-cyan-300">
+                      <Plus className="h-4 w-4" />
+                    </span>
+                    <span className="flex-1 text-[var(--a-text)]">Add new blog article</span>
+                  </Command.Item>
+                  <Command.Item value="Add experience role create" onSelect={() => run(() => router.push("/admin/experience?new=1"))}>
+                    <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-500/15 text-amber-300">
                       <Plus className="h-4 w-4" />
                     </span>
                     <span className="flex-1 text-[var(--a-text)]">Add experience</span>
