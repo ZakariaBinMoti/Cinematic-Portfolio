@@ -22,9 +22,9 @@ import { getOptimizedImageUrl } from "@/lib/media";
 function getCaseStudySlug(title?: string): string | null {
   if (!title) return null;
   const t = title.toLowerCase();
+  if (t.includes("coppins") || t.includes("motorcycle")) return "josh-coppins-motorcycles-oem-catalog-workshop-shopify";
+  if (t.includes("swell")) return "swell-sport-luxury-saunas-consultation-engine-shopify";
   if (t.includes("becca")) return "beccas-bags-luxury-consignment-rental-shopify";
-  if (t.includes("organic wonder")) return "organic-wonders-uk-superfood-cro-optimization";
-  if (t.includes("k-zone") || t.includes("kzone")) return "k-zone-studio-global-lifestyle-ecommerce";
   return null;
 }
 

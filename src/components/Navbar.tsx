@@ -41,7 +41,6 @@ export default function Navbar() {
 
   const navLinks = isHome
     ? [
-        { id: "hero", label: "Overview", href: "#" },
         { id: "about", label: "About", href: "#about" },
         { id: "projects", label: "Projects", href: "#projects" },
         { id: "case-studies", label: "Case Studies", href: "/case-studies" },
@@ -111,18 +110,6 @@ export default function Navbar() {
               );
             })}
           </div>
-
-          {/* Availability Pill */}
-          <a
-            href={isHome ? "#contact" : "/#contact"}
-            onClick={() => {
-              if (isHome) setActiveSection("contact");
-            }}
-            className="hidden sm:inline-flex items-center gap-2 pl-3 pr-3.5 py-1.5 rounded-full bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-xs font-medium text-gray-300 transition-colors mr-1 outline-none"
-          >
-            <span className="w-1.5 h-1.5 rounded-full bg-[#3594bd] shadow-[0_0_8px_rgba(53,148,189,0.8)]" />
-            <span>Available</span>
-          </a>
 
           {/* Mobile Menu Toggle */}
           <button

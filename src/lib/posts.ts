@@ -27,6 +27,188 @@ export interface PostItem {
 // Built-in curated initial case studies & blog articles
 export const FALLBACK_POSTS: PostItem[] = [
   // ==================== CASE STUDIES ====================
+  // 1. Josh Coppins Motorcycles (First)
+  {
+    title: "Josh Coppins Motorcycles: Engineering a Scalable OEM Parts Catalog & Workshop Service Booking Architecture",
+    slug: "josh-coppins-motorcycles-oem-catalog-workshop-shopify",
+    type: "case-study",
+    summary:
+      "Architecting a high-speed Shopify OS 2.0 dealership platform for Motocross legend Josh Coppins, featuring an interactive service booking engine and indexed parts directory with 0.82s LCP.",
+    coverImage:
+      "https://res.cloudinary.com/daysiptql/image/upload/v1791969028/portfolio/josh_coppins_motorcycles___motocross__enduro___land_mobility__new_zealand__showcase_1791969026404.png",
+    category: "Tech & Lifestyle",
+    tags: ["Shopify OS 2.0", "Liquid", "OEM Parts Search", "Service Booking", "Automotive eCommerce"],
+    publishedAt: "2025-09-10T00:00:00.000Z",
+    isPublished: true,
+    readingTime: "6 min read",
+    authorName: "Zakaria Bin Moti",
+    authorRole: "Lead Software Engineer & Shopify Architect",
+    clientName: "Josh Coppins Motorcycles",
+    clientUrl: "https://joshcoppinsmotorcycles.co.nz/",
+    projectYear: "2025",
+    services: [
+      "Custom Shopify OS 2.0 Dealership Architecture",
+      "Interactive Workshop Service Booking Engine",
+      "Dynamic OEM Model & Year Filtration Schemas",
+      "Heavy Vehicle & Machinery Freight Shipping Logic",
+    ],
+    metrics: [
+      { label: "Workshop Inquiries Lift", value: "+38%" },
+      { label: "Largest Contentful Paint (LCP)", value: "0.82s" },
+      { label: "OEM Parts Search Latency", value: "< 45ms" },
+      { label: "Lighthouse Performance Score", value: "96/100" },
+    ],
+    content: `
+## Executive Summary
+
+**Josh Coppins Motorcycles** is New Zealand's premier powersports dealership, service center, and parts supplier, founded by two-time Motocross World Championship runner-up and racing icon **Josh Coppins**.
+
+The dealership faced significant operational friction: customers struggled to find exact OEM Yamaha and motocross replacement parts across thousands of technical SKUs, while the workshop service center was inundated with manual phone calls and scheduling backlogs.
+
+We engineered a **bespoke Shopify OS 2.0 digital flagship** with an intuitive year/make/model part-compatibility lookup and a native workshop booking funnel—achieving **sub-second page loads** across New Zealand and Australia.
+
+---
+
+## The Challenge
+
+1. **Massive Technical Catalog:** Powersports riders require exact fitment verification for spark plugs, piston kits, gaskets, and sprockets. Mismatched parts lead to costly returns and race-day downtime.
+2. **High Friction in Workshop Bookings:** Riders needing scheduled maintenance, suspension rebuilds, or engine diagnostics had to call during business hours, causing staff bottlenecks.
+3. **Bulky Freight Logistics:** Transporting dirt bikes, ATVs, and heavy engines across New Zealand requires tiered regional freight matrices that default Shopify flat-rate shipping cannot accommodate.
+
+---
+
+## Technical Architecture & Implementation
+
+\`\`\`
+Rider / Customer
+      │
+      ▼
+Shopify Storefront Edge (Global Cloudflare CDN)
+      │
+      ├── Fast Filter Component (Liquid + Vanilla JS)
+      │      ├── Year / Make / Model Selectors
+      │      └── Instant Variant Availability Matrix
+      │
+      ├── Native Workshop Scheduling Funnel
+      │      ├── Service Type (Routine Service, Race Prep, Rebuild)
+      │      ├── Machine VIN & Hours Tracker
+      │      └── Real-Time Date/Time Slot Reservation
+      │
+      ▼
+Shopify Admin API & Webhook Dispatcher
+\`\`\`
+
+### 1. Instant Part Filtration without Database Lag
+Instead of heavy third-party app widgets that charge high monthly fees and inject megabytes of JavaScript, we utilized native Shopify Metaobject schemas and lightweight URL parameter hydration to filter compatibility in under 45ms:
+
+\`\`\`liquid
+{% comment %} Native Motocross Model Compatibility Filter {% endcomment %}
+{% assign selected_model = product.metafields.custom.compatible_models.value %}
+<div class="oem-fitment-badge" data-fitment-verified="true">
+  <span class="badge-icon">✓</span>
+  <span class="badge-text">Guaranteed Fitment: {{ product.metafields.custom.oem_series }}</span>
+</div>
+\`\`\`
+
+### 2. High-Converting Workshop Lead Architecture
+We built a frictionless 3-step service scheduler embedded directly into the theme, capturing the motorcycle's model, year, engine hours, and requested maintenance package with instant email/SMS dispatch.
+
+---
+
+## Results & Commercial Impact
+
+* **+38% Lift in Digital Workshop Booking Inquiries:** Riders can now book suspension tunings and pre-race servicing 24/7 on mobile devices.
+* **0.82s Largest Contentful Paint (LCP):** Replaced 6 external apps with native Liquid components, taking mobile Lighthouse scores from 44 to **96/100**.
+* **Zero App Bloat:** Saved hundreds in recurring monthly app fees while ensuring 100% brand consistency.
+    `,
+  },
+
+  // 2. Swell Sport (Second)
+  {
+    title: "Swell Sport: Engineering a High-Ticket Luxury Sauna Consultation & Freight Engine on Shopify",
+    slug: "swell-sport-luxury-saunas-consultation-engine-shopify",
+    type: "case-study",
+    summary:
+      "Developing a high-ticket eCommerce storefront for Australian luxury cedar saunas, equipped with a custom 'Speak to a Sauna Professional' consultation funnel and interstate freight calculator.",
+    coverImage:
+      "https://res.cloudinary.com/daysiptql/image/upload/v1791885031/portfolio/swellsport_multidevice_showcase_1791885029017.png",
+    category: "Health & Wellness",
+    tags: ["Shopify OS 2.0", "High-Ticket CRO", "Consultation Funnel", "Freight Logistics", "Liquid"],
+    publishedAt: "2025-08-28T00:00:00.000Z",
+    isPublished: true,
+    readingTime: "5 min read",
+    authorName: "Zakaria Bin Moti",
+    authorRole: "Lead Software Engineer & Shopify Architect",
+    clientName: "Swell Sport",
+    clientUrl: "https://swellsport.com.au/",
+    projectYear: "2025",
+    services: [
+      "Bespoke High-Ticket Shopify OS 2.0 Theme",
+      "Custom 'Speak to a Sauna Professional' Lead Engine",
+      "Modular Cedar Cube Bundle Customizer",
+      "Nationwide Australian Interstate Freight Estimator",
+    ],
+    metrics: [
+      { label: "High-Ticket Lead Submissions", value: "+46%" },
+      { label: "Largest Contentful Paint (LCP)", value: "0.78s" },
+      { label: "High-Value Inquiries Routed", value: "$1.2M+" },
+      { label: "Mobile Speed Score", value: "97/100" },
+    ],
+    content: `
+## Executive Summary
+
+**Swell Sport** is one of Australia's leading distributors of luxury outdoor cedar saunas, cold plunge tubs, and holistic recovery suites.
+
+Selling products priced between **AU$8,000 and AU$25,000** poses unique eCommerce challenges: buyers rarely make instantaneous impulse purchases through a generic cart checkout. Instead, they require architectural consultations, electrical specification guidance, site access planning, and precise interstate freight estimates.
+
+We re-architected their digital presence into a **high-converting luxury consultation engine**, pairing editorial aesthetics with automated logistical routing.
+
+---
+
+## The Challenge
+
+1. **High-Ticket Friction:** Traditional Shopify "Add to Cart" flows resulted in high cart abandonment because customers needed to verify electrical amperage and council permits before purchasing.
+2. **Complex Bulky Freight:** Delivering 400kg+ cedar wood crates from Sydney and Melbourne to remote Western Australia or Queensland required dynamic freight quotation.
+3. **Custom Option Customization:** Customers needed to configure glass fronts, wood-fired vs. electric Harvia heaters, LED chromotherapy lighting, and roof shingles without confusing UI clutter.
+
+---
+
+## Engineering Solution
+
+\`\`\`
+Prospective Buyer (Architect / Homeowner)
+      │
+      ▼
+Swell Sport Flagship (Shopify OS 2.0)
+      │
+      ├── Modular 3D Bundle Configurator (Custom Liquid + SVG Visualizer)
+      │      ├── Heater Specification (Electric Harvia vs Wood-Burning)
+      │      ├── Cedar Timber Grade & Glass Paneling
+      │      └── Essential Wellness Accessories (Buckets, Ladles, Aromas)
+      │
+      ▼
+Dynamic Action Fork
+      ├── Direct Checkout (Accessories & Stock Units)
+      └── "Speak to a Sauna Professional" High-Ticket Consultation Drawer
+\`\`\`
+
+### 1. The "Consultation-First" Checkout Flow
+We designed a dual-action purchase mechanism: customers can either purchase standard in-stock wellness units immediately, or trigger an interactive slide-out **Consultation Drawer**. This captures room dimensions, electrical specs, and zip code, routing directly into the sales engineering CRM.
+
+### 2. Zero-CLS Interstate Freight Calculator
+Using a bespoke postal-code zone lookup script executing in under 20ms, prospective buyers receive transparent doorstep or depot delivery estimates before checkout, eliminating post-purchase logistical surprises.
+
+---
+
+## Commercial Results
+
+* **+46% Surge in Qualified High-Ticket Leads:** Routed over **AU$1,200,000+** in commercial sauna inquiries within the first 90 days.
+* **0.78s LCP on Australian Mobile Networks:** Pristine Core Web Vitals delivered via lazy-loaded WebP photography and asset optimization.
+* **Zero External Subscription Bloat:** Engineered native Liquid solutions for bundling and consultations, saving the client recurring SaaS fees.
+    `,
+  },
+
+  // 3. Beccas Bags (Third)
   {
     title: "Beccas Bags: Engineering a Custom Luxury Consignment & Rental Engine on Shopify OS 2.0",
     slug: "beccas-bags-luxury-consignment-rental-shopify",
@@ -124,105 +306,9 @@ By enforcing fixed aspect-ratio image containers in Tailwind CSS and pre-allocat
 * **$0 Third-Party App Subscriptions:** Saved the client over $2,000 annually in SaaS app fees by keeping functionality 100% native.
     `,
   },
-  {
-    title: "Organic Wonders UK: High-Performance Superfood Storefront & Core Web Vitals Overhaul",
-    slug: "organic-wonders-uk-superfood-cro-optimization",
-    type: "case-study",
-    summary:
-      "Transforming an organic superfood brand into a blistering 96/100 performance powerhouse with custom subscription funnels and nutritional breakdown components.",
-    coverImage:
-      "https://res.cloudinary.com/daysiptql/image/upload/v1791888348/portfolio/organicwonders_multidevice_showcase_1791888345076.png",
-    category: "Health & Wellness",
-    tags: ["Shopify OS 2.0", "Core Web Vitals", "Liquid Optimization", "CRO", "Subscription Architecture"],
-    publishedAt: "2025-07-20T00:00:00.000Z",
-    isPublished: true,
-    readingTime: "5 min read",
-    authorName: "Zakaria Bin Moti",
-    authorRole: "Lead Software Engineer & Shopify Architect",
-    clientName: "Organic Wonders",
-    clientUrl: "https://organicwonders.co.uk",
-    projectYear: "2025",
-    services: [
-      "Core Web Vitals Remediation & Asset Purging",
-      "Custom Modular Product Detail Page (PDP)",
-      "High-Converting Nutritional Fact Accordions",
-      "ReCharge / Native Subscription UI Integration",
-    ],
-    metrics: [
-      { label: "Checkout Completion", value: "+35%" },
-      { label: "Mobile Speed Score", value: "96 / 100" },
-      { label: "JavaScript Payload Reduced", value: "-58%" },
-      { label: "Bounce Rate", value: "-24%" },
-    ],
-    content: `
-## Background
-
-**Organic Wonders UK** sells certified organic superfoods, medicinal mushroom powders, and wellness supplements. In health and wellness eCommerce, trust and technical transparency are paramount.
-
-The existing store suffered from severe script fatigue: previous developers had installed 14 conflicting apps for reviews, tabs, trust badges, and popups. The page weighed over 4.8MB on initial load, taking over 4.2 seconds to become interactive.
-
----
-
-## Engineering Strategy
-
-1. **Asset Purge & Native Consolidation:** Removed 8 redundant apps. Re-architected tabbed nutritional accordions, verified lab certifications, and bundle selectors as pure Liquid + Vanilla CSS.
-2. **Next-Gen Asset Pipeline:** Re-routed imagery through responsive \`srcset\` pipelines, ensuring mobile devices never download 2000px desktop assets.
-3. **Zero-Render-Blocking Execution:** Deferred all non-essential third-party analytics behind user interaction triggers.
-
----
-
-## Architectural Results
-
-* **Lighthouse Mobile Score surged from 38 to 96.**
-* **First Input Delay (FID) dropped to < 18ms**, delivering native app-like responsiveness.
-* **35% increase in completed checkouts** driven by instant add-to-cart feedback and seamless slide-out drawer mechanics.
-    `,
-  },
-  {
-    title: "K-Zone Studio: Scalable Global Lifestyle eCommerce from Figma to Production",
-    slug: "k-zone-studio-global-lifestyle-ecommerce",
-    type: "case-study",
-    summary:
-      "Turning precision Figma designs into 25+ reusable Liquid sections with multi-currency checkout, dynamic mega-menus, and global localized shipping rules.",
-    coverImage:
-      "https://res.cloudinary.com/daysiptql/image/upload/v1791715009/portfolio/fmpk3tlnv5ncrpf92obn.jpg",
-    category: "Tech & Lifestyle",
-    tags: ["Figma to Shopify", "Custom Liquid Sections", "Multi-Currency", "Responsive UI", "Global CDN"],
-    publishedAt: "2025-06-10T00:00:00.000Z",
-    isPublished: true,
-    readingTime: "5 min read",
-    authorName: "Zakaria Bin Moti",
-    authorRole: "Lead Software Engineer & Shopify Architect",
-    clientName: "K-Zone Studio",
-    clientUrl: "https://kzonestudio.com",
-    projectYear: "2025",
-    services: [
-      "Full Figma to Custom Liquid Implementation",
-      "25+ Custom Drag-and-Drop Theme Customizer Sections",
-      "Shopify Markets Multi-Currency Architecture",
-      "Interactive Product Filtering Engine",
-    ],
-    metrics: [
-      { label: "Custom Theme Sections", value: "25+" },
-      { label: "Global Speed Index", value: "0.9s" },
-      { label: "International Orders Lift", value: "+28%" },
-    ],
-    content: `
-## The Vision
-
-K-Zone Studio needed an editorial, boutique eCommerce storefront that represented their global contemporary lifestyle brand. The design required pixel-perfect translation from complex Figma mockups into fully editable Shopify OS 2.0 sections that non-technical marketers could customize without touching code.
-
----
-
-## Solution Delivered
-
-* **Modular Section Engine:** Engineered 25+ unique Liquid sections with extensive JSON schema settings for color palettes, typography scaling, image positioning, and layout switches.
-* **Shopify Markets Localization:** Seamless automatic currency conversion, localized checkout experiences, and duty calculation across the US, UK, and EU.
-* **Instant Filter Engine:** Filter by size, collection, and price bracket using modern URL search parameter hydration with zero page reloads.
-    `,
-  },
 
   // ==================== BLOG POSTS ====================
+  // 1. Shopify Speed & Liquid Bottlenecks
   {
     title: "Why Most Shopify Stores Are Slow: Fixing Liquid Bottlenecks & Asset Bloat in 2026",
     slug: "why-most-shopify-stores-are-slow-fixing-liquid-bottlenecks",
@@ -230,7 +316,7 @@ K-Zone Studio needed an editorial, boutique eCommerce storefront that represente
     summary:
       "A deep engineering breakdown of how unoptimized Liquid loops, nested queries, and third-party script fatigue destroy store conversion rates—and how to fix them.",
     coverImage:
-      "https://res.cloudinary.com/daysiptql/image/upload/v1791885031/portfolio/swellsport_multidevice_showcase_1791885029017.png",
+      "https://res.cloudinary.com/daysiptql/image/upload/v1792390736/portfolio/blog/shopify_speed_liquid.jpg",
     category: "Shopify & Liquid",
     tags: ["Shopify Performance", "Liquid Optimization", "Core Web Vitals", "Web Architecture"],
     publishedAt: "2026-02-14T00:00:00.000Z",
@@ -308,6 +394,8 @@ Always use Shopify's native \`image_tag\` helper with descriptive sizes:
 High-converting eCommerce engineering is about **subtraction, not addition**. By pruning third-party script bloat, optimizing server-side Liquid logic, and serving modern responsive assets, any Shopify store can achieve **sub-second load times** and dramatic conversion gains.
     `,
   },
+
+  // 2. AI in Modern eCommerce
   {
     title: "The Rise of AI in eCommerce: How Modern Shopify Developers Build Smarter Digital Flagships",
     slug: "rise-of-ai-in-ecommerce-modern-shopify-development",
@@ -315,7 +403,7 @@ High-converting eCommerce engineering is about **subtraction, not addition**. By
     summary:
       "Beyond generic chatbots: practical ways modern software engineers leverage AI for automated catalog enrichment, real-time visual search, and predictive personalized merchandising.",
     coverImage:
-      "https://res.cloudinary.com/daysiptql/image/upload/v1791874100/portfolio/suitshark_multidevice_showcase_1791874098661.png",
+      "https://res.cloudinary.com/daysiptql/image/upload/v1792390742/portfolio/blog/ecommerce_ai_future.jpg",
     category: "AI & Automation",
     tags: ["AI in Commerce", "Shopify API", "Automation", "Future of Web"],
     publishedAt: "2026-03-01T00:00:00.000Z",
@@ -362,6 +450,8 @@ Generating responsive, professional multi-device mockups and marketing assets us
 AI shouldn't replace your brand identity—it should eliminate operational friction and make the shopping experience feel effortlessly intuitive for every customer.
     `,
   },
+
+  // 3. Headless vs Liquid
   {
     title: "Headless Commerce vs. Shopify Liquid OS 2.0: An Architect’s Honest Decision Matrix",
     slug: "headless-commerce-vs-shopify-liquid-architect-decision-matrix",
@@ -369,7 +459,7 @@ AI shouldn't replace your brand identity—it should eliminate operational frict
     summary:
       "When does a brand actually need a Next.js headless storefront, and when is native Shopify Liquid the faster, more profitable choice? A realistic breakdown without the tech hype.",
     coverImage:
-      "https://res.cloudinary.com/daysiptql/image/upload/v1791886933/portfolio/beccasbags_multidevice_showcase_1791886923922.png",
+      "https://res.cloudinary.com/daysiptql/image/upload/v1792390745/portfolio/blog/headless_vs_liquid.jpg",
     category: "Full-Stack & Next.js",
     tags: ["Headless Commerce", "Next.js", "Shopify Storefront API", "Architecture"],
     publishedAt: "2026-01-20T00:00:00.000Z",
@@ -438,7 +528,7 @@ export async function getPosts(options: {
     if (options.category && options.category !== "All") query.category = options.category;
     if (options.tag) query.tags = options.tag;
 
-    let dbQuery = Post.find(query).sort({ publishedAt: -1, order: 1 });
+    let dbQuery = Post.find(query).sort({ order: 1, publishedAt: -1 });
     if (options.limit) dbQuery = dbQuery.limit(options.limit);
 
     const dbPosts = await dbQuery.lean();
