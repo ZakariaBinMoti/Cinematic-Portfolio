@@ -181,6 +181,212 @@ function FormattedMessage({ text }: { text: string }) {
   );
 }
 
+// Aesthetic Ultra-Premium AI Bot Emblem with micro-animations & faceted 3D jewel astroid star
+function AestheticBotEmblem({
+  size = 26,
+  animated = true,
+  idPrefix = "bot",
+  className = "",
+}: {
+  size?: number;
+  animated?: boolean;
+  idPrefix?: string;
+  className?: string;
+}) {
+  return (
+    <div
+      className={`relative flex items-center justify-center select-none ${className}`}
+      style={{ width: size, height: size }}
+    >
+      {/* 1. Ambient Breathing Radial Core Glow */}
+      {animated ? (
+        <motion.div
+          animate={{
+            scale: [0.92, 1.25, 0.92],
+            opacity: [0.4, 0.85, 0.4],
+          }}
+          transition={{
+            duration: 3.2,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+          className="absolute inset-[-4px] rounded-full bg-[#fe743d] blur-[9px] pointer-events-none"
+        />
+      ) : (
+        <div className="absolute inset-[-2px] rounded-full bg-[#fe743d]/30 blur-xs pointer-events-none" />
+      )}
+
+      {/* 2. Micro Prismatic Cross Flare (Subtle rotating optical glint) */}
+      {animated && (
+        <motion.div
+          animate={{
+            rotate: [0, 180, 360],
+            opacity: [0.25, 0.55, 0.25],
+          }}
+          transition={{
+            rotate: { duration: 18, repeat: Infinity, ease: "linear" },
+            opacity: { duration: 3.6, repeat: Infinity, ease: "easeInOut" },
+          }}
+          className="absolute inset-[-6px] pointer-events-none"
+        >
+          <div className="absolute top-1/2 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#ffb088] to-transparent -translate-y-1/2" />
+          <div className="absolute left-1/2 top-0 bottom-0 w-[1px] bg-gradient-to-b from-transparent via-[#ffb088] to-transparent -translate-x-1/2" />
+        </motion.div>
+      )}
+
+      {/* 3. The Custom Sculpted SVG Emblem */}
+      <motion.svg
+        width={size}
+        height={size}
+        viewBox="0 0 28 28"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        className="relative z-10 drop-shadow-[0_0_10px_rgba(254,116,61,0.7)]"
+        animate={
+          animated
+            ? {
+                scale: [1, 1.06, 1],
+              }
+            : undefined
+        }
+        transition={{
+          duration: 3.2,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
+      >
+        <defs>
+          {/* Main 4-point Astroid Diamond Gradient */}
+          <linearGradient
+            id={`${idPrefix}-nova`}
+            x1="2"
+            y1="2"
+            x2="26"
+            y2="26"
+            gradientUnits="userSpaceOnUse"
+          >
+            <stop offset="0%" stopColor="#ffffff" />
+            <stop offset="28%" stopColor="#ffb088" />
+            <stop offset="58%" stopColor="#fe743d" />
+            <stop offset="100%" stopColor="#cb3607" />
+          </linearGradient>
+
+          {/* Facet Specular Highlight (North-East quadrant) */}
+          <linearGradient
+            id={`${idPrefix}-light`}
+            x1="14"
+            y1="2"
+            x2="26"
+            y2="14"
+            gradientUnits="userSpaceOnUse"
+          >
+            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.95" />
+            <stop offset="50%" stopColor="#ffa070" stopOpacity="0.8" />
+            <stop offset="100%" stopColor="#fe743d" stopOpacity="0.15" />
+          </linearGradient>
+
+          {/* Facet Architectural Shadow (South-West quadrant) */}
+          <linearGradient
+            id={`${idPrefix}-dark`}
+            x1="2"
+            y1="14"
+            x2="14"
+            y2="26"
+            gradientUnits="userSpaceOnUse"
+          >
+            <stop offset="0%" stopColor="#7a1803" stopOpacity="0.45" />
+            <stop offset="100%" stopColor="#220500" stopOpacity="0.85" />
+          </linearGradient>
+
+          {/* Satellite Spark Gradient */}
+          <linearGradient id={`${idPrefix}-spark`} x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stopColor="#ffffff" />
+            <stop offset="100%" stopColor="#fe743d" />
+          </linearGradient>
+        </defs>
+
+        {/* Outer Astroid Star (Main AI Diamond Crest) */}
+        {/* Center: (14, 14), Tips at (14, 2), (26, 14), (14, 26), (2, 14) */}
+        <path
+          d="M 14 2 C 14 8.8, 19.2 14, 26 14 C 19.2 14, 14 19.2, 14 26 C 14 19.2, 8.8 14, 2 14 C 8.8 14, 14 8.8, 14 2 Z"
+          fill={`url(#${idPrefix}-nova)`}
+        />
+
+        {/* Specular Facet Overlay - Genuine 3D jewel depth */}
+        <path
+          d="M 14 2 C 14 8.8, 19.2 14, 26 14 L 14 14 Z"
+          fill={`url(#${idPrefix}-light)`}
+        />
+        <path
+          d="M 2 14 C 8.8 14, 14 19.2, 14 26 L 14 14 Z"
+          fill={`url(#${idPrefix}-dark)`}
+        />
+
+        {/* Razor-sharp central axis seam */}
+        <line
+          x1="14"
+          y1="2"
+          x2="14"
+          y2="26"
+          stroke="white"
+          strokeWidth="0.4"
+          strokeOpacity="0.35"
+        />
+        <line
+          x1="2"
+          y1="14"
+          x2="26"
+          y2="14"
+          stroke="white"
+          strokeWidth="0.4"
+          strokeOpacity="0.35"
+        />
+
+        {/* Luminous Central Core Jewel */}
+        <circle cx="14" cy="14" r="1.6" fill="#ffffff" />
+        <circle cx="14" cy="14" r="2.8" fill="#ffffff" fillOpacity="0.3" />
+
+        {/* Secondary Satellite Sparkle (Top-Right, center 22.5, 5.5) */}
+        <motion.path
+          d="M 22.5 2.5 C 22.5 4, 23.8 5.5, 25.5 5.5 C 23.8 5.5, 22.5 7, 22.5 8.5 C 22.5 7, 21.2 5.5, 19.5 5.5 C 21.2 5.5, 22.5 4, 22.5 2.5 Z"
+          fill={`url(#${idPrefix}-spark)`}
+          animate={
+            animated
+              ? {
+                  opacity: [0.55, 1, 0.55],
+                }
+              : undefined
+          }
+          transition={{
+            duration: 2.2,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+
+        {/* Tertiary Micro-Spark (Bottom-Left, center 5.5, 22.5) */}
+        <motion.path
+          d="M 5.5 20.5 C 5.5 21.5, 6.5 22.5, 7.5 22.5 C 6.5 22.5, 5.5 23.5, 5.5 24.5 C 5.5 23.5, 4.5 22.5, 3.5 22.5 C 4.5 22.5, 5.5 21.5, 5.5 20.5 Z"
+          fill="#ffb088"
+          animate={
+            animated
+              ? {
+                  opacity: [1, 0.4, 1],
+                }
+              : undefined
+          }
+          transition={{
+            duration: 2.6,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 0.4,
+          }}
+        />
+      </motion.svg>
+    </div>
+  );
+}
+
 export default function VoiceAssistant() {
   const pathname = usePathname();
   const isAdmin = pathname.startsWith("/admin");
@@ -858,12 +1064,43 @@ export default function VoiceAssistant() {
                   setIsOpen(true);
                   focusInput();
                 }}
-                className="relative w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-[#0c0e17] hover:bg-[#121522] border border-white/12 hover:border-[#f6602d]/60 shadow-[0_10px_30px_rgba(0,0,0,0.8),0_0_20px_rgba(246,96,45,0.18)] flex items-center justify-center text-white transition-colors duration-200"
+                className="relative w-13 h-13 sm:w-14 sm:h-14 rounded-full p-[1.5px] flex items-center justify-center group focus:outline-none focus-visible:ring-2 focus-visible:ring-[#fe743d] transition-transform duration-200"
                 aria-label="Open AI Assistant"
               >
-                <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-[#f6602d]/25 via-transparent to-transparent opacity-70 group-hover:opacity-100 transition-opacity" />
-                <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-[#fe743d] group-hover:scale-110 transition-transform duration-200" />
-                <span className="absolute top-1 right-1 w-2.5 h-2.5 rounded-full bg-[#f6602d] border-2 border-[#0c0e17]" />
+                {/* 1. KINETIC ROTATING CONIC AURA (Continuous ambient light beam circling around the edge) */}
+                <div className="absolute inset-0 rounded-full overflow-hidden pointer-events-none">
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+                    className="w-full h-full rounded-full bg-[conic-gradient(from_0deg,transparent_0deg,transparent_200deg,rgba(246,96,45,0.25)_260deg,rgba(255,160,118,0.95)_360deg)]"
+                  />
+                </div>
+
+                {/* 2. INNER OBSIDIAN GLASS CHASSIS */}
+                <div className="relative w-full h-full rounded-full bg-gradient-to-b from-[#141724] to-[#07090f] border border-white/[0.12] group-hover:border-[#fe743d]/60 flex items-center justify-center overflow-hidden shadow-[0_12px_36px_rgba(0,0,0,0.85),0_0_22px_rgba(246,96,45,0.22)] group-hover:shadow-[0_16px_45px_rgba(0,0,0,0.95),0_0_34px_rgba(246,96,45,0.45)] transition-all duration-300">
+                  {/* Specular Upper Glass Glaze */}
+                  <div className="absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/[0.12] to-transparent rounded-t-full pointer-events-none" />
+
+                  {/* Inner Ambient Core Light */}
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(246,96,45,0.26)_0%,transparent_70%)] opacity-80 group-hover:opacity-100 transition-opacity" />
+
+                  {/* Aesthetic Bespoke AI Emblem */}
+                  <AestheticBotEmblem size={26} idPrefix="launcher" />
+                </div>
+
+                {/* 3. KINETIC ORBITING SATELLITE (Continuously glides around the outer perimeter) */}
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 6.5, repeat: Infinity, ease: "linear" }}
+                  className="absolute inset-0 pointer-events-none"
+                >
+                  <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <span className="relative flex h-2.5 w-2.5 items-center justify-center">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#ff915e] opacity-75" />
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-gradient-to-r from-[#ffe4d6] via-[#fe743d] to-[#f6602d] shadow-[0_0_8px_#fe743d,0_0_2px_#ffffff]" />
+                    </span>
+                  </div>
+                </motion.div>
               </motion.button>
             </motion.div>
           )}
@@ -889,15 +1126,10 @@ export default function VoiceAssistant() {
             <div className="flex items-center justify-between px-4 py-3 border-b border-white/[0.08] bg-[#0c0e17]">
               {/* Left: Avatar & Identity */}
               <div className="flex items-center gap-2.5 min-w-0">
-                <div className="relative w-8 h-8 rounded-full overflow-hidden border border-white/15 shrink-0 bg-white/5">
-                  <Image
-                    src="/favicon.png"
-                    alt="Zakaria AI"
-                    width={32}
-                    height={32}
-                    className="w-full h-full object-cover"
-                  />
-                  <span className="absolute bottom-0 right-0 w-2 h-2 rounded-full bg-[#f6602d] border border-[#090b11]" />
+                <div className="relative w-8 h-8 rounded-full border border-white/15 shrink-0 bg-[#0c0e17] flex items-center justify-center overflow-hidden shadow-inner">
+                  <div className="absolute inset-0 bg-gradient-to-tr from-[#f6602d]/25 to-transparent" />
+                  <AestheticBotEmblem size={17} animated={false} idPrefix="header" />
+                  <span className="absolute bottom-0.5 right-0.5 w-2 h-2 rounded-full bg-[#f6602d] border border-[#090b11]" />
                 </div>
                 <div className="min-w-0">
                   <h3 className="text-xs sm:text-sm font-semibold text-white tracking-tight truncate">
