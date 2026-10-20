@@ -93,6 +93,8 @@ export const metadata: Metadata = {
   category: "technology",
 };
 
+import VoiceAssistant from "@/components/VoiceAssistant";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -212,6 +214,7 @@ export default function RootLayout({
       </head>
       <body className={`${inter.className} antialiased bg-[#121212] text-white`}>
         {children}
+        <VoiceAssistant />
       </body>
     </html>
   );

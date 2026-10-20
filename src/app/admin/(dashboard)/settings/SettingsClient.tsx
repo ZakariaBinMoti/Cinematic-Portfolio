@@ -16,6 +16,7 @@ import {
   Zap,
   Download,
   FileArchive,
+  Sparkles,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Button, Input, Label, Card, Badge, PageHeader } from "../../_ui";
@@ -29,6 +30,7 @@ interface SettingsClientProps {
     cloudinaryCloud: string;
     hasMongo: boolean;
     mongoHost: string;
+    hasGemini: boolean;
   };
 }
 
@@ -261,6 +263,22 @@ export default function SettingsClient({ email, system }: SettingsClientProps) {
                 <span className="text-gray-300">Environment</span>
               </div>
               <Badge tone="cyan">{system.nodeEnv}</Badge>
+            </div>
+
+            <div className="py-3 flex items-center justify-between text-sm">
+              <div className="flex items-center gap-2.5">
+                <Sparkles className="h-4 w-4 text-emerald-400" />
+                <div>
+                  <span className="text-gray-300 block">AI Voice &amp; Chatbot Assistant</span>
+                  <span className="text-[11px] text-[var(--a-text-muted)]">Live database sync</span>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-gray-400">
+                  {system.hasGemini ? "Gemini 1.5 Flash (Active)" : "Dynamic Live Engine (Active)"}
+                </span>
+                <Badge tone="green">Ready</Badge>
+              </div>
             </div>
           </div>
         </Card>

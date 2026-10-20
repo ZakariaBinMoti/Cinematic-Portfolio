@@ -49,5 +49,6 @@ export async function getSystemStatus() {
     cloudinaryCloud: process.env.CLOUDINARY_CLOUD_NAME || "Not configured",
     hasMongo: Boolean(process.env.MONGODB_URI),
     mongoHost: process.env.MONGODB_URI?.includes("mongodb.net") ? "MongoDB Atlas (Cloud)" : "Local/Custom",
+    hasGemini: Boolean(process.env.GEMINI_API_KEY),
   };
 }
