@@ -32,9 +32,9 @@ export default function ContactSection({ contactData }: { contactData?: any }) {
     <section id="contact" className="bg-[#080a10] py-36 px-6 md:px-20 relative z-20 overflow-hidden">
       <div className="max-w-4xl mx-auto text-center relative z-10 p-10 sm:p-14 md:p-16 rounded-3xl bg-white/[0.025] border border-white/[0.09] backdrop-blur-2xl shadow-[0_25px_60px_rgba(0,0,0,0.6)] relative overflow-hidden">
         {/* 3D Spatial Dual Rim Top Highlight */}
-        <div 
-          aria-hidden="true" 
-          className="absolute top-0 inset-x-12 h-[1px] bg-gradient-to-r from-transparent via-[#3594bd]/50 via-white/20 to-[#f6602d]/50 opacity-80" 
+        <div
+          aria-hidden="true"
+          className="absolute top-0 inset-x-12 h-[1px] bg-gradient-to-r from-transparent via-[#3594bd]/50 via-white/20 to-[#f6602d]/50 opacity-80"
         />
 
         <div className="mb-6">
@@ -52,14 +52,14 @@ export default function ContactSection({ contactData }: { contactData?: any }) {
             headline
           )}
         </h2>
-        
+
         <p className="text-base sm:text-lg text-gray-400 mb-12 max-w-2xl mx-auto font-light leading-relaxed">
           {description}
         </p>
-        
+
         {/* Spatial Action Buttons with Professional Hierarchy */}
         <div className="flex flex-col items-center gap-5">
-          {/* Primary Row: High-Intent Actions (Direct Contact & Verified Credentials) */}
+          {/* Primary Row: High-Intent Actions (Direct Contact) */}
           <div className="flex flex-wrap items-center justify-center gap-3.5">
             {/* Email with 1-Click Copy */}
             {email && (
@@ -93,19 +93,6 @@ export default function ContactSection({ contactData }: { contactData?: any }) {
               </div>
             )}
 
-            {/* Standout Resume Button */}
-            <a
-              href="/Zakaria_Bin_Moti_Resume.pdf"
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-2.5 border border-[#3594bd]/45 bg-[#3594bd]/10 hover:bg-[#3594bd]/20 hover:border-[#3594bd]/70 text-white px-7 py-3.5 rounded-full font-medium text-sm transition-all shadow-[0_0_25px_rgba(53,148,189,0.2)] hover:scale-105 active:scale-95 group"
-              title="Open or download Zakaria Bin Moti's Resume (PDF)"
-            >
-              <FileText className="w-4 h-4 text-[#3594bd] group-hover:scale-110 transition-transform" />
-              <span>Download Resume (PDF)</span>
-              <ArrowUpRight className="w-3.5 h-3.5 text-gray-400 group-hover:text-white transition-colors" />
-            </a>
-
             {/* Book Call (Calendly if set) */}
             {calendly && (
               <a
@@ -120,52 +107,63 @@ export default function ContactSection({ contactData }: { contactData?: any }) {
             )}
           </div>
 
-          {/* Secondary Row: Social Profiles */}
-          {(linkedin || github || twitter) && (
-            <div className="flex flex-wrap items-center justify-center gap-2.5 pt-1">
-              {linkedin && (
-                <a
-                  href={linkedin}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="border border-white/10 bg-white/[0.03] text-gray-400 hover:text-white hover:bg-white/[0.08] hover:border-white/20 px-5 py-2.5 rounded-full font-medium text-xs transition-all flex items-center gap-1.5"
-                >
-                  <span>LinkedIn</span>
-                  <ArrowUpRight className="w-3 h-3 opacity-60" />
-                </a>
-              )}
-              {github && (
-                <a
-                  href={github}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="border border-white/10 bg-white/[0.03] text-gray-400 hover:text-white hover:bg-white/[0.08] hover:border-white/20 px-5 py-2.5 rounded-full font-medium text-xs transition-all flex items-center gap-1.5"
-                >
-                  <span>GitHub</span>
-                  <ArrowUpRight className="w-3 h-3 opacity-60" />
-                </a>
-              )}
-              {twitter && (
-                <a
-                  href={twitter}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="border border-white/10 bg-white/[0.03] text-gray-400 hover:text-white hover:bg-white/[0.08] hover:border-white/20 px-5 py-2.5 rounded-full font-medium text-xs transition-all flex items-center gap-1.5"
-                >
-                  <span>X / Twitter</span>
-                  <ArrowUpRight className="w-3 h-3 opacity-60" />
-                </a>
-              )}
-            </div>
-          )}
+          {/* Secondary Row: Social Profiles & Resume */}
+          <div className="flex flex-wrap items-center justify-center gap-2.5 pt-1">
+            {/* Resume Button matching LinkedIn/GitHub style */}
+            <a
+              href="/Zakaria_Bin_Moti_Resume.pdf"
+              target="_blank"
+              rel="noreferrer"
+              className="border border-white/10 bg-white/[0.03] text-gray-400 hover:text-white hover:bg-white/[0.08] hover:border-white/20 px-5 py-2.5 rounded-full font-medium text-xs transition-all flex items-center gap-1.5"
+              title="Open or download Zakaria Bin Moti's Resume"
+            >
+              <FileText className="w-3 h-3 opacity-60" />
+              <span>Resume</span>
+              <ArrowUpRight className="w-3 h-3 opacity-60" />
+            </a>
+
+            {linkedin && (
+              <a
+                href={linkedin}
+                target="_blank"
+                rel="noreferrer"
+                className="border border-white/10 bg-white/[0.03] text-gray-400 hover:text-white hover:bg-white/[0.08] hover:border-white/20 px-5 py-2.5 rounded-full font-medium text-xs transition-all flex items-center gap-1.5"
+              >
+                <span>LinkedIn</span>
+                <ArrowUpRight className="w-3 h-3 opacity-60" />
+              </a>
+            )}
+            {github && (
+              <a
+                href={github}
+                target="_blank"
+                rel="noreferrer"
+                className="border border-white/10 bg-white/[0.03] text-gray-400 hover:text-white hover:bg-white/[0.08] hover:border-white/20 px-5 py-2.5 rounded-full font-medium text-xs transition-all flex items-center gap-1.5"
+              >
+                <span>GitHub</span>
+                <ArrowUpRight className="w-3 h-3 opacity-60" />
+              </a>
+            )}
+            {twitter && (
+              <a
+                href={twitter}
+                target="_blank"
+                rel="noreferrer"
+                className="border border-white/10 bg-white/[0.03] text-gray-400 hover:text-white hover:bg-white/[0.08] hover:border-white/20 px-5 py-2.5 rounded-full font-medium text-xs transition-all flex items-center gap-1.5"
+              >
+                <span>X / Twitter</span>
+                <ArrowUpRight className="w-3 h-3 opacity-60" />
+              </a>
+            )}
+          </div>
         </div>
       </div>
-      
+
       <div className="mt-28 text-center text-gray-600 text-xs">
         <p>© {new Date().getFullYear()} Zakaria Bin Moti. All rights reserved.</p>
-        <a 
-          href="/admin/login" 
-          rel="nofollow" 
+        <a
+          href="/admin/login"
+          rel="nofollow"
           className="hover:text-gray-400 transition-colors mt-2 inline-block opacity-60 hover:opacity-100"
         >
           Admin Studio

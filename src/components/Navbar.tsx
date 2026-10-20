@@ -173,12 +173,12 @@ export default function Navbar() {
                 target="_blank"
                 rel="noreferrer"
                 onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center justify-between px-4 py-2.5 rounded-xl text-sm font-medium border border-[#3594bd]/40 bg-[#3594bd]/10 hover:bg-[#3594bd]/20 text-white transition-all shadow-[0_0_15px_rgba(53,148,189,0.15)] group"
-                title="Open or download Zakaria Bin Moti's Resume (PDF)"
+                className="flex items-center justify-between px-4 py-2.5 rounded-xl text-sm font-medium border border-white/10 bg-white/[0.04] hover:bg-white/[0.08] hover:border-white/20 text-gray-200 hover:text-white transition-all group"
+                title="Open or download Zakaria Bin Moti's Resume"
               >
                 <span className="flex items-center gap-2.5">
-                  <FileText className="w-4 h-4 text-[#3594bd] group-hover:scale-110 transition-transform" />
-                  <span>Download Resume (PDF)</span>
+                  <FileText className="w-4 h-4 text-gray-400 group-hover:text-white group-hover:scale-105 transition-transform" />
+                  <span>Resume</span>
                 </span>
                 <ArrowUpRight className="w-4 h-4 text-gray-400 group-hover:text-white transition-colors" />
               </a>
