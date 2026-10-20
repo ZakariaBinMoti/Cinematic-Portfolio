@@ -107,9 +107,9 @@ PROFILE & IDENTITY:
 
 OFFICIAL CONTACT & LIVE LINKS:
 - Portfolio Website: https://hellozakaria.com
-- Email: ${contact.email || "zakaria.binmoti@gmail.com"}
-- LinkedIn: ${contact.linkedin || "https://www.linkedin.com/in/zakariabinmoti"}
-- GitHub: ${contact.github || "https://github.com/ZakariaBinMoti"}
+- Email Address: zakaria.binmoti@gmail.com (always state zakaria.binmoti@gmail.com with @gmail.com)
+- LinkedIn: https://www.linkedin.com/in/zakariabinmoti
+- GitHub: https://github.com/ZakariaBinMoti
 - Resume (PDF): https://hellozakaria.com/Zakaria_Bin_Moti_Resume.pdf
 ${contact.calendly ? `- Book a Call: ${contact.calendly}` : ""}
 

@@ -41,36 +41,50 @@ export async function POST(req: NextRequest) {
           parts: [{ text: message }],
         });
 
-        const geminiRes = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiKey}`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              contents,
-              systemInstruction: {
-                parts: [{ text: systemPrompt }],
-              },
-              generationConfig: {
-                temperature: 0.7,
-                maxOutputTokens: 300, // kept concise for voice narration
-              },
-            }),
-          }
-        );
+        // Try high-speed models in order of latency
+        const candidateModels = [
+          "gemini-3.5-flash-lite",
+          "gemini-3.5-flash",
+          "gemini-flash-latest",
+          "gemini-2.5-flash",
+        ];
 
-        if (geminiRes.ok) {
-          const geminiData = await geminiRes.json();
-          const reply = geminiData?.candidates?.[0]?.content?.parts?.[0]?.text;
-          if (reply) {
-            return NextResponse.json({
-              reply: reply.trim(),
-              provider: "gemini",
-            });
+        for (const model of candidateModels) {
+          try {
+            const geminiRes = await fetch(
+              `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${geminiKey}`,
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  contents,
+                  systemInstruction: {
+                    parts: [{ text: systemPrompt }],
+                  },
+                  generationConfig: {
+                    temperature: 0.7,
+                    maxOutputTokens: 300, // kept concise for voice narration
+                  },
+                }),
+              }
+            );
+
+            if (geminiRes.ok) {
+              const geminiData = await geminiRes.json();
+              const reply = geminiData?.candidates?.[0]?.content?.parts?.[0]?.text;
+              if (reply) {
+                return NextResponse.json({
+                  reply: reply.trim(),
+                  provider: model,
+                });
+              }
+            } else {
+              const err = await geminiRes.json().catch(() => ({}));
+              console.warn(`Model ${model} returned ${geminiRes.status}:`, err?.error?.message);
+            }
+          } catch (modelErr) {
+            console.warn(`Error trying ${model}:`, modelErr);
           }
-        } else {
-          const errText = await geminiRes.text();
-          console.warn("Gemini API call failed, using dynamic local engine:", errText);
         }
       } catch (geminiErr) {
         console.warn("Gemini call error, falling back to dynamic engine:", geminiErr);
