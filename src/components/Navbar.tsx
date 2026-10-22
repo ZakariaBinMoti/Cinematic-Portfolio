@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
-import { FileText, ArrowUpRight } from "lucide-react";
+import { FileText, ArrowUpRight, ChevronDown, Layers, BookOpen } from "lucide-react";
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -13,7 +13,12 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState("hero");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [moreDropdownOpen, setMoreDropdownOpen] = useState(false);
 
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const dropdownTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // ScrollSpy for in-page anchors on home page
   useEffect(() => {
     if (!isHome) return;
 
@@ -39,24 +44,76 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [isHome]);
 
+  // Click outside to close desktop dropdown
+  useEffect(() => {
+    const handleOutsideClick = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setMoreDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => document.removeEventListener("mousedown", handleOutsideClick);
+  }, []);
+
+  // Primary smooth in-page anchors (keeps user on landing page without jarring redirects)
   const navLinks = isHome
     ? [
         { id: "about", label: "About", href: "#about" },
         { id: "projects", label: "Projects", href: "#projects" },
-        { id: "case-studies", label: "Case Studies", href: "/case-studies" },
         { id: "skills", label: "Stack", href: "#skills" },
         { id: "experience", label: "Experience", href: "#experience" },
-        { id: "blog", label: "Blog", href: "/blog" },
         { id: "contact", label: "Contact", href: "#contact" },
       ]
     : [
         { id: "home", label: "Home", href: "/" },
         { id: "projects", label: "Projects", href: "/#projects" },
-        { id: "case-studies", label: "Case Studies", href: "/case-studies" },
+        { id: "skills", label: "Stack", href: "/#skills" },
         { id: "experience", label: "Experience", href: "/#experience" },
-        { id: "blog", label: "Blog", href: "/blog" },
         { id: "contact", label: "Contact", href: "/#contact" },
       ];
+
+  // Secondary pages grouped into the luxury "More" dropdown
+  const exploreLinks = [
+    {
+      id: "case-studies",
+      label: "Case Studies",
+      description: "Architecture & CRO deep-dives",
+      href: "/case-studies",
+      icon: Layers,
+      badge: "Deep-Dives",
+    },
+    {
+      id: "blog",
+      label: "Blog & Insights",
+      description: "Engineering & Shopify guides",
+      href: "/blog",
+      icon: BookOpen,
+      badge: "Articles",
+    },
+    {
+      id: "resume",
+      label: "Resume / CV",
+      description: "View or download verified PDF",
+      href: "/Zakaria_Bin_Moti_Resume.pdf",
+      icon: FileText,
+      isExternal: true,
+      badge: "PDF",
+    },
+  ];
+
+  const isExploreActive =
+    pathname.startsWith("/case-studies") || pathname.startsWith("/blog");
+
+  const handleMouseEnter = () => {
+    if (dropdownTimerRef.current) clearTimeout(dropdownTimerRef.current);
+    setMoreDropdownOpen(true);
+  };
+
+  const handleMouseLeave = () => {
+    dropdownTimerRef.current = setTimeout(() => {
+      setMoreDropdownOpen(false);
+    }, 180);
+  };
 
   return (
     <>
@@ -87,7 +144,7 @@ export default function Navbar() {
             />
           </a>
 
-          {/* Desktop Nav Items */}
+          {/* Desktop Nav Items (100% in-page anchors on home page) */}
           <div className="hidden md:flex items-center gap-1 px-1">
             {navLinks.map((link) => {
               const isActive = isHome
@@ -111,9 +168,101 @@ export default function Navbar() {
                 </a>
               );
             })}
+
+            {/* "More" Dropdown Trigger for Case Studies, Blog & Resume */}
+            <div
+              ref={dropdownRef}
+              className="relative"
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handleMouseLeave}
+            >
+              <button
+                type="button"
+                onClick={() => setMoreDropdownOpen(!moreDropdownOpen)}
+                className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium border transition-all duration-200 outline-none focus:outline-none cursor-pointer ${
+                  isExploreActive || moreDropdownOpen
+                    ? "bg-white/[0.12] text-white shadow-[0_0_15px_rgba(255,255,255,0.08)] border-white/15"
+                    : "border-white/0 text-gray-400 hover:text-gray-200 hover:bg-white/[0.04]"
+                }`}
+                aria-expanded={moreDropdownOpen}
+                aria-label="More navigation links"
+              >
+                <span>More</span>
+                <ChevronDown
+                  className={`w-3 h-3 transition-transform duration-200 ${
+                    moreDropdownOpen ? "rotate-180 text-[#fe743d]" : "text-gray-400"
+                  }`}
+                />
+              </button>
+
+              {/* Floating Luxury Obsidian Glass Dropdown Menu */}
+              <AnimatePresence>
+                {moreDropdownOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: 8, scale: 0.95 }}
+                    transition={{ duration: 0.16, ease: "easeOut" }}
+                    className="absolute right-0 top-full mt-2 w-64 p-2 rounded-2xl bg-[#090b12]/95 backdrop-blur-2xl border border-white/[0.12] shadow-[0_20px_50px_rgba(0,0,0,0.85),0_0_25px_rgba(246,96,45,0.18)] flex flex-col gap-1 z-50 pointer-events-auto"
+                  >
+                    {/* Top Rim Gradient Ambient Glow */}
+                    <div className="absolute inset-x-4 top-0 h-[1.5px] bg-gradient-to-r from-transparent via-[#f6602d]/60 to-transparent" />
+
+                    {exploreLinks.map((item) => {
+                      const Icon = item.icon;
+                      const isItemActive =
+                        pathname === item.href ||
+                        (item.href !== "/" && pathname.startsWith(item.href));
+
+                      return (
+                        <a
+                          key={item.id}
+                          href={item.href}
+                          target={item.isExternal ? "_blank" : undefined}
+                          rel={item.isExternal ? "noreferrer" : undefined}
+                          onClick={() => setMoreDropdownOpen(false)}
+                          className={`group flex items-start gap-3 p-2.5 rounded-xl transition-all duration-200 ${
+                            isItemActive
+                              ? "bg-[#f6602d]/15 border border-[#f6602d]/30 text-white"
+                              : "hover:bg-white/[0.06] text-zinc-300 hover:text-white"
+                          }`}
+                        >
+                          <div
+                            className={`p-2 rounded-lg shrink-0 transition-colors ${
+                              isItemActive
+                                ? "bg-[#f6602d] text-white shadow-[0_0_12px_rgba(246,96,45,0.4)]"
+                                : "bg-white/[0.06] text-zinc-400 group-hover:text-white group-hover:bg-white/[0.1]"
+                            }`}
+                          >
+                            <Icon className="w-4 h-4" />
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <div className="flex items-center justify-between gap-1">
+                              <span className="text-xs font-semibold text-white group-hover:text-[#fe743d] transition-colors">
+                                {item.label}
+                              </span>
+                              {item.isExternal ? (
+                                <ArrowUpRight className="w-3 h-3 text-zinc-500 group-hover:text-zinc-300 transition-colors" />
+                              ) : item.badge ? (
+                                <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-white/[0.06] text-zinc-400 font-mono">
+                                  {item.badge}
+                                </span>
+                              ) : null}
+                            </div>
+                            <p className="text-[11px] text-zinc-400 font-light truncate mt-0.5">
+                              {item.description}
+                            </p>
+                          </div>
+                        </a>
+                      );
+                    })}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           </div>
 
-          {/* Mobile Menu Toggle */}
+          {/* Mobile Menu Toggle Button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="md:hidden flex items-center justify-center w-8 h-8 rounded-full bg-white/[0.05] border border-white/10 text-white mr-1 outline-none pointer-events-auto cursor-pointer"
@@ -140,7 +289,8 @@ export default function Navbar() {
             transition={{ duration: 0.2 }}
             className="fixed top-20 inset-x-4 z-50 md:hidden bg-[#080a10]/95 backdrop-blur-2xl border border-white/10 rounded-2xl p-4 shadow-2xl pointer-events-auto"
           >
-            <div className="flex flex-col gap-1.5">
+            {/* Primary Section Anchors */}
+            <div className="flex flex-col gap-1">
               {navLinks.map((link) => {
                 const isActive = isHome
                   ? activeSection === link.id
@@ -154,7 +304,7 @@ export default function Navbar() {
                       if (isHome) setActiveSection(link.id);
                       setMobileMenuOpen(false);
                     }}
-                    className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+                    className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors ${
                       isActive
                         ? "bg-white/10 text-white"
                         : "text-gray-300 hover:text-white hover:bg-white/5"
@@ -166,22 +316,46 @@ export default function Navbar() {
               })}
             </div>
 
-            {/* Direct Mobile Resume Access */}
-            <div className="pt-2.5 mt-2 border-t border-white/10">
-              <a
-                href="/Zakaria_Bin_Moti_Resume.pdf"
-                target="_blank"
-                rel="noreferrer"
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center justify-between px-4 py-2.5 rounded-xl text-sm font-medium border border-white/10 bg-white/[0.04] hover:bg-white/[0.08] hover:border-white/20 text-gray-200 hover:text-white transition-all group"
-                title="Open or download Zakaria Bin Moti's Resume"
-              >
-                <span className="flex items-center gap-2.5">
-                  <FileText className="w-4 h-4 text-gray-400 group-hover:text-white group-hover:scale-105 transition-transform" />
-                  <span>Resume</span>
-                </span>
-                <ArrowUpRight className="w-4 h-4 text-gray-400 group-hover:text-white transition-colors" />
-              </a>
+            {/* Explore Pages & Case Studies */}
+            <div className="pt-3 mt-3 border-t border-white/10">
+              <span className="text-[10px] font-mono uppercase tracking-wider text-gray-500 px-4 mb-2 block">
+                Explore More
+              </span>
+              <div className="flex flex-col gap-1">
+                {exploreLinks.map((item) => {
+                  const Icon = item.icon;
+                  const isItemActive =
+                    pathname === item.href ||
+                    (item.href !== "/" && pathname.startsWith(item.href));
+
+                  return (
+                    <a
+                      key={item.id}
+                      href={item.href}
+                      target={item.isExternal ? "_blank" : undefined}
+                      rel={item.isExternal ? "noreferrer" : undefined}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={`flex items-center justify-between px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${
+                        isItemActive
+                          ? "bg-[#f6602d]/15 text-white border border-[#f6602d]/30"
+                          : "text-gray-300 hover:text-white hover:bg-white/5"
+                      }`}
+                    >
+                      <span className="flex items-center gap-2.5">
+                        <Icon className="w-4 h-4 text-[#fe743d]" />
+                        <span>{item.label}</span>
+                      </span>
+                      {item.isExternal ? (
+                        <ArrowUpRight className="w-4 h-4 text-gray-500" />
+                      ) : (
+                        <span className="text-[10px] text-gray-500 font-mono">
+                          {item.badge}
+                        </span>
+                      )}
+                    </a>
+                  );
+                })}
+              </div>
             </div>
           </motion.div>
         )}
