@@ -40,6 +40,10 @@ export default function RoamingCompanion({
   const botRef = useRef<HTMLDivElement>(null);
   const [botRect, setBotRect] = useState<DOMRect | null>(null);
 
+  // Pointer & Drag tracking (Guarantees clean click vs drag separation)
+  const pointerDownPosRef = useRef<{ x: number; y: number; time: number } | null>(null);
+  const isRealDragRef = useRef(false);
+
   // Scroll throttling refs
   const isScrollingRef = useRef(false);
   const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -126,7 +130,58 @@ export default function RoamingCompanion({
     return () => window.removeEventListener("mousemove", handleMouseMove);
   }, []);
 
-  // 4. Autonomous 2D Roaming Finite State Machine (Moves all around the screen!)
+  // 4. Pop Speech Bubble Helper (Cycles through quotes)
+  const popSpeechBubble = useCallback(() => {
+    if (isDismissed || isChatOpen || isDragging) return;
+
+    const nextQuote = COMPANION_QUOTES[quoteIndexRef.current % COMPANION_QUOTES.length];
+    quoteIndexRef.current += 1;
+    setCurrentQuote(nextQuote);
+
+    if (bubbleTimeoutRef.current) clearTimeout(bubbleTimeoutRef.current);
+    bubbleTimeoutRef.current = setTimeout(() => {
+      setCurrentQuote(null);
+    }, 4500);
+  }, [isDismissed, isChatOpen, isDragging]);
+
+  // 5. Initial Speech Bubble: Appears immediately after 2.5 seconds on first load!
+  useEffect(() => {
+    if (isDismissed || isChatOpen) return;
+
+    const initialTimer = setTimeout(() => {
+      popSpeechBubble();
+    }, 2500);
+
+    return () => clearTimeout(initialTimer);
+  }, [isDismissed, isChatOpen, popSpeechBubble]);
+
+  // 6. Subsequent Speech Bubbles: Consistently pops every 8 to 12 seconds
+  useEffect(() => {
+    if (isDismissed || isChatOpen) return;
+
+    let timerId: NodeJS.Timeout;
+
+    const scheduleNext = () => {
+      // 8 to 12 seconds delay
+      const delay = Math.floor(8000 + Math.random() * 4000);
+      timerId = setTimeout(() => {
+        if (!isDragging && !currentQuote && !isChatOpen && !isDismissed) {
+          popSpeechBubble();
+        }
+        scheduleNext();
+      }, delay);
+    };
+
+    // Begin recurring cycle 6s after initial mount
+    const startRecurring = setTimeout(scheduleNext, 6000);
+
+    return () => {
+      clearTimeout(startRecurring);
+      clearTimeout(timerId);
+    };
+  }, [isDismissed, isChatOpen, isDragging, currentQuote, popSpeechBubble]);
+
+  // 7. Autonomous 2D Roaming Finite State Machine (Moves all around the screen!)
   useEffect(() => {
     if (isDismissed || isMobile || isChatOpen || isDragging) return;
 
@@ -168,12 +223,6 @@ export default function RoamingCompanion({
 
         loopTimeoutRef.current = setTimeout(() => {
           setAction("idle");
-
-          // 40% chance of popping a speech bubble
-          if (Math.random() < 0.45 && !currentQuote) {
-            popSpeechBubble();
-          }
-
           loopTimeoutRef.current = setTimeout(triggerNextAction, 3000 + Math.random() * 2500);
         }, duration * 1000);
       } else if (roll < 0.72) {
@@ -192,11 +241,6 @@ export default function RoamingCompanion({
 
         loopTimeoutRef.current = setTimeout(() => {
           setAction("idle");
-
-          if (Math.random() < 0.5 && !currentQuote) {
-            popSpeechBubble();
-          }
-
           loopTimeoutRef.current = setTimeout(triggerNextAction, 3200 + Math.random() * 2500);
         }, duration * 1000);
       } else {
@@ -223,25 +267,9 @@ export default function RoamingCompanion({
 
         loopTimeoutRef.current = setTimeout(() => {
           setAction("idle");
-
-          if (Math.random() < 0.4 && !currentQuote) {
-            popSpeechBubble();
-          }
-
           loopTimeoutRef.current = setTimeout(triggerNextAction, 2500 + Math.random() * 2500);
         }, anticDuration);
       }
-    };
-
-    const popSpeechBubble = () => {
-      const nextQuote = COMPANION_QUOTES[quoteIndexRef.current % COMPANION_QUOTES.length];
-      quoteIndexRef.current += 1;
-      setCurrentQuote(nextQuote);
-
-      if (bubbleTimeoutRef.current) clearTimeout(bubbleTimeoutRef.current);
-      bubbleTimeoutRef.current = setTimeout(() => {
-        setCurrentQuote(null);
-      }, 4800);
     };
 
     loopTimeoutRef.current = setTimeout(triggerNextAction, 2800);
@@ -249,60 +277,66 @@ export default function RoamingCompanion({
     return () => {
       if (loopTimeoutRef.current) clearTimeout(loopTimeoutRef.current);
     };
-  }, [positionX, positionY, isDismissed, isMobile, isChatOpen, isHovered, isDragging, currentQuote]);
+  }, [positionX, positionY, isDismissed, isMobile, isChatOpen, isHovered, isDragging]);
 
-  // 5. Periodic Speech Bubble Timer (Runs consistently across entire session)
-  useEffect(() => {
-    if (isDismissed || isChatOpen) return;
+  // 8. Pointer Down: Track initial click position to differentiate Click vs Drag
+  const handlePointerDown = (e: React.PointerEvent) => {
+    pointerDownPosRef.current = { x: e.clientX, y: e.clientY, time: Date.now() };
+    isRealDragRef.current = false;
+  };
 
-    const bubbleInterval = setInterval(() => {
-      if (!isDragging && !currentQuote) {
-        const nextQuote = COMPANION_QUOTES[quoteIndexRef.current % COMPANION_QUOTES.length];
-        quoteIndexRef.current += 1;
-        setCurrentQuote(nextQuote);
-
-        if (bubbleTimeoutRef.current) clearTimeout(bubbleTimeoutRef.current);
-        bubbleTimeoutRef.current = setTimeout(() => {
-          setCurrentQuote(null);
-        }, 4800);
-      }
-    }, 14000);
-
-    return () => clearInterval(bubbleInterval);
-  }, [isDismissed, isChatOpen, isDragging, currentQuote]);
-
-  // 6. Drag & Drop Handlers (Grabbable with mouse or touch!)
+  // 9. Drag Start: User is holding and moving
   const handleDragStart = () => {
+    isRealDragRef.current = true;
     setIsDragging(true);
     setCurrentQuote(null);
     setAction("drag");
   };
 
+  // 10. Drag End: User released
   const handleDragEnd = (_: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
     setIsDragging(false);
 
-    // If movement was negligible (< 6px), treat as a click to open chat
     const movedDistance = Math.hypot(info.offset.x, info.offset.y);
-    if (movedDistance < 6) {
-      onOpenChat();
-      return;
+    if (movedDistance >= 8) {
+      // It was a real drag reposition!
+      const safeX = Math.max(50, Math.min(window.innerWidth - 110, positionX + info.offset.x));
+      const safeY = Math.max(80, Math.min(window.innerHeight - 130, positionY + info.offset.y));
+
+      setPositionX(safeX);
+      setPositionY(safeY);
+      setAction("hover");
+
+      setTimeout(() => {
+        setAction("idle");
+      }, 700);
     }
 
-    // Otherwise, it was a drag! Place Zaki at the new dropped coordinate
-    const safeX = Math.max(50, Math.min(window.innerWidth - 110, positionX + info.offset.x));
-    const safeY = Math.max(80, Math.min(window.innerHeight - 130, positionY + info.offset.y));
-
-    setPositionX(safeX);
-    setPositionY(safeY);
-    setAction("hover");
-
-    // Land softly and resume idle state
+    // Keep flag true briefly to prevent click handler from misfiring
     setTimeout(() => {
-      setAction("idle");
-    }, 800);
+      isRealDragRef.current = false;
+    }, 100);
   };
 
-  // 7. Handle User Dismissal ('(x)' click)
+  // 11. Click Handler: Single click / tap cleanly opens chat
+  const handleClick = (e: React.MouseEvent) => {
+    // If user dragged, do not open chat
+    if (isRealDragRef.current) return;
+
+    // Check distance between pointer down and release
+    if (pointerDownPosRef.current) {
+      const moved = Math.hypot(
+        e.clientX - pointerDownPosRef.current.x,
+        e.clientY - pointerDownPosRef.current.y
+      );
+      if (moved > 8) return;
+    }
+
+    // It was a click / tap! Open chat immediately!
+    onOpenChat();
+  };
+
+  // 12. Handle User Dismissal ('(x)' button)
   const handleDismiss = (e: React.MouseEvent) => {
     e.stopPropagation();
     setIsDismissing(true);
@@ -335,8 +369,10 @@ export default function RoamingCompanion({
           drag
           dragMomentum={false}
           dragElastic={0.08}
+          onPointerDown={handlePointerDown}
           onDragStart={handleDragStart}
           onDragEnd={handleDragEnd}
+          onClick={handleClick}
           initial={{ opacity: 0, scale: 0.3, x: positionX, y: positionY }}
           animate={
             isDismissing
@@ -374,7 +410,13 @@ export default function RoamingCompanion({
           {/* 1. SINGLE-LINE SPEECH BUBBLE */}
           <AnimatePresence>
             {currentQuote && !isDragging && (
-              <div className={bubbleFlipped ? "absolute top-full mt-2 left-1/2 -translate-x-1/2" : ""}>
+              <div
+                className={
+                  bubbleFlipped
+                    ? "absolute top-full mt-2 left-1/2 -translate-x-1/2"
+                    : ""
+                }
+              >
                 <CompanionSpeechBubble
                   quote={currentQuote}
                   onClick={onOpenChat}
