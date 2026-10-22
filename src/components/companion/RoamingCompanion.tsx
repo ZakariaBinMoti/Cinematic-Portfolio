@@ -318,7 +318,12 @@ export default function RoamingCompanion({
     }, 100);
   };
 
-  // 11. Click Handler: Single click / tap cleanly opens chat
+  // 11. Click & Tap Handlers: Single click / tap cleanly opens chat
+  const handleTap = () => {
+    if (isRealDragRef.current) return;
+    onOpenChat();
+  };
+
   const handleClick = (e: React.MouseEvent) => {
     // If user dragged, do not open chat
     if (isRealDragRef.current) return;
@@ -372,6 +377,7 @@ export default function RoamingCompanion({
           onPointerDown={handlePointerDown}
           onDragStart={handleDragStart}
           onDragEnd={handleDragEnd}
+          onTap={handleTap}
           onClick={handleClick}
           initial={{ opacity: 0, scale: 0.3, x: positionX, y: positionY }}
           animate={

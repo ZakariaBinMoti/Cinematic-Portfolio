@@ -481,16 +481,102 @@ export default function VoiceAssistant() {
     }
   }, [isOpen, isLiveCall, focusInput]);
 
+  // Pre-load and cache browser SpeechSynthesis voices immediately
+  const [cachedVoices, setCachedVoices] = useState<SpeechSynthesisVoice[]>([]);
+
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const hasSpeechRec =
-        "SpeechRecognition" in window || "webkitSpeechRecognition" in window;
-      const hasSpeechSynth = "speechSynthesis" in window;
-      setSpeechSupported(Boolean(hasSpeechRec && hasSpeechSynth));
+    if (typeof window === "undefined") {
+      return;
+    }
+    const hasSpeechRec =
+      "SpeechRecognition" in window || "webkitSpeechRecognition" in window;
+    const hasSpeechSynth = "speechSynthesis" in window;
+    setSpeechSupported(Boolean(hasSpeechRec && hasSpeechSynth));
+
+    if (hasSpeechSynth) {
+      const loadVoices = () => {
+        const list = window.speechSynthesis.getVoices();
+        if (list && list.length > 0) {
+          setCachedVoices(list);
+        }
+      };
+
+      loadVoices();
+      window.speechSynthesis.onvoiceschanged = loadVoices;
+
+      return () => {
+        if ("speechSynthesis" in window) {
+          window.speechSynthesis.onvoiceschanged = null;
+        }
+      };
     }
   }, []);
 
-  // Text-to-Speech Engine with Fail-Safe Timeout Protection
+  // Soft, crisp, natural female voice selector (prioritizing neural & natural conversational female voices)
+  const getFemaleVoice = useCallback((): SpeechSynthesisVoice | null => {
+    if (typeof window === "undefined" || !("speechSynthesis" in window)) return null;
+
+    const list = cachedVoices.length > 0 ? cachedVoices : window.speechSynthesis.getVoices();
+    if (!list || list.length === 0) return null;
+
+    const englishVoices = list.filter((v) => v.lang.startsWith("en"));
+    const pool = englishVoices.length > 0 ? englishVoices : list;
+
+    // Strict male keyword list to prevent harsh or robotic male voices
+    const maleKeywords = [
+      "male", "david", "mark", "george", "daniel", "guy", "james",
+      "richard", "stefan", "oliver", "rishi", "paul", "tom", "alex", "fred"
+    ];
+
+    const femalePool = pool.filter((v) => {
+      const nameLower = v.name.toLowerCase();
+      return !maleKeywords.some((maleKey) => nameLower.includes(maleKey));
+    });
+
+    // 1. Google UK English Female (Soft, crisp, natural conversational British female voice in Chrome)
+    const googleUKFemale = femalePool.find(
+      (v) => v.name.includes("Google") && v.name.includes("UK English Female")
+    );
+    if (googleUKFemale) return googleUKFemale;
+
+    // 2. Google US English (Crisp, warm female voice in Chrome)
+    const googleUS = femalePool.find((v) => v.name === "Google US English");
+    if (googleUS) return googleUS;
+
+    // 3. Microsoft Natural / Neural female voices (Edge / Windows: Aria, Jenny, Sonia, Natasha)
+    const edgeNeuralFemale = femalePool.find(
+      (v) =>
+        (v.name.includes("Aria") || v.name.includes("Jenny") || v.name.includes("Sonia") || v.name.includes("Natasha")) &&
+        v.name.includes("Natural")
+    );
+    if (edgeNeuralFemale) return edgeNeuralFemale;
+
+    // 4. Apple Safari / macOS / iOS female voices (Samantha, Victoria, Karen, Moira, Tessa, Serena, Siri)
+    const appleFemale = femalePool.find((v) =>
+      ["samantha", "victoria", "karen", "moira", "tessa", "serena", "siri"].some((name) =>
+        v.name.toLowerCase().includes(name)
+      )
+    );
+    if (appleFemale) return appleFemale;
+
+    // 5. Any voice explicitly tagged with 'Female' or 'Woman'
+    const explicitFemale = femalePool.find((v) => {
+      const n = v.name.toLowerCase();
+      return n.includes("female") || n.includes("woman");
+    });
+    if (explicitFemale) return explicitFemale;
+
+    // 6. Microsoft Zira (Clean, clear Windows desktop female voice)
+    const zira = femalePool.find((v) => v.name.toLowerCase().includes("zira"));
+    if (zira) return zira;
+
+    // 7. Any non-male candidate
+    if (femalePool.length > 0) return femalePool[0];
+
+    return pool[0] || null;
+  }, [cachedVoices]);
+
+  // Text-to-Speech Engine with Fail-Safe Timeout Protection & Female Natural Tuning
   const speakText = useCallback(
     (text: string, messageId?: string, onDone?: () => void) => {
       if (
@@ -508,7 +594,10 @@ export default function VoiceAssistant() {
         const cleanText = text
           .replace(/https?:\/\/[^\s]+/g, "")
           .replace(/\[([^\]]+)\]\([^\)]+\)/g, "$1")
-          .replace(/[*#_~`•-]/g, "")
+          .replace(/[*#_~`•\-+]/g, "")
+          .replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, "")
+          .replace(/[\u2600-\u27BF]/g, "")
+          .replace(/\s+/g, " ")
           .replace(/\n+/g, ". ")
           .trim();
 
@@ -518,21 +607,16 @@ export default function VoiceAssistant() {
         }
 
         const utterance = new SpeechSynthesisUtterance(cleanText);
-        const voices = window.speechSynthesis.getVoices();
-        const naturalVoice = voices.find(
-          (v) =>
-            v.lang.startsWith("en") &&
-            (v.name.includes("Natural") ||
-              v.name.includes("Google") ||
-              v.name.includes("Samantha") ||
-              v.name.includes("Daniel") ||
-              v.name.includes("Premium") ||
-              v.name.includes("English"))
-        );
+        const selectedVoice = getFemaleVoice();
 
-        if (naturalVoice) utterance.voice = naturalVoice;
-        utterance.rate = 1.05;
-        utterance.pitch = 1.0;
+        if (selectedVoice) {
+          utterance.voice = selectedVoice;
+        }
+
+        // Soft, medium speed, crisp and clean cadence
+        utterance.rate = 0.98; // Medium conversational pace (removes robotic rushed sound)
+        utterance.pitch = 1.0; // Soft natural tone
+        utterance.volume = 1.0;
 
         let hasFinished = false;
         let safetyTimer: NodeJS.Timeout | null = null;
@@ -575,7 +659,7 @@ export default function VoiceAssistant() {
         if (onDone) onDone();
       }
     },
-    []
+    [getFemaleVoice]
   );
 
   const stopSpeaking = useCallback(() => {
