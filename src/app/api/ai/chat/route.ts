@@ -127,7 +127,7 @@ export async function POST(req: NextRequest) {
     } else if (lower.includes("rate") || lower.includes("pricing") || lower.includes("cost") || lower.includes("available") || lower.includes("availability")) {
       fallbackReply = `Zakaria is available for high-tier Shopify theme development, enterprise speed optimization, headless builds, and architectural consulting. For exact project scoping and rates, send him a message at ${contact?.email || "zakaria.binmoti@gmail.com"}.`;
     } else if (lower.includes("who are you") || lower.includes("who is zakaria") || lower.includes("about") || lower.includes("background")) {
-      fallbackReply = `Zakaria Bin Moti is a Lead Software Engineer and Shopify OS 2.0 Architect with over 6 years of experience delivering 250+ production stores globally. He blends elite engineering with conversion-focused design to create blisteringly fast, high-converting digital storefronts.`;
+      fallbackReply = `Zakaria Bin Moti is a Lead Software Engineer and Shopify OS 2.0 Architect with 2+ years of experience delivering 250+ production stores globally. He blends elite engineering with conversion-focused design to create blisteringly fast, high-converting digital storefronts.`;
     } else {
       fallbackReply = `Hi there! I am Zakaria's AI Assistant. You can ask me anything about his 250+ delivered Shopify stores, live case studies, technical stack, or how to get in touch with him for a project. What would you like to know?`;
     }

@@ -103,7 +103,7 @@ PROFILE & IDENTITY:
 - Title: Lead Software Engineer & Shopify OS 2.0 Architect
 - Tagline: ${hero.headline || "Architecting high-converting eCommerce platforms, custom Next.js web applications, and scalable frontend architectures."}
 - Bio/Background: ${about.bio || "Full-stack software engineer and Shopify architect with a proven track record delivering over 250+ production storefronts globally with sub-0.7s Core Web Vitals and high-ticket CRO."}
-- Years of Experience: 6+ years specializing in modern eCommerce and full-stack software development.
+- Years of Experience: 2+ years specializing in modern eCommerce and full-stack software development.
 
 OFFICIAL CONTACT & LIVE LINKS:
 - Portfolio Website: https://hellozakaria.com
