@@ -22,6 +22,8 @@ import {
   ArrowUpRight,
   Send,
 } from "lucide-react";
+import RoamingCompanion from "./companion/RoamingCompanion";
+import CompanionMascot from "./companion/CompanionMascot";
 
 interface Message {
   id: string;
@@ -1040,6 +1042,15 @@ export default function VoiceAssistant() {
 
   return (
     <>
+      {/* 0. INTERACTIVE ROAMING SCREEN COMPANION (Astro-Bot Mascot) */}
+      <RoamingCompanion
+        onOpenChat={() => {
+          setIsOpen(true);
+          focusInput();
+        }}
+        isChatOpen={isOpen}
+      />
+
       {/* 1. MINIMAL WORLD-CLASS FLOATING LAUNCHER (Compact 52px Button) */}
       <div className="fixed bottom-6 right-6 z-50 pointer-events-auto">
         <AnimatePresence>
@@ -1051,9 +1062,22 @@ export default function VoiceAssistant() {
               className="relative group"
             >
               <div className="absolute right-full mr-3 top-1/2 -translate-y-1/2 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                <div className="bg-[#0c0e17] text-white text-xs px-3 py-1.5 rounded-lg border border-white/10 shadow-xl whitespace-nowrap flex items-center gap-1.5 font-medium">
+                <div className="bg-[#0c0e17] text-white text-xs px-3 py-1.5 rounded-lg border border-white/10 shadow-xl whitespace-nowrap flex items-center gap-2 font-medium">
                   <span className="w-1.5 h-1.5 rounded-full bg-[#f6602d]" />
                   <span>Ask Zakaria&apos;s AI</span>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (typeof window !== "undefined") {
+                        window.dispatchEvent(new CustomEvent("summon-companion"));
+                      }
+                    }}
+                    className="pointer-events-auto ml-1 px-1.5 py-0.5 rounded bg-white/[0.08] hover:bg-[#f6602d]/20 text-zinc-300 hover:text-[#ff9e6c] text-[10px] flex items-center gap-1 transition-colors"
+                    title="Bring robot companion to screen"
+                  >
+                    <span>Summon 🤖</span>
+                  </button>
                 </div>
               </div>
 
@@ -1128,7 +1152,9 @@ export default function VoiceAssistant() {
               <div className="flex items-center gap-2.5 min-w-0">
                 <div className="relative w-8 h-8 rounded-full border border-white/15 shrink-0 bg-[#0c0e17] flex items-center justify-center overflow-hidden shadow-inner">
                   <div className="absolute inset-0 bg-gradient-to-tr from-[#f6602d]/25 to-transparent" />
-                  <AestheticBotEmblem size={17} animated={false} idPrefix="header" />
+                  <div className="scale-75 translate-y-0.5">
+                    <CompanionMascot size={26} action="idle" />
+                  </div>
                   <span className="absolute bottom-0.5 right-0.5 w-2 h-2 rounded-full bg-[#f6602d] border border-[#090b11]" />
                 </div>
                 <div className="min-w-0">
