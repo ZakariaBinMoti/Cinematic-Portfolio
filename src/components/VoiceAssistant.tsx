@@ -40,6 +40,12 @@ interface Message {
   }>;
   suggestedFollowUps?: string[];
   showLeadForm?: boolean;
+  leadCaptured?: boolean;
+  leadData?: {
+    name?: string | null;
+    email?: string | null;
+    storeUrl?: string | null;
+  };
 }
 
 // Helper to format inline markdown (bold, links, emails) into clean JSX
@@ -1096,10 +1102,14 @@ export default function VoiceAssistant() {
           relatedProjects: data.relatedProjects || [],
           suggestedFollowUps: data.suggestedFollowUps || [],
           showLeadForm: Boolean(data.showLeadForm),
+          leadCaptured: Boolean(data.leadCaptured),
+          leadData: data.leadData,
         };
 
-        if (data.showLeadForm) {
+        if (data.showLeadForm && !data.leadCaptured) {
           setActiveLeadFormMessageId(aiMsgId);
+        } else if (data.leadCaptured) {
+          setActiveLeadFormMessageId(null);
         }
 
         setMessages((prev) => [...prev, aiMsg]);
@@ -1905,40 +1915,35 @@ export default function VoiceAssistant() {
                           )}
                         </div>
 
-                        {/* Interactive Lead Capture Card (Auto-triggered or on-demand) */}
-                        {!isUser && (msg.showLeadForm || activeLeadFormMessageId === msg.id) && (
-                          <div className="w-[96%] sm:w-[94%]">
-                            <LeadCaptureCard />
+                        {/* Automatic / Conversational Lead Confirmation Badge */}
+                        {!isUser && msg.leadCaptured && (
+                          <div className="w-[96%] sm:w-[94%] mt-2 p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs space-y-1">
+                            <div className="flex items-center gap-1.5 font-semibold text-emerald-400">
+                              <Check className="w-3.5 h-3.5 text-emerald-400" />
+                              <span>Project Inquiry Recorded &amp; Sent to Zakaria!</span>
+                            </div>
+                            <p className="text-[11px] text-zinc-300 leading-relaxed">
+                              Logged under <span className="font-mono text-emerald-300 font-semibold">[Website AI Companion]</span>. Zakaria has received your details and will get back to you directly within 24 hours.
+                            </p>
                           </div>
                         )}
 
-                        {/* Interactive Rich Project Cards */}
-                        {!isUser && msg.relatedProjects && msg.relatedProjects.length > 0 && (
+                        {/* Interactive Lead Capture Form Card (If requested and not yet captured) */}
+                        {!isUser && !msg.leadCaptured && (msg.showLeadForm || activeLeadFormMessageId === msg.id || (activeLeadFormMessageId === "active" && msg.id === messages[messages.length - 1]?.id)) && (
+                          <div className="w-[96%] sm:w-[94%]">
+                            <LeadCaptureCard
+                              onSuccess={() => {
+                                setActiveLeadFormMessageId(null);
+                              }}
+                            />
+                          </div>
+                        )}
+
+                        {/* Interactive Rich Project Cards (ONLY shown when NOT in hiring mode and projects exist) */}
+                        {!isUser && !msg.showLeadForm && !msg.leadCaptured && msg.relatedProjects && msg.relatedProjects.length > 0 && (
                           <div className="w-[96%] sm:w-[94%] space-y-2 mt-1.5">
                             {msg.relatedProjects.map((p, pIdx) => (
                               <ProjectPreviewCard key={pIdx} project={p} />
-                            ))}
-                          </div>
-                        )}
-
-                        {/* Dynamic Contextual Follow-Up Buttons */}
-                        {!isUser && msg.suggestedFollowUps && msg.suggestedFollowUps.length > 0 && (
-                          <div className="flex flex-wrap gap-1.5 mt-2 ml-0.5">
-                            {msg.suggestedFollowUps.map((chip, chipIdx) => (
-                              <button
-                                key={chipIdx}
-                                type="button"
-                                onClick={() => {
-                                  if (chip.includes("Inquire") || chip.includes("Hire")) {
-                                    setActiveLeadFormMessageId(msg.id);
-                                  } else {
-                                    handleSendMessage(chip);
-                                  }
-                                }}
-                                className="text-[10px] sm:text-[11px] px-2.5 py-1 rounded-full bg-white/[0.04] hover:bg-[#f6602d]/15 border border-white/[0.08] hover:border-[#f6602d]/40 text-zinc-300 hover:text-[#ff915e] transition-all text-left flex items-center gap-1 cursor-pointer"
-                              >
-                                <span>{chip}</span>
-                              </button>
                             ))}
                           </div>
                         )}
@@ -2011,28 +2016,36 @@ export default function VoiceAssistant() {
                   <div ref={messagesEndRef} />
                 </div>
 
-                {/* Quick Prompts */}
-                {messages.length <= 2 && (
-                  <div className="px-4 py-2 flex flex-wrap gap-1.5 border-t border-white/[0.05] bg-white/[0.01]">
-                    {quickPrompts.map((prompt, idx) => (
-                      <button
-                        key={idx}
-                        type="button"
-                        onClick={() => {
-                          if (prompt.includes("Inquire") || prompt.includes("Hire")) {
-                            setActiveLeadFormMessageId("welcome");
-                          } else {
-                            handleSendMessage(prompt);
-                          }
-                          focusInput();
-                        }}
-                        className="text-[11px] px-2.5 py-1 rounded-full bg-white/[0.04] hover:bg-[#f6602d]/10 border border-white/[0.08] hover:border-[#f6602d]/30 text-zinc-400 hover:text-[#ff915e] transition-all text-left"
-                      >
-                        {prompt}
-                      </button>
-                    ))}
-                  </div>
-                )}
+                {/* Dynamic Contextual Action Chips Bar (Always docked right above chat input) */}
+                {(() => {
+                  const latestAssistant = [...messages].reverse().find((m) => m.role === "assistant");
+                  const activeChips =
+                    latestAssistant?.suggestedFollowUps && latestAssistant.suggestedFollowUps.length > 0
+                      ? latestAssistant.suggestedFollowUps
+                      : quickPrompts;
+
+                  return (
+                    <div className="px-3 py-2 flex items-center gap-1.5 overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden border-t border-white/[0.06] bg-[#0c0e17] shrink-0">
+                      {activeChips.map((chip, idx) => (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => {
+                            if (chip.includes("Inquire") || chip.includes("Hire")) {
+                              setActiveLeadFormMessageId("active");
+                            } else {
+                              handleSendMessage(chip);
+                            }
+                            focusInput();
+                          }}
+                          className="text-[11px] whitespace-nowrap px-3 py-1 rounded-full bg-white/[0.04] hover:bg-[#f6602d]/15 border border-white/[0.08] hover:border-[#f6602d]/40 text-zinc-300 hover:text-[#ff915e] transition-all shrink-0 cursor-pointer flex items-center gap-1 font-medium"
+                        >
+                          <span>{chip}</span>
+                        </button>
+                      ))}
+                    </div>
+                  );
+                })()}
 
                 {/* Minimalist Speech Dictation Overlay */}
                 {isListening && (

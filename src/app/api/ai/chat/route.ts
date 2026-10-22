@@ -8,14 +8,101 @@ interface ChatMessage {
   text: string;
 }
 
-function findRelatedProjects(text: string, projects: any[]): any[] {
-  if (!projects || projects.length === 0) return [];
-  const lower = text.toLowerCase();
+interface ExtractedLead {
+  email: string | null;
+  name: string | null;
+  storeUrl: string | null;
+}
 
+function extractLeadInfo(message: string, history: ChatMessage[]): ExtractedLead {
+  const combined = [...history.map((m) => m.text), message].join(" ");
+
+  // 1. Extract email (checks current message first, then conversation history)
+  const currentEmailMatch = message.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
+  const historyEmailMatch = combined.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
+  const email = currentEmailMatch
+    ? currentEmailMatch[0].toLowerCase()
+    : historyEmailMatch
+    ? historyEmailMatch[0].toLowerCase()
+    : null;
+
+  // 2. Extract client name (e.g. "I'm David", "My name is John Miller", "David, david@brand.com")
+  let name: string | null = null;
+  const namePatterns = [
+    /(?:my name is|i am|i'm|name is|this is)\s+([A-Z][a-zA-Z]+(?:\s+[A-Z][a-zA-Z]+)?)/i,
+    /(?:call me)\s+([A-Z][a-zA-Z]+)/i,
+    /^([A-Z][a-zA-Z]+(?:\s+[A-Z][a-zA-Z]+)?)[,\s]+.*@[a-zA-Z0-9.-]+/i,
+  ];
+  for (const pat of namePatterns) {
+    const match = message.match(pat);
+    if (match && match[1]) {
+      let candidate = match[1].trim();
+      // Remove trailing prepositions like "from ...", "at ...", "with ..."
+      candidate = candidate.replace(/\s+(?:from|at|with|of)\b.*$/i, "").trim();
+      const lowerCandidate = candidate.toLowerCase();
+      const stopWords = ["shopify", "liquid", "zakaria", "zaki", "developer", "engineer", "looking", "interested", "sure", "hello", "hi", "hey"];
+      if (!stopWords.includes(lowerCandidate) && candidate.length > 1) {
+        name = candidate;
+        break;
+      }
+    }
+  }
+
+  // 3. Extract store / website URL
+  let storeUrl: string | null = null;
+  const urlMatch = message.match(/(?:https?:\/\/)?([a-zA-Z0-9-]+\.(?:myshopify\.com|[a-zA-Z]{2,}))(?:\/[^\s]*)?/i);
+  if (urlMatch && urlMatch[1]) {
+    const domain = urlMatch[1].toLowerCase();
+    const commonMailHosts = [
+      "gmail.com",
+      "yahoo.com",
+      "outlook.com",
+      "hotmail.com",
+      "icloud.com",
+      "proton.me",
+      "protonmail.com",
+      "google.com",
+    ];
+    if (!commonMailHosts.includes(domain)) {
+      storeUrl = urlMatch[0];
+    }
+  }
+
+  return { email, name, storeUrl };
+}
+
+function findRelatedProjects(
+  query: string,
+  projects: any[],
+  isHireIntent: boolean
+): any[] {
+  if (!projects || projects.length === 0) return [];
+
+  const lower = query.toLowerCase();
+
+  // If user is inquiring about hiring, rates, quotes, or contact, NEVER show random projects unless they explicitly asked to view past projects
+  const explicitProjectRequest =
+    lower.includes("show project") ||
+    lower.includes("see project") ||
+    lower.includes("view project") ||
+    lower.includes("past work") ||
+    lower.includes("portfolio") ||
+    lower.includes("case stud") ||
+    lower.includes("show me your work") ||
+    lower.includes("what have you built");
+
+  if (isHireIntent && !explicitProjectRequest) {
+    return [];
+  }
+
+  // Match if a specific project title or slug was mentioned in user query
   const matched = projects.filter((p) => {
     const titleLower = (p.title || "").toLowerCase();
     const slugLower = (p.caseStudySlug || "").toLowerCase();
-    return lower.includes(titleLower) || (slugLower && lower.includes(slugLower));
+    return (
+      (titleLower && lower.includes(titleLower)) ||
+      (slugLower && lower.includes(slugLower))
+    );
   });
 
   if (matched.length > 0) {
@@ -29,13 +116,14 @@ function findRelatedProjects(text: string, projects: any[]): any[] {
     }));
   }
 
+  // If user explicitly asked for projects/work/case studies
   if (
-    lower.includes("project") ||
-    lower.includes("store") ||
-    lower.includes("work") ||
-    lower.includes("case study") ||
+    lower.includes("what project") ||
+    lower.includes("top project") ||
+    lower.includes("featured work") ||
     lower.includes("portfolio") ||
-    lower.includes("ecommerce")
+    lower.includes("case study") ||
+    lower.includes("what have you built")
   ) {
     return projects.slice(0, 2).map((p) => ({
       title: p.title,
@@ -50,17 +138,18 @@ function findRelatedProjects(text: string, projects: any[]): any[] {
   return [];
 }
 
-function computeFollowUps(query: string, reply: string): string[] {
+function computeFollowUps(query: string, reply: string, isHireIntent: boolean, leadCaptured: boolean): string[] {
+  if (leadCaptured) {
+    return [
+      "See live case studies 📈",
+      "Tech stack & skills ⚡",
+      "Download Resume (PDF) 📄",
+    ];
+  }
+
   const combined = (query + " " + reply).toLowerCase();
 
-  if (
-    combined.includes("hire") ||
-    combined.includes("rate") ||
-    combined.includes("contact") ||
-    combined.includes("quote") ||
-    combined.includes("collaborate") ||
-    combined.includes("availability")
-  ) {
+  if (isHireIntent) {
     return [
       "Inquire / Hire Zakaria ✉️",
       "See live case studies 📈",
@@ -89,16 +178,16 @@ function computeFollowUps(query: string, reply: string): string[] {
     combined.includes("architecture")
   ) {
     return [
-      "Show standout projects 🚀",
+      "Top Shopify projects? 🚀",
       "See case studies 📊",
-      "Inquire for a project ✉️",
+      "Inquire / Hire Zakaria ✉️",
     ];
   }
 
   return [
     "Top Shopify projects? 🚀",
     "Tech stack & skills ⚡",
-    "How to hire Zakaria ✉️",
+    "Inquire / Hire Zakaria ✉️",
   ];
 }
 
@@ -112,14 +201,36 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Message is required" }, { status: 400 });
     }
 
-    // 1. Automatic Lead Capture from conversational text (if user provided an email address)
-    const emailMatch = message.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
-    if (emailMatch) {
-      const capturedEmail = emailMatch[0].toLowerCase();
+    const lower = message.toLowerCase();
+
+    // Check hiring or project collaboration intent
+    const isHireIntent =
+      lower.includes("hire") ||
+      lower.includes("quote") ||
+      lower.includes("price") ||
+      lower.includes("rate") ||
+      lower.includes("meeting") ||
+      lower.includes("work with") ||
+      lower.includes("collaborate") ||
+      lower.includes("inquire") ||
+      lower.includes("consult") ||
+      lower.includes("build a store") ||
+      lower.includes("build my store") ||
+      lower.includes("rebuild") ||
+      lower.includes("redesign") ||
+      lower.includes("theme development");
+
+    // 1. Conversational Lead Detection & Extraction
+    const leadInfo = extractLeadInfo(message, history);
+    let leadCaptured = false;
+
+    if (leadInfo.email) {
       try {
         await dbConnect();
         await Lead.create({
-          email: capturedEmail,
+          name: leadInfo.name || undefined,
+          email: leadInfo.email,
+          storeUrl: leadInfo.storeUrl || undefined,
           message: message,
           source: "website_ai_companion",
           channel: "website",
@@ -130,7 +241,8 @@ export async function POST(req: NextRequest) {
             referer: req.headers.get("referer") || undefined,
           },
         });
-        console.log(`[Auto-Lead] Captured email from chat: ${capturedEmail}`);
+        leadCaptured = true;
+        console.log(`[Auto-Lead] Captured lead from chat: ${leadInfo.email} (${leadInfo.name || "Anonymous"})`);
       } catch (leadErr) {
         console.warn("Auto-lead capture error:", leadErr);
       }
@@ -139,18 +251,6 @@ export async function POST(req: NextRequest) {
     // 2. Fetch live portfolio knowledge (always synced with MongoDB)
     const { systemPrompt, dataSnapshot } = await getLivePortfolioKnowledge();
     const { projects = [], caseStudies = [], contact = {} } = dataSnapshot;
-
-    // Check if the user is asking about hiring or collaboration
-    const lower = message.toLowerCase();
-    const isHireIntent =
-      lower.includes("hire") ||
-      lower.includes("quote") ||
-      lower.includes("price") ||
-      lower.includes("rate") ||
-      lower.includes("meeting") ||
-      lower.includes("work with") ||
-      lower.includes("collaborate") ||
-      lower.includes("inquire");
 
     // 3. Check for Gemini API Key in environment
     const geminiKey = process.env.GEMINI_API_KEY;
@@ -168,10 +268,15 @@ export async function POST(req: NextRequest) {
           });
         }
 
-        // Add current message
+        // Add current message with contextual guidance if user gave their contact info
+        let augmentedMessage = message;
+        if (leadCaptured && leadInfo.email) {
+          augmentedMessage += `\n[System Note: The visitor just provided their contact email (${leadInfo.email}${leadInfo.name ? `, Name: ${leadInfo.name}` : ""}). Confirm warmly that you have sent their message and details directly to Zakaria and that he will respond to their email within 24 hours. Do not show project lists.]`;
+        }
+
         contents.push({
           role: "user",
-          parts: [{ text: message }],
+          parts: [{ text: augmentedMessage }],
         });
 
         const candidateModels = [
@@ -195,7 +300,7 @@ export async function POST(req: NextRequest) {
                   },
                   generationConfig: {
                     temperature: 0.65,
-                    maxOutputTokens: 250, // clean, balanced length
+                    maxOutputTokens: 250,
                   },
                 }),
               }
@@ -206,15 +311,17 @@ export async function POST(req: NextRequest) {
               const reply = geminiData?.candidates?.[0]?.content?.parts?.[0]?.text;
               if (reply) {
                 const cleanReply = reply.trim();
-                const relatedProjects = findRelatedProjects(message + " " + cleanReply, projects);
-                const suggestedFollowUps = computeFollowUps(message, cleanReply);
+                const relatedProjects = findRelatedProjects(message, projects, isHireIntent);
+                const suggestedFollowUps = computeFollowUps(message, cleanReply, isHireIntent, leadCaptured);
 
                 return NextResponse.json({
                   reply: cleanReply,
                   provider: model,
                   relatedProjects,
                   suggestedFollowUps,
-                  showLeadForm: isHireIntent,
+                  showLeadForm: isHireIntent && !leadCaptured,
+                  leadCaptured,
+                  leadData: leadCaptured ? leadInfo : undefined,
                 });
               }
             } else {
@@ -233,7 +340,11 @@ export async function POST(req: NextRequest) {
     // 4. Smart Dynamic Knowledge Fallback Engine
     let fallbackReply = "";
 
-    if (
+    if (leadCaptured && leadInfo.email) {
+      fallbackReply = `Thank you${leadInfo.name ? " " + leadInfo.name : ""}! I've sent your project details and contact information directly to Zakaria. He will review your store scope and get back to you at ${leadInfo.email} within 24 hours. In the meantime, feel free to explore his case studies or technical stack!`;
+    } else if (isHireIntent) {
+      fallbackReply = `Zakaria is open for select custom Shopify OS 2.0 themes, headless storefronts, and architectural consulting! What's your name, email (or store URL), and what are you looking to build or optimize?`;
+    } else if (
       lower.includes("project") ||
       lower.includes("store") ||
       lower.includes("work") ||
@@ -268,14 +379,13 @@ export async function POST(req: NextRequest) {
     } else if (
       lower.includes("contact") ||
       lower.includes("email") ||
-      lower.includes("hire") ||
       lower.includes("call") ||
       lower.includes("reach") ||
       lower.includes("touch")
     ) {
       const email = contact?.email || "zakaria.binmoti@gmail.com";
       const linkedin = contact?.linkedin || "https://www.linkedin.com/in/zakariabinmoti";
-      fallbackReply = `You can reach Zakaria directly via email at ${email} or connect on LinkedIn at ${linkedin}. He is open to select Shopify architecture, custom themes, and full-stack contracts!`;
+      fallbackReply = `You can reach Zakaria directly via email at ${email} or connect on LinkedIn at ${linkedin}. Feel free to drop your email and project overview right here as well!`;
     } else if (
       lower.includes("skill") ||
       lower.includes("stack") ||
@@ -293,7 +403,7 @@ export async function POST(req: NextRequest) {
       lower.includes("available") ||
       lower.includes("availability")
     ) {
-      fallbackReply = `Zakaria is available for custom Shopify theme development, headless builds, and architectural consulting. For project scoping and rates, feel free to drop him a line at ${contact?.email || "zakaria.binmoti@gmail.com"}.`;
+      fallbackReply = `Zakaria is available for custom Shopify theme development, headless builds, and architectural consulting. To get a quote for your project, what's your name, email, and store scope?`;
     } else if (
       lower.includes("who are you") ||
       lower.includes("who is zakaria") ||
@@ -305,15 +415,17 @@ export async function POST(req: NextRequest) {
       fallbackReply = `Hi there! I am Zaki, Zakaria's AI assistant. Ask me anything about his Shopify development work, featured projects, tech stack, or how to get in touch with him!`;
     }
 
-    const relatedProjects = findRelatedProjects(message + " " + fallbackReply, projects);
-    const suggestedFollowUps = computeFollowUps(message, fallbackReply);
+    const relatedProjects = findRelatedProjects(message, projects, isHireIntent);
+    const suggestedFollowUps = computeFollowUps(message, fallbackReply, isHireIntent, leadCaptured);
 
     return NextResponse.json({
       reply: fallbackReply,
       provider: "dynamic-knowledge-engine",
       relatedProjects,
       suggestedFollowUps,
-      showLeadForm: isHireIntent,
+      showLeadForm: isHireIntent && !leadCaptured,
+      leadCaptured,
+      leadData: leadCaptured ? leadInfo : undefined,
     });
   } catch (error: any) {
     console.error("AI Chat Route Error:", error);
