@@ -397,13 +397,14 @@ export default function VoiceAssistant() {
   const [isOpen, setIsOpen] = useState(false);
   const [isLiveCall, setIsLiveCall] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [companionDismissed, setCompanionDismissed] = useState(false);
 
   // Chat & Voice state
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "welcome",
       role: "assistant",
-      text: "Hi! I am Zakaria's AI Assistant. Ask or speak to me about his 250+ Shopify stores, technical architecture, or hiring availability.",
+      text: "Hi! I am Zaki, Zakaria's AI Companion. Ask or speak to me about his 250+ Shopify stores, technical architecture, or hiring availability.",
       timestamp: new Date(),
     },
   ]);
@@ -1049,12 +1050,13 @@ export default function VoiceAssistant() {
           focusInput();
         }}
         isChatOpen={isOpen}
+        onDismissStateChange={setCompanionDismissed}
       />
 
-      {/* 1. MINIMAL WORLD-CLASS FLOATING LAUNCHER (Compact 52px Button) */}
+      {/* 1. MINIMAL WORLD-CLASS FLOATING LAUNCHER (Appears ONLY when companion is dismissed!) */}
       <div className="fixed bottom-6 right-6 z-50 pointer-events-auto">
         <AnimatePresence>
-          {!isOpen && (
+          {!isOpen && companionDismissed && (
             <motion.div
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
@@ -1069,14 +1071,15 @@ export default function VoiceAssistant() {
                     type="button"
                     onClick={(e) => {
                       e.stopPropagation();
+                      setCompanionDismissed(false);
                       if (typeof window !== "undefined") {
                         window.dispatchEvent(new CustomEvent("summon-companion"));
                       }
                     }}
                     className="pointer-events-auto ml-1 px-1.5 py-0.5 rounded bg-white/[0.08] hover:bg-[#f6602d]/20 text-zinc-300 hover:text-[#ff9e6c] text-[10px] flex items-center gap-1 transition-colors"
-                    title="Bring robot companion to screen"
+                    title="Bring Zaki back to screen"
                   >
-                    <span>Summon 🤖</span>
+                    <span>Summon Zaki 🤖</span>
                   </button>
                 </div>
               </div>
@@ -1158,11 +1161,16 @@ export default function VoiceAssistant() {
                   <span className="absolute bottom-0.5 right-0.5 w-2 h-2 rounded-full bg-[#f6602d] border border-[#090b11]" />
                 </div>
                 <div className="min-w-0">
-                  <h3 className="text-xs sm:text-sm font-semibold text-white tracking-tight truncate">
-                    Zakaria&apos;s AI
-                  </h3>
-                  <p className="text-[10px] text-zinc-400 font-light truncate">
-                    {isLiveCall ? "Live Audio Mode" : "Portfolio Knowledge"}
+                  <div className="flex items-center gap-1.5">
+                    <h3 className="text-xs sm:text-sm font-semibold text-white tracking-tight truncate">
+                      Zaki
+                    </h3>
+                    <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-[#f6602d]/20 text-[#ff915e] font-mono border border-[#f6602d]/30 font-medium leading-none">
+                      AI Companion
+                    </span>
+                  </div>
+                  <p className="text-[10px] text-zinc-400 font-light truncate mt-0.5">
+                    {isLiveCall ? "Live Voice Companion" : "Zakaria's AI Assistant"}
                   </p>
                 </div>
               </div>

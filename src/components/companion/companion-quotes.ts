@@ -6,43 +6,38 @@ export interface CompanionQuote {
 
 export const COMPANION_QUOTES: CompanionQuote[] = [
   {
-    text: "Ask Zakaria's AI anything!",
+    text: "Hi, I'm Zaki! Ask me anything",
     emoji: "✨",
-    actionHint: "Click to chat",
+    actionHint: "Chat",
   },
   {
-    text: "Shopify Architect with 250+ stores!",
-    emoji: "🚀",
-    actionHint: "Explore work",
-  },
-  {
-    text: "Try our live voice chat mode!",
-    emoji: "🎙️",
-    actionHint: "Talk to AI",
-  },
-  {
-    text: "Looking for a Lead Software Engineer?",
+    text: "Need a Lead Shopify Architect?",
     emoji: "💼",
-    actionHint: "Hire Zakaria",
+    actionHint: "Hire",
   },
   {
-    text: "Psst... I know all of Zakaria's projects!",
-    emoji: "🤖",
-    actionHint: "Ask a question",
+    text: "Delivered 250+ production stores",
+    emoji: "🚀",
+    actionHint: "Projects",
   },
   {
-    text: "Delivered $30k+ client revenue!",
-    emoji: "📈",
-    actionHint: "View stats",
+    text: "Try my real-time voice mode!",
+    emoji: "🎙️",
+    actionHint: "Listen",
   },
   {
-    text: "Beep boop! Fast Next.js & Shopify stacks ⚡",
-    emoji: "⚡",
-    actionHint: "See stack",
+    text: "Drag & drop me anywhere on screen!",
+    emoji: "🛸",
+    actionHint: "Move",
+  },
+  {
+    text: "I know all of Zakaria's work",
+    emoji: "💡",
+    actionHint: "Explore",
   },
   {
     text: "Click me to start chatting!",
-    emoji: "👋",
-    actionHint: "Open chat",
+    emoji: "💬",
+    actionHint: "Talk",
   },
 ];

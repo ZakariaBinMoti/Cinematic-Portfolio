@@ -9,7 +9,8 @@ export type CompanionAction =
   | "hover"
   | "wave"
   | "sleep"
-  | "heartPulse";
+  | "heartPulse"
+  | "drag";
 
 interface CompanionMascotProps {
   action?: CompanionAction;
@@ -89,11 +90,21 @@ export default function CompanionMascot({
         rotate: { duration: 1.8, ease: "easeInOut" },
       },
     },
-    wave: {
-      y: [0, -2, 0],
-      rotate: [0, 2, 0],
+    drag: {
+      y: [-8, -14, -8],
+      rotate: [-4, 4, -4],
+      scale: 1.05,
       transition: {
-        duration: 1.5,
+        duration: 0.5,
+        repeat: Infinity,
+        ease: "easeInOut",
+      },
+    },
+    wave: {
+      y: [0, -3.5, 0],
+      rotate: [0, 4, 0],
+      transition: {
+        duration: 0.8,
         repeat: Infinity,
         ease: "easeInOut",
       },
@@ -119,8 +130,9 @@ export default function CompanionMascot({
   };
 
   // Shadow scale variant corresponding to body elevation
-  const shadowScale = action === "hover" ? 0.6 : action === "walk" ? 0.9 : 1;
-  const shadowOpacity = action === "hover" ? 0.35 : 0.7;
+  const shadowScale =
+    action === "hover" || action === "drag" ? 0.5 : action === "walk" ? 0.88 : 1;
+  const shadowOpacity = action === "hover" || action === "drag" ? 0.25 : 0.7;
 
   return (
     <div
@@ -132,7 +144,12 @@ export default function CompanionMascot({
         {action === "sleep" && (
           <motion.div
             initial={{ opacity: 0, y: 0, scale: 0.6 }}
-            animate={{ opacity: [0, 1, 0], y: -24, x: [0, 8, 14], scale: [0.6, 1, 0.8] }}
+            animate={{
+              opacity: [0, 1, 0],
+              y: -24,
+              x: [0, 8, 14],
+              scale: [0.6, 1, 0.8],
+            }}
             exit={{ opacity: 0 }}
             transition={{ duration: 2.5, repeat: Infinity, ease: "easeOut" }}
             className="absolute -top-3 right-0 font-bold text-[#22d3ee] text-xs pointer-events-none drop-shadow-[0_0_6px_rgba(34,211,238,0.8)]"
@@ -195,18 +212,18 @@ export default function CompanionMascot({
               <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
             </linearGradient>
 
-            {/* Red Earcups Gradient */}
-            <linearGradient id="redEarGrad" x1="0.2" y1="0" x2="0.8" y2="1">
-              <stop offset="0%" stopColor="#ff5247" />
-              <stop offset="45%" stopColor="#e5261d" />
-              <stop offset="100%" stopColor="#8c0d06" />
+            {/* Brand Orange Earcups Gradient */}
+            <linearGradient id="brandEarGrad" x1="0.2" y1="0" x2="0.8" y2="1">
+              <stop offset="0%" stopColor="#ff9a6c" />
+              <stop offset="45%" stopColor="#f6602d" />
+              <stop offset="100%" stopColor="#9e2603" />
             </linearGradient>
 
-            {/* Red Collar Gradient */}
-            <linearGradient id="redCollarGrad" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stopColor="#ff4d42" />
-              <stop offset="60%" stopColor="#d91e15" />
-              <stop offset="100%" stopColor="#7a0a03" />
+            {/* Brand Orange Collar Gradient */}
+            <linearGradient id="brandCollarGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stopColor="#ff8552" />
+              <stop offset="50%" stopColor="#f6602d" />
+              <stop offset="100%" stopColor="#871e02" />
             </linearGradient>
 
             {/* Dark Curved Visor Gradient */}
@@ -257,7 +274,7 @@ export default function CompanionMascot({
             </linearGradient>
           </defs>
 
-          {/* === 1. RED AUDIO EARCUPS (Behind helmet) === */}
+          {/* === 1. BRAND ORANGE AUDIO EARCUPS (Behind helmet) === */}
           {/* Left Earcup */}
           <rect
             x="14"
@@ -265,7 +282,7 @@ export default function CompanionMascot({
             width="12"
             height="24"
             rx="6"
-            fill="url(#redEarGrad)"
+            fill="url(#brandEarGrad)"
           />
           <rect
             x="16"
@@ -274,7 +291,7 @@ export default function CompanionMascot({
             height="18"
             rx="2"
             fill="#ffffff"
-            fillOpacity="0.3"
+            fillOpacity="0.35"
           />
 
           {/* Right Earcup */}
@@ -284,7 +301,7 @@ export default function CompanionMascot({
             width="12"
             height="24"
             rx="6"
-            fill="url(#redEarGrad)"
+            fill="url(#brandEarGrad)"
           />
           <rect
             x="86"
@@ -293,7 +310,7 @@ export default function CompanionMascot({
             height="18"
             rx="2"
             fill="#ffffff"
-            fillOpacity="0.3"
+            fillOpacity="0.35"
           />
 
           {/* === 2. LEGS & STUBBY FEET === */}
@@ -302,9 +319,15 @@ export default function CompanionMascot({
             animate={
               action === "walk"
                 ? { y: [0, -3, 0], rotate: [-6, 6, -6] }
+                : action === "drag"
+                ? { y: [0, 2, 0], rotate: [-14, 10, -14] }
                 : undefined
             }
-            transition={{ duration: 0.5, repeat: Infinity, ease: "easeInOut" }}
+            transition={{
+              duration: action === "drag" ? 0.4 : 0.5,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
             style={{ originX: "42px", originY: "105px" }}
           >
             <rect
@@ -322,9 +345,15 @@ export default function CompanionMascot({
             animate={
               action === "walk"
                 ? { y: [-3, 0, -3], rotate: [6, -6, 6] }
+                : action === "drag"
+                ? { y: [2, 0, 2], rotate: [10, -14, 10] }
                 : undefined
             }
-            transition={{ duration: 0.5, repeat: Infinity, ease: "easeInOut" }}
+            transition={{
+              duration: action === "drag" ? 0.4 : 0.5,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
             style={{ originX: "68px", originY: "105px" }}
           >
             <rect
@@ -399,20 +428,38 @@ export default function CompanionMascot({
             />
           </g>
 
-          {/* === 5. CUTE CHUBBY ARMS HOLDING ENVELOPE === */}
+          {/* === 5. CUTE CHUBBY ARMS === */}
           {/* Left Arm */}
           <path
             d="M 32 78 C 26 80, 24 90, 32 94 C 36 96, 39 91, 39 88 C 39 82, 36 78, 32 78 Z"
             fill="url(#bodyGrad)"
           />
 
-          {/* Right Arm (Can wave in 'wave' action!) */}
+          {/* Right Arm: Natural Fluid Wave when 'wave', Dangle when 'drag', Resting when default */}
           {action === "wave" ? (
+            <motion.g
+              animate={{ rotate: [-18, 26, -18] }}
+              transition={{
+                duration: 0.42,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+              style={{ originX: "78px", originY: "72px" }}
+            >
+              {/* Arm raised up alongside head */}
+              <path
+                d="M 76 72 C 82 66, 92 56, 95 44 C 97 38, 91 36, 86 40 C 82 44, 76 60, 76 72 Z"
+                fill="url(#bodyGrad)"
+              />
+              {/* Cute waving palm */}
+              <circle cx="91" cy="41" r="5" fill="url(#bodyGrad)" />
+            </motion.g>
+          ) : action === "drag" ? (
             <motion.path
-              animate={{ rotate: [-10, 25, -10] }}
-              transition={{ duration: 0.6, repeat: Infinity, ease: "easeInOut" }}
+              animate={{ rotate: [-18, -4, -18] }}
+              transition={{ duration: 0.5, repeat: Infinity, ease: "easeInOut" }}
               style={{ originX: "78px", originY: "78px" }}
-              d="M 78 78 C 86 72, 94 65, 96 55 C 97 50, 92 48, 88 52 C 84 56, 78 70, 78 78 Z"
+              d="M 78 78 C 86 82, 92 88, 86 96 C 82 98, 76 92, 74 88 C 74 82, 76 78, 78 78 Z"
               fill="url(#bodyGrad)"
             />
           ) : (
@@ -422,13 +469,13 @@ export default function CompanionMascot({
             />
           )}
 
-          {/* === 6. RED COLLAR / NECK RING === */}
+          {/* === 6. BRAND ORANGE COLLAR / NECK RING === */}
           <ellipse
             cx="55"
             cy="68"
             rx="18"
             ry="5.5"
-            fill="url(#redCollarGrad)"
+            fill="url(#brandCollarGrad)"
           />
 
           {/* === 7. GLOSSY WHITE ASTRONAUT HELMET === */}
@@ -470,7 +517,7 @@ export default function CompanionMascot({
             filter="url(#cyanGlow)"
             transform={`translate(${eyeOffsetX}, ${eyeOffsetY})`}
           >
-            {/* Winking Left Eye (Cute curved dash/arc matching the image) */}
+            {/* Winking Left Eye */}
             <path
               d="M 40 41 C 41.5 39, 45.5 39, 47 41"
               stroke="#00f2fe"
@@ -479,10 +526,18 @@ export default function CompanionMascot({
               fill="none"
             />
 
-            {/* Right Eye: Either blinking dash or glowing pill/dot */}
+            {/* Right Eye: Either blinking dash, happy squint (wave), or glowing pill */}
             {isBlinking || action === "sleep" ? (
               <path
                 d="M 63 41 C 64.5 39, 68.5 39, 70 41"
+                stroke="#00f2fe"
+                strokeWidth="2.8"
+                strokeLinecap="round"
+                fill="none"
+              />
+            ) : action === "wave" ? (
+              <path
+                d="M 63 41 C 64.5 38, 68.5 38, 70 41"
                 stroke="#00f2fe"
                 strokeWidth="2.8"
                 strokeLinecap="round"
@@ -510,8 +565,8 @@ export default function CompanionMascot({
           </g>
         </svg>
 
-        {/* 10. JETPACK HOVER SPARKS (When floating in 'hover' mode) */}
-        {action === "hover" && (
+        {/* 10. JETPACK HOVER / DRAG SPARKS */}
+        {(action === "hover" || action === "drag") && (
           <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-4 pointer-events-none">
             <span className="w-2.5 h-3.5 bg-gradient-to-t from-transparent via-[#00f2fe] to-white rounded-full blur-[1px] animate-pulse" />
             <span className="w-2.5 h-3.5 bg-gradient-to-t from-transparent via-[#00f2fe] to-white rounded-full blur-[1px] animate-pulse [animation-delay:100ms]" />
