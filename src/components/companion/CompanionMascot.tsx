@@ -10,6 +10,7 @@ export type CompanionAction =
   | "wave"
   | "sleep"
   | "heartPulse"
+  | "dizzy"
   | "drag";
 
 interface CompanionMascotProps {
@@ -127,6 +128,15 @@ export default function CompanionMascot({
         ease: "easeInOut",
       },
     },
+    dizzy: {
+      y: [0, -2, 0],
+      rotate: [-7, 7, -7],
+      transition: {
+        duration: 0.2,
+        repeat: Infinity,
+        ease: "easeInOut",
+      },
+    },
   };
 
   // Shadow scale variant corresponding to body elevation
@@ -170,6 +180,31 @@ export default function CompanionMascot({
             className="absolute top-1/2 left-1/2 -translate-x-1/2 text-rose-500 text-sm pointer-events-none drop-shadow-[0_0_8px_rgba(244,63,94,0.9)]"
           >
             ❤️
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* 2.5 FLOATING DIZZY STARS */}
+      <AnimatePresence>
+        {action === "dizzy" && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={{
+              opacity: [0.6, 1, 0.6],
+              rotate: [0, 360],
+              scale: [0.9, 1.15, 0.9],
+            }}
+            exit={{ opacity: 0 }}
+            transition={{
+              rotate: { duration: 1.4, repeat: Infinity, ease: "linear" },
+              opacity: { duration: 0.8, repeat: Infinity, ease: "easeInOut" },
+              scale: { duration: 0.8, repeat: Infinity, ease: "easeInOut" },
+            }}
+            className="absolute -top-3 inset-x-0 flex justify-center items-center pointer-events-none z-20"
+          >
+            <span className="text-amber-300 text-xs drop-shadow-[0_0_6px_rgba(252,211,77,0.9)]">
+              💫
+            </span>
           </motion.div>
         )}
       </AnimatePresence>
@@ -517,51 +552,82 @@ export default function CompanionMascot({
             filter="url(#cyanGlow)"
             transform={`translate(${eyeOffsetX}, ${eyeOffsetY})`}
           >
-            {/* Winking Left Eye */}
-            <path
-              d="M 40 41 C 41.5 39, 45.5 39, 47 41"
-              stroke="#00f2fe"
-              strokeWidth="2.8"
-              strokeLinecap="round"
-              fill="none"
-            />
-
-            {/* Right Eye: Either blinking dash, happy squint (wave), or glowing pill */}
-            {isBlinking || action === "sleep" ? (
-              <path
-                d="M 63 41 C 64.5 39, 68.5 39, 70 41"
-                stroke="#00f2fe"
-                strokeWidth="2.8"
-                strokeLinecap="round"
-                fill="none"
-              />
-            ) : action === "wave" ? (
-              <path
-                d="M 63 41 C 64.5 38, 68.5 38, 70 41"
-                stroke="#00f2fe"
-                strokeWidth="2.8"
-                strokeLinecap="round"
-                fill="none"
-              />
+            {action === "dizzy" ? (
+              <>
+                {/* Spiral Left Eye */}
+                <path
+                  d="M 39 41 A 4 4 0 1 0 47 41 A 2.6 2.6 0 1 0 42 41 A 1.2 1.2 0 1 0 44.5 41"
+                  stroke="#00f2fe"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  fill="none"
+                />
+                {/* Spiral Right Eye */}
+                <path
+                  d="M 63 41 A 4 4 0 1 0 71 41 A 2.6 2.6 0 1 0 66 41 A 1.2 1.2 0 1 0 68.5 41"
+                  stroke="#00f2fe"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  fill="none"
+                />
+                {/* Wobbly Dizzy Mouth */}
+                <path
+                  d="M 49 48 Q 52 45, 55 48 T 61 48"
+                  stroke="#00f2fe"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  fill="none"
+                />
+              </>
             ) : (
-              <rect
-                x="63.5"
-                y="37.5"
-                width="6.5"
-                height="8.5"
-                rx="3.2"
-                fill="#00f2fe"
-              />
-            )}
+              <>
+                {/* Winking Left Eye */}
+                <path
+                  d="M 40 41 C 41.5 39, 45.5 39, 47 41"
+                  stroke="#00f2fe"
+                  strokeWidth="2.8"
+                  strokeLinecap="round"
+                  fill="none"
+                />
 
-            {/* Cute Smile Mouth */}
-            <path
-              d="M 51 47.5 C 53 50.5, 57 50.5, 59 47.5"
-              stroke="#00f2fe"
-              strokeWidth="2"
-              strokeLinecap="round"
-              fill="none"
-            />
+                {/* Right Eye: Either blinking dash, happy squint (wave), or glowing pill */}
+                {isBlinking || action === "sleep" ? (
+                  <path
+                    d="M 63 41 C 64.5 39, 68.5 39, 70 41"
+                    stroke="#00f2fe"
+                    strokeWidth="2.8"
+                    strokeLinecap="round"
+                    fill="none"
+                  />
+                ) : action === "wave" ? (
+                  <path
+                    d="M 63 41 C 64.5 38, 68.5 38, 70 41"
+                    stroke="#00f2fe"
+                    strokeWidth="2.8"
+                    strokeLinecap="round"
+                    fill="none"
+                  />
+                ) : (
+                  <rect
+                    x="63.5"
+                    y="37.5"
+                    width="6.5"
+                    height="8.5"
+                    rx="3.2"
+                    fill="#00f2fe"
+                  />
+                )}
+
+                {/* Cute Smile Mouth */}
+                <path
+                  d="M 51 47.5 C 53 50.5, 57 50.5, 59 47.5"
+                  stroke="#00f2fe"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  fill="none"
+                />
+              </>
+            )}
           </g>
         </svg>
 

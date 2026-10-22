@@ -1,11 +1,13 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
+import { usePathname } from "next/navigation";
 import { motion, AnimatePresence, PanInfo } from "framer-motion";
 import { X } from "lucide-react";
 import CompanionMascot, { CompanionAction } from "./CompanionMascot";
 import CompanionSpeechBubble from "./CompanionSpeechBubble";
-import { COMPANION_QUOTES, CompanionQuote } from "./companion-quotes";
+import { getContextualQuote, CompanionQuote } from "./companion-quotes";
+import { playChimePip, playTapPip, playDizzyPip } from "@/lib/companion-audio";
 
 interface RoamingCompanionProps {
   onOpenChat: () => void;
@@ -18,6 +20,8 @@ export default function RoamingCompanion({
   isChatOpen = false,
   onDismissStateChange,
 }: RoamingCompanionProps) {
+  const pathname = usePathname();
+
   // Dismissal state
   const [isDismissed, setIsDismissed] = useState(false);
   const [isDismissing, setIsDismissing] = useState(false);
@@ -31,9 +35,11 @@ export default function RoamingCompanion({
   const [isDragging, setIsDragging] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
+  // In-page section tracking (projects, skills, experience, contact)
+  const [activeSection, setActiveSection] = useState<string | null>(null);
+
   // Speech bubble state
   const [currentQuote, setCurrentQuote] = useState<CompanionQuote | null>(null);
-  const quoteIndexRef = useRef(0);
 
   // Mouse tracking for reactive eyes
   const [mousePos, setMousePos] = useState<{ x: number; y: number } | null>(null);
@@ -49,6 +55,13 @@ export default function RoamingCompanion({
   const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const loopTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const bubbleTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // AFK Idle Timer Ref (45s sleep)
+  const idleTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Mouse circling / Dizzy tracker
+  const mouseTrailRef = useRef<Array<{ x: number; y: number; time: number }>>([]);
+  const dizzyCooldownRef = useRef(false);
 
   // 1. Initial Mount: Check sessionStorage & setup responsive coordinates
   useEffect(() => {
@@ -100,7 +113,34 @@ export default function RoamingCompanion({
     };
   }, [onDismissStateChange]);
 
-  // 2. Listen to Scroll: Pause movement during scroll (Zero GPU competition with ScrollyCanvas)
+  // 2. Track in-page section for context-aware quotes
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const sectionIds = ["projects", "skills", "experience", "contact"];
+    const handleScrollSections = () => {
+      const viewportMid = window.scrollY + window.innerHeight * 0.45;
+
+      for (const id of sectionIds) {
+        const el = document.getElementById(id);
+        if (el) {
+          const top = el.offsetTop;
+          const height = el.offsetHeight;
+          if (viewportMid >= top && viewportMid < top + height) {
+            setActiveSection(id);
+            return;
+          }
+        }
+      }
+      setActiveSection(null);
+    };
+
+    window.addEventListener("scroll", handleScrollSections, { passive: true });
+    handleScrollSections();
+    return () => window.removeEventListener("scroll", handleScrollSections);
+  }, []);
+
+  // 3. Listen to Scroll: Pause movement during scroll (Zero GPU competition with ScrollyCanvas)
   useEffect(() => {
     const handleScroll = () => {
       isScrollingRef.current = true;
@@ -117,34 +157,98 @@ export default function RoamingCompanion({
     };
   }, []);
 
-  // 3. Mouse Movement Tracking for Living Digital Visor Eyes
+  // 4. Mouse Movement Tracking for Living Digital Visor Eyes + Dizzy Detection
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       setMousePos({ x: e.clientX, y: e.clientY });
       if (botRef.current) {
-        setBotRect(botRef.current.getBoundingClientRect());
+        const rect = botRef.current.getBoundingClientRect();
+        setBotRect(rect);
+
+        // Check if mouse is vigorously circling around Zaki
+        if (!dizzyCooldownRef.current && !isDragging && action !== "dizzy") {
+          const botCenterX = rect.left + rect.width / 2;
+          const botCenterY = rect.top + rect.height / 2;
+          const distToBot = Math.hypot(e.clientX - botCenterX, e.clientY - botCenterY);
+
+          if (distToBot < 120) {
+            const now = Date.now();
+            mouseTrailRef.current.push({ x: e.clientX, y: e.clientY, time: now });
+            mouseTrailRef.current = mouseTrailRef.current.filter((p) => now - p.time < 500);
+
+            if (mouseTrailRef.current.length > 10) {
+              let totalDist = 0;
+              for (let i = 1; i < mouseTrailRef.current.length; i++) {
+                totalDist += Math.hypot(
+                  mouseTrailRef.current[i].x - mouseTrailRef.current[i - 1].x,
+                  mouseTrailRef.current[i].y - mouseTrailRef.current[i - 1].y
+                );
+              }
+
+              if (totalDist > 400) {
+                // High-speed circling detected! Trigger dizzy state!
+                setAction("dizzy");
+                playDizzyPip();
+                dizzyCooldownRef.current = true;
+                setTimeout(() => {
+                  setAction("idle");
+                  setTimeout(() => {
+                    dizzyCooldownRef.current = false;
+                  }, 4000);
+                }, 2200);
+              }
+            }
+          }
+        }
       }
     };
 
     window.addEventListener("mousemove", handleMouseMove, { passive: true });
     return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, []);
+  }, [action, isDragging]);
 
-  // 4. Pop Speech Bubble Helper (Cycles through quotes)
+  // 5. AFK Idle Detector (Sleep after 45s of no interaction)
+  useEffect(() => {
+    const resetIdle = () => {
+      if (action === "sleep") {
+        setAction("idle");
+      }
+      if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
+      idleTimerRef.current = setTimeout(() => {
+        if (!isDismissed && !isChatOpen && !isDragging) {
+          setAction("sleep");
+        }
+      }, 45000); // 45 seconds of idle inactivity
+    };
+
+    window.addEventListener("mousemove", resetIdle, { passive: true });
+    window.addEventListener("keydown", resetIdle, { passive: true });
+    window.addEventListener("scroll", resetIdle, { passive: true });
+    resetIdle();
+
+    return () => {
+      window.removeEventListener("mousemove", resetIdle);
+      window.removeEventListener("keydown", resetIdle);
+      window.removeEventListener("scroll", resetIdle);
+      if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
+    };
+  }, [action, isDismissed, isChatOpen, isDragging]);
+
+  // 6. Pop Speech Bubble Helper (Contextual based on page & in-page section)
   const popSpeechBubble = useCallback(() => {
-    if (isDismissed || isChatOpen || isDragging) return;
+    if (isDismissed || isChatOpen || isDragging || action === "sleep" || action === "dizzy") return;
 
-    const nextQuote = COMPANION_QUOTES[quoteIndexRef.current % COMPANION_QUOTES.length];
-    quoteIndexRef.current += 1;
+    const nextQuote = getContextualQuote(pathname || "/", activeSection);
     setCurrentQuote(nextQuote);
+    playChimePip();
 
     if (bubbleTimeoutRef.current) clearTimeout(bubbleTimeoutRef.current);
     bubbleTimeoutRef.current = setTimeout(() => {
       setCurrentQuote(null);
     }, 4500);
-  }, [isDismissed, isChatOpen, isDragging]);
+  }, [isDismissed, isChatOpen, isDragging, action, pathname, activeSection]);
 
-  // 5. Initial Speech Bubble: Appears immediately after 2.5 seconds on first load!
+  // 7. Initial Speech Bubble: Appears immediately after 2.5 seconds on first load!
   useEffect(() => {
     if (isDismissed || isChatOpen) return;
 
@@ -155,38 +259,35 @@ export default function RoamingCompanion({
     return () => clearTimeout(initialTimer);
   }, [isDismissed, isChatOpen, popSpeechBubble]);
 
-  // 6. Subsequent Speech Bubbles: Consistently pops every 8 to 12 seconds
+  // 8. Subsequent Speech Bubbles: Consistently pops every 8 to 12 seconds
   useEffect(() => {
     if (isDismissed || isChatOpen) return;
 
     let timerId: NodeJS.Timeout;
 
     const scheduleNext = () => {
-      // 8 to 12 seconds delay
       const delay = Math.floor(8000 + Math.random() * 4000);
       timerId = setTimeout(() => {
-        if (!isDragging && !currentQuote && !isChatOpen && !isDismissed) {
+        if (!isDragging && !currentQuote && !isChatOpen && !isDismissed && action !== "sleep") {
           popSpeechBubble();
         }
         scheduleNext();
       }, delay);
     };
 
-    // Begin recurring cycle 6s after initial mount
     const startRecurring = setTimeout(scheduleNext, 6000);
 
     return () => {
       clearTimeout(startRecurring);
       clearTimeout(timerId);
     };
-  }, [isDismissed, isChatOpen, isDragging, currentQuote, popSpeechBubble]);
+  }, [isDismissed, isChatOpen, isDragging, currentQuote, action, popSpeechBubble]);
 
-  // 7. Autonomous 2D Roaming Finite State Machine (Moves all around the screen!)
+  // 9. Autonomous 2D Roaming Finite State Machine (Moves all around the screen!)
   useEffect(() => {
-    if (isDismissed || isMobile || isChatOpen || isDragging) return;
+    if (isDismissed || isMobile || isChatOpen || isDragging || action === "sleep" || action === "dizzy") return;
 
     const triggerNextAction = () => {
-      // Don't roam if user is dragging, hovering, scrolling, or tab hidden
       if (
         isHovered ||
         isDragging ||
@@ -248,22 +349,15 @@ export default function RoamingCompanion({
         const anticRoll = Math.random();
         let chosenAntic: CompanionAction = "wave";
 
-        if (anticRoll < 0.45) {
-          chosenAntic = "wave"; // Realistic friendly wave
-        } else if (anticRoll < 0.75) {
-          chosenAntic = "heartPulse"; // Heart pulse from love letter
+        if (anticRoll < 0.5) {
+          chosenAntic = "wave";
         } else {
-          chosenAntic = "sleep"; // Quick nap with zZ
+          chosenAntic = "heartPulse";
         }
 
         setAction(chosenAntic);
 
-        const anticDuration =
-          chosenAntic === "wave"
-            ? 2200
-            : chosenAntic === "heartPulse"
-            ? 1600
-            : 3200;
+        const anticDuration = chosenAntic === "wave" ? 2200 : 1600;
 
         loopTimeoutRef.current = setTimeout(() => {
           setAction("idle");
@@ -277,15 +371,15 @@ export default function RoamingCompanion({
     return () => {
       if (loopTimeoutRef.current) clearTimeout(loopTimeoutRef.current);
     };
-  }, [positionX, positionY, isDismissed, isMobile, isChatOpen, isHovered, isDragging]);
+  }, [positionX, positionY, isDismissed, isMobile, isChatOpen, isHovered, isDragging, action]);
 
-  // 8. Pointer Down: Track initial click position to differentiate Click vs Drag
+  // 10. Pointer Down: Track initial click position to differentiate Click vs Drag
   const handlePointerDown = (e: React.PointerEvent) => {
     pointerDownPosRef.current = { x: e.clientX, y: e.clientY, time: Date.now() };
     isRealDragRef.current = false;
   };
 
-  // 9. Drag Start: User is holding and moving
+  // 11. Drag Start: User is holding and moving
   const handleDragStart = () => {
     isRealDragRef.current = true;
     setIsDragging(true);
@@ -293,13 +387,12 @@ export default function RoamingCompanion({
     setAction("drag");
   };
 
-  // 10. Drag End: User released
+  // 12. Drag End: User released
   const handleDragEnd = (_: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
     setIsDragging(false);
 
     const movedDistance = Math.hypot(info.offset.x, info.offset.y);
     if (movedDistance >= 8) {
-      // It was a real drag reposition!
       const safeX = Math.max(50, Math.min(window.innerWidth - 110, positionX + info.offset.x));
       const safeY = Math.max(80, Math.min(window.innerHeight - 130, positionY + info.offset.y));
 
@@ -312,23 +405,21 @@ export default function RoamingCompanion({
       }, 700);
     }
 
-    // Keep flag true briefly to prevent click handler from misfiring
     setTimeout(() => {
       isRealDragRef.current = false;
     }, 100);
   };
 
-  // 11. Click & Tap Handlers: Single click / tap cleanly opens chat
+  // 13. Click & Tap Handlers: Single click / tap cleanly opens chat
   const handleTap = () => {
     if (isRealDragRef.current) return;
+    playTapPip();
     onOpenChat();
   };
 
   const handleClick = (e: React.MouseEvent) => {
-    // If user dragged, do not open chat
     if (isRealDragRef.current) return;
 
-    // Check distance between pointer down and release
     if (pointerDownPosRef.current) {
       const moved = Math.hypot(
         e.clientX - pointerDownPosRef.current.x,
@@ -337,11 +428,11 @@ export default function RoamingCompanion({
       if (moved > 8) return;
     }
 
-    // It was a click / tap! Open chat immediately!
+    playTapPip();
     onOpenChat();
   };
 
-  // 12. Handle User Dismissal ('(x)' button)
+  // 14. Handle User Dismissal ('(x)' button)
   const handleDismiss = (e: React.MouseEvent) => {
     e.stopPropagation();
     setIsDismissing(true);

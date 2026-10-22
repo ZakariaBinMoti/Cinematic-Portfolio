@@ -1,9 +1,105 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getLivePortfolioKnowledge } from "@/lib/ai-knowledge";
+import dbConnect from "@/lib/mongodb";
+import Lead from "@/models/Lead";
 
 interface ChatMessage {
   role: "user" | "assistant";
   text: string;
+}
+
+function findRelatedProjects(text: string, projects: any[]): any[] {
+  if (!projects || projects.length === 0) return [];
+  const lower = text.toLowerCase();
+
+  const matched = projects.filter((p) => {
+    const titleLower = (p.title || "").toLowerCase();
+    const slugLower = (p.caseStudySlug || "").toLowerCase();
+    return lower.includes(titleLower) || (slugLower && lower.includes(slugLower));
+  });
+
+  if (matched.length > 0) {
+    return matched.slice(0, 2).map((p) => ({
+      title: p.title,
+      description: p.description,
+      techStack: p.techStack || [],
+      liveLink: p.liveLink || "",
+      caseStudySlug: p.caseStudySlug || "",
+      imageUrl: p.imageUrl || "",
+    }));
+  }
+
+  if (
+    lower.includes("project") ||
+    lower.includes("store") ||
+    lower.includes("work") ||
+    lower.includes("case study") ||
+    lower.includes("portfolio") ||
+    lower.includes("ecommerce")
+  ) {
+    return projects.slice(0, 2).map((p) => ({
+      title: p.title,
+      description: p.description,
+      techStack: p.techStack || [],
+      liveLink: p.liveLink || "",
+      caseStudySlug: p.caseStudySlug || "",
+      imageUrl: p.imageUrl || "",
+    }));
+  }
+
+  return [];
+}
+
+function computeFollowUps(query: string, reply: string): string[] {
+  const combined = (query + " " + reply).toLowerCase();
+
+  if (
+    combined.includes("hire") ||
+    combined.includes("rate") ||
+    combined.includes("contact") ||
+    combined.includes("quote") ||
+    combined.includes("collaborate") ||
+    combined.includes("availability")
+  ) {
+    return [
+      "Inquire / Hire Zakaria ✉️",
+      "See live case studies 📈",
+      "Download Resume (PDF) 📄",
+    ];
+  }
+
+  if (
+    combined.includes("project") ||
+    combined.includes("store") ||
+    combined.includes("case study") ||
+    combined.includes("built")
+  ) {
+    return [
+      "What tech stack was used? ⚡",
+      "How to hire Zakaria ✉️",
+      "Explore Shopify OS 2.0 🛍️",
+    ];
+  }
+
+  if (
+    combined.includes("skill") ||
+    combined.includes("stack") ||
+    combined.includes("liquid") ||
+    combined.includes("next") ||
+    combined.includes("architecture")
+  ) {
+    return [
+      "Show standout projects 🚀",
+      "See case studies 📊",
+      "Inquire for a project ✉️",
+    ];
+  }
+
+  return [
+    "Top Shopify projects? 🚀",
+    "Tech stack & skills ⚡",
+    "How to hire Zakaria ✉️",
+  ];
 }
 
 export async function POST(req: NextRequest) {
@@ -16,10 +112,47 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Message is required" }, { status: 400 });
     }
 
-    // 1. Fetch live portfolio knowledge (always synced with MongoDB)
-    const { systemPrompt, dataSnapshot } = await getLivePortfolioKnowledge();
+    // 1. Automatic Lead Capture from conversational text (if user provided an email address)
+    const emailMatch = message.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
+    if (emailMatch) {
+      const capturedEmail = emailMatch[0].toLowerCase();
+      try {
+        await dbConnect();
+        await Lead.create({
+          email: capturedEmail,
+          message: message,
+          source: "website_ai_companion",
+          channel: "website",
+          status: "new",
+          metadata: {
+            detectedInChat: true,
+            userAgent: req.headers.get("user-agent") || undefined,
+            referer: req.headers.get("referer") || undefined,
+          },
+        });
+        console.log(`[Auto-Lead] Captured email from chat: ${capturedEmail}`);
+      } catch (leadErr) {
+        console.warn("Auto-lead capture error:", leadErr);
+      }
+    }
 
-    // 2. Check for Gemini API Key in environment
+    // 2. Fetch live portfolio knowledge (always synced with MongoDB)
+    const { systemPrompt, dataSnapshot } = await getLivePortfolioKnowledge();
+    const { projects = [], caseStudies = [], contact = {} } = dataSnapshot;
+
+    // Check if the user is asking about hiring or collaboration
+    const lower = message.toLowerCase();
+    const isHireIntent =
+      lower.includes("hire") ||
+      lower.includes("quote") ||
+      lower.includes("price") ||
+      lower.includes("rate") ||
+      lower.includes("meeting") ||
+      lower.includes("work with") ||
+      lower.includes("collaborate") ||
+      lower.includes("inquire");
+
+    // 3. Check for Gemini API Key in environment
     const geminiKey = process.env.GEMINI_API_KEY;
 
     if (geminiKey) {
@@ -41,7 +174,6 @@ export async function POST(req: NextRequest) {
           parts: [{ text: message }],
         });
 
-        // Try high-speed models in order of latency
         const candidateModels = [
           "gemini-3.5-flash-lite",
           "gemini-3.5-flash",
@@ -62,8 +194,8 @@ export async function POST(req: NextRequest) {
                     parts: [{ text: systemPrompt }],
                   },
                   generationConfig: {
-                    temperature: 0.7,
-                    maxOutputTokens: 300, // kept concise for voice narration
+                    temperature: 0.65,
+                    maxOutputTokens: 250, // clean, balanced length
                   },
                 }),
               }
@@ -73,9 +205,16 @@ export async function POST(req: NextRequest) {
               const geminiData = await geminiRes.json();
               const reply = geminiData?.candidates?.[0]?.content?.parts?.[0]?.text;
               if (reply) {
+                const cleanReply = reply.trim();
+                const relatedProjects = findRelatedProjects(message + " " + cleanReply, projects);
+                const suggestedFollowUps = computeFollowUps(message, cleanReply);
+
                 return NextResponse.json({
-                  reply: reply.trim(),
+                  reply: cleanReply,
                   provider: model,
+                  relatedProjects,
+                  suggestedFollowUps,
+                  showLeadForm: isHireIntent,
                 });
               }
             } else {
@@ -91,14 +230,16 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // 3. Smart Dynamic Knowledge Engine (100% Free, Zero Key Required Fallback)
-    // Matches queries directly against live MongoDB data snapshot
-    const lower = message.toLowerCase();
-    const { projects, caseStudies, skills, contact } = dataSnapshot;
-
+    // 4. Smart Dynamic Knowledge Fallback Engine
     let fallbackReply = "";
 
-    if (lower.includes("project") || lower.includes("store") || lower.includes("work") || lower.includes("portfolio") || lower.includes("built")) {
+    if (
+      lower.includes("project") ||
+      lower.includes("store") ||
+      lower.includes("work") ||
+      lower.includes("portfolio") ||
+      lower.includes("built")
+    ) {
       const topProjects = (projects || []).slice(0, 3);
       if (topProjects.length > 0) {
         const list = topProjects
@@ -108,7 +249,13 @@ export async function POST(req: NextRequest) {
       } else {
         fallbackReply = `Zakaria has developed a diverse portfolio of custom Shopify themes and full-stack web applications. You can view all featured work in the Projects section!`;
       }
-    } else if (lower.includes("case study") || lower.includes("case studies") || lower.includes("josh coppins") || lower.includes("swell") || lower.includes("becca")) {
+    } else if (
+      lower.includes("case study") ||
+      lower.includes("case studies") ||
+      lower.includes("josh coppins") ||
+      lower.includes("swell") ||
+      lower.includes("becca")
+    ) {
       if (caseStudies && caseStudies.length > 0) {
         const csList = caseStudies
           .slice(0, 3)
@@ -118,23 +265,55 @@ export async function POST(req: NextRequest) {
       } else {
         fallbackReply = `You can explore detailed case studies for Josh Coppins Motorcycles, Swell Sport, and Becca's Bags directly in the Case Studies section!`;
       }
-    } else if (lower.includes("contact") || lower.includes("email") || lower.includes("hire") || lower.includes("call") || lower.includes("reach") || lower.includes("touch")) {
+    } else if (
+      lower.includes("contact") ||
+      lower.includes("email") ||
+      lower.includes("hire") ||
+      lower.includes("call") ||
+      lower.includes("reach") ||
+      lower.includes("touch")
+    ) {
       const email = contact?.email || "zakaria.binmoti@gmail.com";
       const linkedin = contact?.linkedin || "https://www.linkedin.com/in/zakariabinmoti";
       fallbackReply = `You can reach Zakaria directly via email at ${email} or connect on LinkedIn at ${linkedin}. He is open to select Shopify architecture, custom themes, and full-stack contracts!`;
-    } else if (lower.includes("skill") || lower.includes("stack") || lower.includes("tech") || lower.includes("liquid") || lower.includes("next") || lower.includes("react") || lower.includes("shopify")) {
+    } else if (
+      lower.includes("skill") ||
+      lower.includes("stack") ||
+      lower.includes("tech") ||
+      lower.includes("liquid") ||
+      lower.includes("next") ||
+      lower.includes("react") ||
+      lower.includes("shopify")
+    ) {
       fallbackReply = `Zakaria specializes in the modern eCommerce ecosystem: Shopify OS 2.0 & Liquid architecture, Next.js & React storefronts, TypeScript, Tailwind CSS, and performance optimization. Backend proficiencies include Node.js, MongoDB, and REST/GraphQL APIs.`;
-    } else if (lower.includes("rate") || lower.includes("pricing") || lower.includes("cost") || lower.includes("available") || lower.includes("availability")) {
+    } else if (
+      lower.includes("rate") ||
+      lower.includes("pricing") ||
+      lower.includes("cost") ||
+      lower.includes("available") ||
+      lower.includes("availability")
+    ) {
       fallbackReply = `Zakaria is available for custom Shopify theme development, headless builds, and architectural consulting. For project scoping and rates, feel free to drop him a line at ${contact?.email || "zakaria.binmoti@gmail.com"}.`;
-    } else if (lower.includes("who are you") || lower.includes("who is zakaria") || lower.includes("about") || lower.includes("background")) {
+    } else if (
+      lower.includes("who are you") ||
+      lower.includes("who is zakaria") ||
+      lower.includes("about") ||
+      lower.includes("background")
+    ) {
       fallbackReply = `Zakaria Bin Moti is a Lead Software Engineer and Shopify OS 2.0 Architect with over 2 years of experience creating fast, conversion-optimized eCommerce storefronts and full-stack web applications.`;
     } else {
       fallbackReply = `Hi there! I am Zaki, Zakaria's AI assistant. Ask me anything about his Shopify development work, featured projects, tech stack, or how to get in touch with him!`;
     }
 
+    const relatedProjects = findRelatedProjects(message + " " + fallbackReply, projects);
+    const suggestedFollowUps = computeFollowUps(message, fallbackReply);
+
     return NextResponse.json({
       reply: fallbackReply,
       provider: "dynamic-knowledge-engine",
+      relatedProjects,
+      suggestedFollowUps,
+      showLeadForm: isHireIntent,
     });
   } catch (error: any) {
     console.error("AI Chat Route Error:", error);

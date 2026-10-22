@@ -30,6 +30,16 @@ interface Message {
   role: "user" | "assistant";
   text: string;
   timestamp: Date;
+  relatedProjects?: Array<{
+    title: string;
+    description: string;
+    techStack?: string[];
+    liveLink?: string;
+    caseStudySlug?: string;
+    imageUrl?: string;
+  }>;
+  suggestedFollowUps?: string[];
+  showLeadForm?: boolean;
 }
 
 // Helper to format inline markdown (bold, links, emails) into clean JSX
@@ -179,6 +189,225 @@ function FormattedMessage({ text }: { text: string }) {
           </div>
         );
       })}
+    </div>
+  );
+}
+
+// Rich Project Card Preview Component for Chat
+function ProjectPreviewCard({
+  project,
+}: {
+  project: {
+    title: string;
+    description: string;
+    techStack?: string[];
+    liveLink?: string;
+    caseStudySlug?: string;
+  };
+}) {
+  return (
+    <div className="p-3 rounded-xl bg-[#0e111a] border border-white/[0.08] hover:border-[#f6602d]/40 transition-all text-xs shadow-md">
+      <div className="flex items-start justify-between gap-2">
+        <h4 className="font-semibold text-white text-xs tracking-tight">{project.title}</h4>
+        {project.liveLink && (
+          <a
+            href={project.liveLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[10px] text-[#ff915e] hover:underline flex items-center gap-0.5 shrink-0"
+          >
+            <span>Live Store</span>
+            <ArrowUpRight className="w-3 h-3" />
+          </a>
+        )}
+      </div>
+      <p className="text-[11px] text-zinc-400 line-clamp-2 mt-1 leading-relaxed">
+        {project.description}
+      </p>
+      {project.techStack && project.techStack.length > 0 && (
+        <div className="flex flex-wrap gap-1 mt-2">
+          {project.techStack.slice(0, 3).map((tech, idx) => (
+            <span
+              key={idx}
+              className="text-[9px] px-1.5 py-0.5 rounded bg-white/[0.05] text-zinc-300 font-mono"
+            >
+              {tech}
+            </span>
+          ))}
+        </div>
+      )}
+      {project.caseStudySlug && (
+        <a
+          href={`/case-studies/${project.caseStudySlug}`}
+          className="mt-2.5 inline-flex items-center gap-1 text-[11px] font-medium text-[#fe743d] hover:text-white transition-colors"
+        >
+          <span>View Case Study Breakdown &rarr;</span>
+        </a>
+      )}
+    </div>
+  );
+}
+
+// Full Interactive Lead Capture Flow Card
+function LeadCaptureCard({
+  defaultMessage = "",
+  onSuccess,
+}: {
+  defaultMessage?: string;
+  onSuccess?: () => void;
+}) {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [storeUrl, setStoreUrl] = useState("");
+  const [budget, setBudget] = useState("$2,000 - $5,000");
+  const [message, setMessage] = useState(defaultMessage);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email || !email.includes("@")) {
+      setError("Please provide a valid email address.");
+      return;
+    }
+    setError(null);
+    setIsSubmitting(true);
+
+    try {
+      const res = await fetch("/api/leads", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: name.trim(),
+          email: email.trim().toLowerCase(),
+          storeUrl: storeUrl.trim(),
+          projectBudget: budget,
+          message: message.trim(),
+          source: "website_ai_companion", // Identifies origin as website AI
+          channel: "website", // Multi-platform CRM channel
+        }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || "Failed to submit lead");
+      }
+
+      setSubmitted(true);
+      if (onSuccess) onSuccess();
+    } catch (err: any) {
+      setError(err.message || "Failed to submit. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  if (submitted) {
+    return (
+      <div className="mt-2.5 p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs space-y-1.5 animate-fadeIn">
+        <div className="flex items-center gap-1.5 font-semibold text-emerald-400">
+          <Check className="w-4 h-4 text-emerald-400" />
+          <span>Lead Captured &amp; Stored in Backend!</span>
+        </div>
+        <p className="text-[11px] text-zinc-300 leading-relaxed">
+          Logged under <span className="font-mono text-emerald-300 font-semibold">[Website AI Companion]</span>. Zakaria has been notified and will review your scope and follow up directly at <span className="text-white font-medium">{email}</span> within 24 hours.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mt-2.5 p-3.5 rounded-xl bg-[#0c0f1a] border border-[#f6602d]/35 text-zinc-200 text-xs shadow-[0_8px_30px_rgba(0,0,0,0.6)] space-y-2.5">
+      <div className="flex items-center justify-between border-b border-white/[0.08] pb-2">
+        <div className="flex items-center gap-1.5">
+          <Sparkles className="w-3.5 h-3.5 text-[#f6602d]" />
+          <span className="font-semibold text-white text-xs">Direct Project Inquiry</span>
+        </div>
+        <span className="text-[9px] px-1.5 py-0.5 rounded bg-[#f6602d]/20 text-[#ff915e] font-mono border border-[#f6602d]/30 font-medium">
+          Website AI Lead
+        </span>
+      </div>
+
+      <form onSubmit={handleSubmit} className="space-y-2">
+        <div className="grid grid-cols-2 gap-2">
+          <div>
+            <label className="text-[10px] text-zinc-400 block mb-0.5">Your Name</label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="e.g. Alex Miller"
+              className="w-full px-2.5 py-1.5 rounded-lg bg-white/[0.04] border border-white/10 focus:border-[#f6602d] text-white text-xs placeholder-zinc-600 focus:outline-none"
+            />
+          </div>
+          <div>
+            <label className="text-[10px] text-zinc-400 block mb-0.5">Email Address *</label>
+            <input
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="alex@brand.com"
+              className="w-full px-2.5 py-1.5 rounded-lg bg-white/[0.04] border border-white/10 focus:border-[#f6602d] text-white text-xs placeholder-zinc-600 focus:outline-none"
+            />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-2">
+          <div>
+            <label className="text-[10px] text-zinc-400 block mb-0.5">Store / Brand URL</label>
+            <input
+              type="text"
+              value={storeUrl}
+              onChange={(e) => setStoreUrl(e.target.value)}
+              placeholder="brandstore.com"
+              className="w-full px-2.5 py-1.5 rounded-lg bg-white/[0.04] border border-white/10 focus:border-[#f6602d] text-white text-xs placeholder-zinc-600 focus:outline-none"
+            />
+          </div>
+          <div>
+            <label className="text-[10px] text-zinc-400 block mb-0.5">Estimated Budget</label>
+            <select
+              value={budget}
+              onChange={(e) => setBudget(e.target.value)}
+              className="w-full px-2.5 py-1.5 rounded-lg bg-[#141724] border border-white/10 focus:border-[#f6602d] text-white text-xs focus:outline-none"
+            >
+              <option value="Under $1,500">Under $1,500</option>
+              <option value="$1,500 - $3,500">$1,500 - $3,500</option>
+              <option value="$3,500 - $7,000">$3,500 - $7,000</option>
+              <option value="$7,000+">$7,000+ (Full Custom Architecture)</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label className="text-[10px] text-zinc-400 block mb-0.5">Project Scope / Message</label>
+          <textarea
+            rows={2}
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            placeholder="Tell Zakaria what you want to build or optimize..."
+            className="w-full px-2.5 py-1.5 rounded-lg bg-white/[0.04] border border-white/10 focus:border-[#f6602d] text-white text-xs placeholder-zinc-600 focus:outline-none resize-none"
+          />
+        </div>
+
+        {error && <p className="text-[10px] text-rose-400">{error}</p>}
+
+        <button
+          type="submit"
+          disabled={isSubmitting || !email}
+          className="w-full py-1.5 px-3 rounded-lg bg-[#f6602d] hover:bg-[#fe743d] text-white font-medium text-xs flex items-center justify-center gap-1.5 disabled:opacity-40 transition-colors shadow-sm cursor-pointer"
+        >
+          {isSubmitting ? (
+            <span>Sending to Zakaria...</span>
+          ) : (
+            <>
+              <span>Send Project Inquiry</span>
+              <Send className="w-3 h-3" />
+            </>
+          )}
+        </button>
+      </form>
     </div>
   );
 }
@@ -398,14 +627,20 @@ export default function VoiceAssistant() {
   const [isLiveCall, setIsLiveCall] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [companionDismissed, setCompanionDismissed] = useState(false);
+  const [activeLeadFormMessageId, setActiveLeadFormMessageId] = useState<string | null>(null);
 
   // Chat & Voice state
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "welcome",
       role: "assistant",
-      text: "Hi! I am Zaki, Zakaria's AI Companion. Ask or speak to me about his 250+ Shopify stores, technical architecture, or hiring availability.",
+      text: "Hi! I am Zaki, Zakaria's AI Companion. Ask or speak to me about Zakaria's Shopify architecture, live projects, or hiring availability.",
       timestamp: new Date(),
+      suggestedFollowUps: [
+        "Top Shopify projects? 🚀",
+        "Tech stack & skills ⚡",
+        "Inquire / Hire Zakaria ✉️",
+      ],
     },
   ]);
   const [input, setInput] = useState("");
@@ -481,6 +716,25 @@ export default function VoiceAssistant() {
       focusInput();
     }
   }, [isOpen, isLiveCall, focusInput]);
+
+  // Global Ctrl+K / Cmd+K summon shortcut
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        setIsOpen((prev) => {
+          const next = !prev;
+          if (next) {
+            focusInput();
+          }
+          return next;
+        });
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [focusInput]);
 
   // Pre-load and cache browser SpeechSynthesis voices immediately
   const [cachedVoices, setCachedVoices] = useState<SpeechSynthesisVoice[]>([]);
@@ -839,7 +1093,14 @@ export default function VoiceAssistant() {
           role: "assistant",
           text: replyText,
           timestamp: new Date(),
+          relatedProjects: data.relatedProjects || [],
+          suggestedFollowUps: data.suggestedFollowUps || [],
+          showLeadForm: Boolean(data.showLeadForm),
         };
+
+        if (data.showLeadForm) {
+          setActiveLeadFormMessageId(aiMsgId);
+        }
 
         setMessages((prev) => [...prev, aiMsg]);
 
@@ -1177,8 +1438,14 @@ export default function VoiceAssistant() {
         role: "assistant",
         text: "Conversation refreshed. Ask or talk about Zakaria's Shopify architecture, live projects, or hiring availability!",
         timestamp: new Date(),
+        suggestedFollowUps: [
+          "Top Shopify projects? 🚀",
+          "Tech stack & skills ⚡",
+          "Inquire / Hire Zakaria ✉️",
+        ],
       },
     ]);
+    setActiveLeadFormMessageId(null);
     focusInput();
   };
 
@@ -1186,9 +1453,9 @@ export default function VoiceAssistant() {
 
   const quickPrompts = [
     "Top Shopify projects? 🚀",
-    "Tell me about Josh Coppins 🏍️",
+    "Inquire / Hire Zakaria ✉️",
     "Tech stack & skills ⚡",
-    "How to hire Zakaria ✉️",
+    "Tell me about Josh Coppins 🏍️",
   ];
 
   return (
@@ -1638,6 +1905,44 @@ export default function VoiceAssistant() {
                           )}
                         </div>
 
+                        {/* Interactive Lead Capture Card (Auto-triggered or on-demand) */}
+                        {!isUser && (msg.showLeadForm || activeLeadFormMessageId === msg.id) && (
+                          <div className="w-[96%] sm:w-[94%]">
+                            <LeadCaptureCard />
+                          </div>
+                        )}
+
+                        {/* Interactive Rich Project Cards */}
+                        {!isUser && msg.relatedProjects && msg.relatedProjects.length > 0 && (
+                          <div className="w-[96%] sm:w-[94%] space-y-2 mt-1.5">
+                            {msg.relatedProjects.map((p, pIdx) => (
+                              <ProjectPreviewCard key={pIdx} project={p} />
+                            ))}
+                          </div>
+                        )}
+
+                        {/* Dynamic Contextual Follow-Up Buttons */}
+                        {!isUser && msg.suggestedFollowUps && msg.suggestedFollowUps.length > 0 && (
+                          <div className="flex flex-wrap gap-1.5 mt-2 ml-0.5">
+                            {msg.suggestedFollowUps.map((chip, chipIdx) => (
+                              <button
+                                key={chipIdx}
+                                type="button"
+                                onClick={() => {
+                                  if (chip.includes("Inquire") || chip.includes("Hire")) {
+                                    setActiveLeadFormMessageId(msg.id);
+                                  } else {
+                                    handleSendMessage(chip);
+                                  }
+                                }}
+                                className="text-[10px] sm:text-[11px] px-2.5 py-1 rounded-full bg-white/[0.04] hover:bg-[#f6602d]/15 border border-white/[0.08] hover:border-[#f6602d]/40 text-zinc-300 hover:text-[#ff915e] transition-all text-left flex items-center gap-1 cursor-pointer"
+                              >
+                                <span>{chip}</span>
+                              </button>
+                            ))}
+                          </div>
+                        )}
+
                         {/* Inline Actions (Listen / Stop Speaking / Copy) */}
                         {!isUser && (
                           <div className="flex items-center gap-3 mt-1.5 ml-1 text-[11px] text-zinc-500">
@@ -1714,7 +2019,11 @@ export default function VoiceAssistant() {
                         key={idx}
                         type="button"
                         onClick={() => {
-                          handleSendMessage(prompt);
+                          if (prompt.includes("Inquire") || prompt.includes("Hire")) {
+                            setActiveLeadFormMessageId("welcome");
+                          } else {
+                            handleSendMessage(prompt);
+                          }
                           focusInput();
                         }}
                         className="text-[11px] px-2.5 py-1 rounded-full bg-white/[0.04] hover:bg-[#f6602d]/10 border border-white/[0.08] hover:border-[#f6602d]/30 text-zinc-400 hover:text-[#ff915e] transition-all text-left"
@@ -1766,7 +2075,7 @@ export default function VoiceAssistant() {
                     placeholder={
                       isListening
                         ? "Listening... speak into your mic..."
-                        : "Ask about projects, stack, hiring..."
+                        : "Ask projects, stack, hire... (Ctrl+K)"
                     }
                     className="flex-1 bg-white/[0.04] border border-white/[0.08] focus:border-[#f6602d]/60 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white placeholder-zinc-500 focus:outline-none transition-colors"
                   />
