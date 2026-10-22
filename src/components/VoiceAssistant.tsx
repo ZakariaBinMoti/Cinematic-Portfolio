@@ -441,6 +441,7 @@ export default function VoiceAssistant() {
   const lastSpeechTimeRef = useRef(0);
   const messagesRef = useRef(messages);
   const voiceEnabledRef = useRef(voiceEnabled);
+  const isSubmittingSpeechRef = useRef(false);
 
   useEffect(() => {
     isListeningRef.current = isListening;
@@ -780,8 +781,12 @@ export default function VoiceAssistant() {
   const handleSendMessage = useCallback(
     async (textToSend?: string) => {
       const query = (textToSend || input || accumulatedSpeechRef.current).trim();
-      if (!query || isLoadingRef.current) return;
+      if (!query || isLoadingRef.current) {
+        isSubmittingSpeechRef.current = false;
+        return;
+      }
 
+      isSubmittingSpeechRef.current = true;
       stopSpeaking();
       stopListening();
 
@@ -838,9 +843,14 @@ export default function VoiceAssistant() {
 
         setMessages((prev) => [...prev, aiMsg]);
 
-        // Speak reply & automatically resume listening if in Live Call mode
+        // Speak reply & automatically resume listening when finished in Live Call mode
         speakText(replyText, aiMsgId, () => {
           if (isLiveCallRef.current) {
+            isSubmittingSpeechRef.current = false;
+            accumulatedSpeechRef.current = "";
+            lastRecognizedTextRef.current = "";
+            lastSpeechTimeRef.current = 0;
+            setLiveTranscript("");
             startListening();
           }
         });
@@ -855,11 +865,15 @@ export default function VoiceAssistant() {
         setMessages((prev) => [...prev, errorMsg]);
 
         if (isLiveCallRef.current) {
-          setTimeout(() => startListening(), 800);
+          setTimeout(() => {
+            isSubmittingSpeechRef.current = false;
+            startListening();
+          }, 800);
         }
       } finally {
         setIsLoading(false);
         isLoadingRef.current = false;
+        isSubmittingSpeechRef.current = false;
         focusInput();
       }
     },
@@ -867,7 +881,33 @@ export default function VoiceAssistant() {
     [input, speakText, stopSpeaking, focusInput]
   );
 
-  // Start Listening Session - ALWAYS Creates a Fresh Instance to Prevent Dead Instance Lockup
+  // Unified Speech Submitter - Prevents race conditions and guarantees submission on silence/pause
+  const submitSpeech = useCallback(
+    (speechText?: string) => {
+      const query = (speechText || accumulatedSpeechRef.current).trim();
+      if (!query || query.length < 2 || isSubmittingSpeechRef.current || isLoadingRef.current) {
+        return;
+      }
+
+      isSubmittingSpeechRef.current = true;
+
+      // Immediately cancel all timers to avoid double submit
+      if (silenceWatchdogRef.current) {
+        clearInterval(silenceWatchdogRef.current);
+        silenceWatchdogRef.current = null;
+      }
+      if (fastPathTimerRef.current) {
+        clearTimeout(fastPathTimerRef.current);
+        fastPathTimerRef.current = null;
+      }
+
+      stopListening();
+      handleSendMessage(query);
+    },
+    [handleSendMessage, stopListening]
+  );
+
+  // Start Listening Session - Always Fresh Instance to Guarantee Chromium Stability
   const startListening = useCallback(async () => {
     if (typeof window === "undefined") return;
     if (isSpeakingRef.current || isLoadingRef.current) return;
@@ -876,7 +916,7 @@ export default function VoiceAssistant() {
 
     const stream = await requestMicStream();
     if (!stream) {
-      alert("Please allow microphone access in your browser to talk with Zakaria's AI.");
+      alert("Please allow microphone access in your browser to talk with Zaki.");
       return;
     }
 
@@ -902,7 +942,7 @@ export default function VoiceAssistant() {
       return;
     }
 
-    // CREATE FRESH INSTANCE - Essential for Chromium stability!
+    // CREATE FRESH INSTANCE - Essential for Chromium stability
     const recognition = new SpeechRecognition();
     recognition.continuous = true;
     recognition.interimResults = true;
@@ -912,6 +952,7 @@ export default function VoiceAssistant() {
     accumulatedSpeechRef.current = "";
     lastRecognizedTextRef.current = "";
     lastSpeechTimeRef.current = 0;
+    isSubmittingSpeechRef.current = false;
     setLiveTranscript("");
 
     recognition.onstart = () => {
@@ -919,25 +960,25 @@ export default function VoiceAssistant() {
       isListeningRef.current = true;
     };
 
-    // Watchdog Polling: Guaranteed submission after 1000ms of user silence
+    // Watchdog Polling: Guaranteed submission after 800ms of user silence
     if (silenceWatchdogRef.current) clearInterval(silenceWatchdogRef.current);
     silenceWatchdogRef.current = setInterval(() => {
       if (
         isListeningRef.current &&
         !isLoadingRef.current &&
         !isSpeakingRef.current &&
-        lastSpeechTimeRef.current > 0 &&
-        accumulatedSpeechRef.current.trim().length >= 2
+        !isSubmittingSpeechRef.current &&
+        lastSpeechTimeRef.current > 0
       ) {
-        const elapsed = Date.now() - lastSpeechTimeRef.current;
-        if (elapsed >= 1000) {
-          const textToSubmit = accumulatedSpeechRef.current.trim();
-          lastSpeechTimeRef.current = 0;
-          stopListening();
-          handleSendMessage(textToSubmit);
+        const textToSubmit = accumulatedSpeechRef.current.trim();
+        if (textToSubmit.length >= 2) {
+          const elapsed = Date.now() - lastSpeechTimeRef.current;
+          if (elapsed >= 800) {
+            submitSpeech(textToSubmit);
+          }
         }
       }
-    }, 150);
+    }, 100);
 
     recognition.onresult = (event: any) => {
       // Collect the full transcript across all chunks
@@ -966,18 +1007,19 @@ export default function VoiceAssistant() {
           setInput(activeSpeech);
         }
 
-        // Fast-path: When Chrome flags isFinal for a sentence, auto-submit after 700ms
+        // Fast-path: When Chrome flags isFinal for a sentence, submit after 600ms of pause
         if (isFinalSentence && activeSpeech.length >= 2) {
           if (fastPathTimerRef.current) clearTimeout(fastPathTimerRef.current);
           fastPathTimerRef.current = setTimeout(() => {
-            if (isListeningRef.current && !isLoadingRef.current && !isSpeakingRef.current) {
-              const text = accumulatedSpeechRef.current.trim();
-              if (text) {
-                stopListening();
-                handleSendMessage(text);
-              }
+            if (
+              isListeningRef.current &&
+              !isLoadingRef.current &&
+              !isSpeakingRef.current &&
+              !isSubmittingSpeechRef.current
+            ) {
+              submitSpeech(accumulatedSpeechRef.current || activeSpeech);
             }
-          }, 700);
+          }, 600);
         }
       }
     };
@@ -992,18 +1034,26 @@ export default function VoiceAssistant() {
     };
 
     recognition.onend = () => {
-      // CRITICAL FIX: If Chrome fires onend while in Live mode, RESTART WITH A FRESH INSTANCE!
-      // Never call recognition.start() on a dead instance.
+      // 1. CRITICAL FIX: If user spoke something, SUBMIT IT IMMEDIATELY! Do NOT wipe or loop!
+      const pendingSpeech = accumulatedSpeechRef.current.trim();
+      if (pendingSpeech.length >= 2 && !isSubmittingSpeechRef.current && !isLoadingRef.current) {
+        submitSpeech(pendingSpeech);
+        return;
+      }
+
+      // 2. If no speech was spoken, and still in Live mode, cleanly restart listening
       if (
-        (isLiveCallRef.current || isListeningRef.current) &&
+        isLiveCallRef.current &&
         !isSpeakingRef.current &&
-        !isLoadingRef.current
+        !isLoadingRef.current &&
+        !isSubmittingSpeechRef.current
       ) {
         setTimeout(() => {
           if (
-            (isLiveCallRef.current || isListeningRef.current) &&
+            isLiveCallRef.current &&
             !isSpeakingRef.current &&
-            !isLoadingRef.current
+            !isLoadingRef.current &&
+            !isSubmittingSpeechRef.current
           ) {
             startListening();
           }
@@ -1023,7 +1073,15 @@ export default function VoiceAssistant() {
     } catch (err: any) {
       console.warn("Recognition start error:", err);
     }
-  }, [requestMicStream, startVolumeTracking, stopListening, stopSpeaking, stopVolumeTracking, handleSendMessage]);
+  }, [
+    requestMicStream,
+    startVolumeTracking,
+    stopListening,
+    stopSpeaking,
+    stopVolumeTracking,
+    handleSendMessage,
+    submitSpeech,
+  ]);
 
   // Clean up on unmount
   useEffect(() => {
@@ -1069,7 +1127,7 @@ export default function VoiceAssistant() {
     }
   };
 
-  const handleToggleLiveCall = () => {
+  const handleToggleLiveCall = async () => {
     stopSpeaking();
     stopListening();
 
@@ -1082,11 +1140,19 @@ export default function VoiceAssistant() {
       isLiveCallRef.current = true;
       setIsOpen(true);
 
+      // Pre-warm microphone immediately on user click gesture so permissions are ready
+      requestMicStream().catch(() => {});
+
       speakText(
-        "Hello! I am Zakaria's AI. Ask me anything about his Shopify projects, code architecture, or hiring availability.",
+        "Hello! I am Zaki. Ask me anything about Zakaria's Shopify work, projects, or hiring availability.",
         undefined,
         () => {
           if (isLiveCallRef.current) {
+            isSubmittingSpeechRef.current = false;
+            accumulatedSpeechRef.current = "";
+            lastRecognizedTextRef.current = "";
+            lastSpeechTimeRef.current = 0;
+            setLiveTranscript("");
             startListening();
           }
         }
@@ -1353,7 +1419,7 @@ export default function VoiceAssistant() {
                   />
                   <span>
                     {isSpeaking
-                      ? "Zakaria is speaking..."
+                      ? "Zaki is speaking..."
                       : isLoading
                       ? "Thinking & analyzing..."
                       : isListening
@@ -1456,16 +1522,21 @@ export default function VoiceAssistant() {
                       <span className="font-bold mr-1 text-[#f6602d]">You:</span>
                       &quot;{liveTranscript}&quot;
                     </p>
+                  ) : isLoading ? (
+                    <div className="flex items-center justify-center gap-2 text-zinc-300 py-3">
+                      <span className="w-2 h-2 rounded-full bg-[#f6602d] animate-ping" />
+                      <span className="italic font-medium">Zaki is thinking & preparing answer...</span>
+                    </div>
                   ) : isSpeaking ? (
                     <p className="text-zinc-300 text-left leading-relaxed break-words [overflow-wrap:anywhere]">
                       <span className="font-semibold mr-1 text-[#fe743d]">
-                        Zakaria:
+                        Zaki:
                       </span>
                       &quot;{messages[messages.length - 1]?.text}&quot;
                     </p>
                   ) : (
-                    <p className="text-zinc-500 italic text-center">
-                      Speak freely. When you pause, the AI will reply automatically.
+                    <p className="text-zinc-500 italic text-center py-2">
+                      Speak freely. When you pause, Zaki will reply automatically.
                     </p>
                   )}
                 </div>
