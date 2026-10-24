@@ -9,6 +9,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ChevronRight, ExternalLink, LogOut, Menu, Search } from "lucide-react";
 import { Kbd } from "../_ui";
 import { isActive, navItems } from "./nav";
+import AdminThemeToggle from "./AdminThemeToggle";
 
 export default function Topbar({
   email,
@@ -100,6 +101,9 @@ export default function Topbar({
           Live
           <ExternalLink className="h-3.5 w-3.5" />
         </a>
+
+        {/* Day / Night Theme Toggle */}
+        <AdminThemeToggle />
 
         {/* User menu */}
         <div className="relative" ref={menuRef}>

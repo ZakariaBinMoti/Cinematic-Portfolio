@@ -25,16 +25,21 @@ export const metadata: Metadata = {
 export default function AdminRootLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className={`admin-root ${geist.variable}`}>
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `(function(){try{var t=localStorage.getItem("admin-theme");if(t==="light"){var r=document.currentScript?document.currentScript.parentElement:document.querySelector(".admin-root");if(r){r.classList.add("light");r.classList.remove("dark");r.setAttribute("data-admin-theme","light");}}}catch(e){}})();`,
+        }}
+      />
       {children}
       <Toaster
-        theme="dark"
         position="bottom-right"
         richColors
         closeButton
         toastOptions={{
           style: {
-            background: "rgba(16,16,24,0.92)",
-            border: "1px solid rgba(255,255,255,0.08)",
+            background: "var(--a-bg-elevated)",
+            border: "1px solid var(--a-border)",
+            color: "var(--a-text)",
             backdropFilter: "blur(16px)",
             fontFamily: "var(--font-geist)",
           },

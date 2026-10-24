@@ -17,6 +17,7 @@ import {
 import { PostItem } from "@/lib/posts";
 import { getOptimizedImageUrl } from "@/lib/media";
 import Navbar from "@/components/Navbar";
+import ThemeToggle from "@/components/ThemeToggle";
 
 interface CaseStudiesCatalogProps {
   caseStudies: PostItem[];
@@ -287,6 +288,9 @@ export default function CaseStudiesCatalog({ caseStudies }: CaseStudiesCatalogPr
 
       {/* Footer */}
       <footer className="border-t border-white/[0.08] py-12 px-6 text-center text-xs text-gray-500 font-mono">
+        <div className="mb-4 flex justify-center">
+          <ThemeToggle />
+        </div>
         <p>© {new Date().getFullYear()} Zakaria Bin Moti. All rights reserved.</p>
         <div className="mt-3 flex items-center justify-center gap-4 text-gray-400">
           <Link href="/" className="hover:text-white transition-colors">Home</Link>

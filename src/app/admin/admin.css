@@ -217,3 +217,298 @@
     animation: none;
   }
 }
+
+/* ==========================================================================
+   Day / White Mode (Admin Console)
+   Applied via .admin-root.light and .admin-root[data-admin-theme="light"]
+   ========================================================================== */
+
+.admin-root[data-admin-theme="light"],
+.admin-root.light {
+  --a-bg: #f8fafc;
+  --a-bg-elevated: #ffffff;
+  --a-surface: rgba(15, 23, 42, 0.035);
+  --a-surface-hover: rgba(15, 23, 42, 0.065);
+  --a-surface-strong: rgba(15, 23, 42, 0.095);
+  --a-border: rgba(15, 23, 42, 0.09);
+  --a-border-strong: rgba(15, 23, 42, 0.16);
+  --a-text: #0f172a;
+  --a-text-muted: #334155;
+  --a-text-subtle: #64748b;
+  --a-accent: #7c3aed;
+  --a-accent-2: #0284c7;
+  --a-accent-3: #db2777;
+  --a-success: #059669;
+  --a-danger: #dc2626;
+  --a-warning: #d97706;
+  --a-ring: rgba(124, 58, 237, 0.35);
+  --a-gradient: linear-gradient(135deg, #7c3aed 0%, #4f46e5 45%, #0284c7 100%);
+  --a-shadow-lg: 0 20px 45px -15px rgba(15, 23, 42, 0.09), 0 0 0 1px var(--a-border);
+}
+
+.admin-root.light ::selection,
+.admin-root[data-admin-theme="light"] ::selection {
+  background: rgba(124, 58, 237, 0.2);
+  color: #0f172a;
+}
+
+/* Scrollbars */
+.admin-root.light *::-webkit-scrollbar-thumb,
+.admin-root[data-admin-theme="light"] *::-webkit-scrollbar-thumb {
+  background: rgba(15, 23, 42, 0.14);
+}
+.admin-root.light *::-webkit-scrollbar-thumb:hover,
+.admin-root[data-admin-theme="light"] *::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(15, 23, 42, 0.24);
+}
+
+/* Dotted grid */
+.admin-root.light .a-grid-bg,
+.admin-root[data-admin-theme="light"] .a-grid-bg {
+  background-image: radial-gradient(rgba(15, 23, 42, 0.07) 1px, transparent 1px);
+}
+
+/* Shimmer */
+.admin-root.light .a-shimmer::after,
+.admin-root[data-admin-theme="light"] .a-shimmer::after {
+  background: linear-gradient(90deg, transparent, rgba(15, 23, 42, 0.05), transparent);
+}
+
+/* Gradient borders */
+.admin-root.light .a-gradient-border::before,
+.admin-root[data-admin-theme="light"] .a-gradient-border::before {
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.4), rgba(15, 23, 42, 0.06) 40%, rgba(2, 132, 199, 0.4)) !important;
+}
+
+/* Topbar Header */
+.admin-root.light header,
+.admin-root[data-admin-theme="light"] header {
+  background: rgba(255, 255, 255, 0.88) !important;
+  border-bottom-color: var(--a-border) !important;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03);
+}
+
+/* Desktop & Mobile Sidebar */
+.admin-root.light aside,
+.admin-root[data-admin-theme="light"] aside {
+  background: #ffffff !important;
+  border-right-color: var(--a-border) !important;
+}
+.admin-root.light aside a[aria-current="page"],
+.admin-root[data-admin-theme="light"] aside a[aria-current="page"] {
+  color: #7c3aed !important;
+}
+.admin-root.light aside [class*="nav-pill"],
+.admin-root[data-admin-theme="light"] aside [class*="nav-pill"] {
+  background: rgba(124, 58, 237, 0.07) !important;
+  border-color: rgba(124, 58, 237, 0.2) !important;
+  box-shadow: none !important;
+}
+
+/* Cards & Elevated surfaces */
+.admin-root.light .a-glass,
+.admin-root[data-admin-theme="light"] .a-glass {
+  background: #ffffff !important;
+  border-color: var(--a-border) !important;
+  box-shadow: 0 4px 20px -4px rgba(15, 23, 42, 0.04) !important;
+}
+.admin-root.light [class*="rounded-[var(--a-radius)]"],
+.admin-root[data-admin-theme="light"] [class*="rounded-[var(--a-radius)]"] {
+  background: #ffffff !important;
+  border-color: var(--a-border) !important;
+  box-shadow: 0 4px 20px -4px rgba(15, 23, 42, 0.04) !important;
+}
+
+/* Drawers, Modals & Dropdown Popovers */
+.admin-root.light [class*="bg-[#0e0e14]"],
+.admin-root.light [class*="bg-[#0b0b10]"],
+.admin-root.light [class*="bg-[#16161f]"],
+.admin-root.light [class*="bg-[rgba(14,14,20,0.96)]"],
+.admin-root.light [class*="bg-[rgba(14,14,20,0.97)]"],
+.admin-root[data-admin-theme="light"] [class*="bg-[#0e0e14]"],
+.admin-root[data-admin-theme="light"] [class*="bg-[#0b0b10]"],
+.admin-root[data-admin-theme="light"] [class*="bg-[#16161f]"],
+.admin-root[data-admin-theme="light"] [class*="bg-[rgba(14,14,20,0.96)]"],
+.admin-root[data-admin-theme="light"] [class*="bg-[rgba(14,14,20,0.97)]"] {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  border-color: var(--a-border) !important;
+}
+
+/* Command Palette (cmdk) */
+.admin-root.light [cmdk-root],
+.admin-root[data-admin-theme="light"] [cmdk-root] {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+}
+.admin-root.light [cmdk-input],
+.admin-root[data-admin-theme="light"] [cmdk-input] {
+  color: #0f172a !important;
+}
+.admin-root.light [cmdk-item],
+.admin-root[data-admin-theme="light"] [cmdk-item] {
+  color: #334155 !important;
+}
+.admin-root.light [cmdk-item][data-selected="true"],
+.admin-root[data-admin-theme="light"] [cmdk-item][data-selected="true"] {
+  background: rgba(124, 58, 237, 0.08) !important;
+  color: #0f172a !important;
+}
+
+/* Inputs, Textareas, Selects */
+.admin-root.light input:not([type="checkbox"]):not([type="radio"]),
+.admin-root.light textarea,
+.admin-root.light select,
+.admin-root[data-admin-theme="light"] input:not([type="checkbox"]):not([type="radio"]),
+.admin-root[data-admin-theme="light"] textarea,
+.admin-root[data-admin-theme="light"] select {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  border-color: rgba(15, 23, 42, 0.14) !important;
+}
+.admin-root.light input:focus,
+.admin-root.light textarea:focus,
+.admin-root.light select:focus,
+.admin-root[data-admin-theme="light"] input:focus,
+.admin-root[data-admin-theme="light"] textarea:focus,
+.admin-root[data-admin-theme="light"] select:focus {
+  background-color: #ffffff !important;
+  border-color: rgba(124, 58, 237, 0.5) !important;
+  box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.1) !important;
+}
+.admin-root.light select option,
+.admin-root[data-admin-theme="light"] select option {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+}
+
+/* Inner containers (search filters, pill groups) */
+.admin-root.light div[class*="bg-black/20"],
+.admin-root.light div[class*="bg-black/30"],
+.admin-root.light div[class*="bg-black/40"],
+.admin-root[data-admin-theme="light"] div[class*="bg-black/20"],
+.admin-root[data-admin-theme="light"] div[class*="bg-black/30"],
+.admin-root[data-admin-theme="light"] div[class*="bg-black/40"] {
+  background-color: rgba(15, 23, 42, 0.04) !important;
+  border-color: rgba(15, 23, 42, 0.08) !important;
+}
+
+/* Modal and Drawer backdrop overlays - preserve gentle focus backdrop */
+.admin-root.light .fixed.inset-0.bg-black\/60,
+.admin-root.light .fixed.inset-0.bg-black\/70,
+.admin-root.light .fixed.inset-0.bg-black\/75,
+.admin-root.light .fixed.inset-0.bg-black\/80,
+.admin-root[data-admin-theme="light"] .fixed.inset-0.bg-black\/60,
+.admin-root[data-admin-theme="light"] .fixed.inset-0.bg-black\/70,
+.admin-root[data-admin-theme="light"] .fixed.inset-0.bg-black\/75,
+.admin-root[data-admin-theme="light"] .fixed.inset-0.bg-black\/80 {
+  background-color: rgba(15, 23, 42, 0.55) !important;
+}
+
+/* Typography & Headings */
+.admin-root.light h1,
+.admin-root.light h2,
+.admin-root.light h3,
+.admin-root.light h4,
+.admin-root[data-admin-theme="light"] h1,
+.admin-root[data-admin-theme="light"] h2,
+.admin-root[data-admin-theme="light"] h3,
+.admin-root[data-admin-theme="light"] h4 {
+  color: #0f172a !important;
+}
+.admin-root.light .text-white:not(button[class*="primary"]):not([class*="bg-primary"]):not([class*="bg-violet"]):not([class*="bg-emerald"]):not([class*="bg-red"]):not([class*="bg-teal"]):not([class*="bg-cyan"]):not([class*="bg-amber"]):not([class*="bg-purple"]):not([class*="bg-[linear-gradient"]):not([class*="from-"]):not([class*="text-white "]),
+.admin-root[data-admin-theme="light"] .text-white:not(button[class*="primary"]):not([class*="bg-primary"]):not([class*="bg-violet"]):not([class*="bg-emerald"]):not([class*="bg-red"]):not([class*="bg-teal"]):not([class*="bg-cyan"]):not([class*="bg-amber"]):not([class*="bg-purple"]):not([class*="bg-[linear-gradient"]):not([class*="from-"]):not([class*="text-white "]) {
+  color: #0f172a !important;
+}
+.admin-root.light .text-gray-400,
+.admin-root[data-admin-theme="light"] .text-gray-400,
+.admin-root.light .text-zinc-400,
+.admin-root[data-admin-theme="light"] .text-zinc-400 {
+  color: #64748b !important;
+}
+.admin-root.light .text-gray-300,
+.admin-root[data-admin-theme="light"] .text-gray-300,
+.admin-root.light .text-zinc-300,
+.admin-root[data-admin-theme="light"] .text-zinc-300 {
+  color: #334155 !important;
+}
+
+/* Keyboard keys */
+.admin-root.light kbd,
+.admin-root[data-admin-theme="light"] kbd {
+  background: rgba(15, 23, 42, 0.05) !important;
+  border-color: rgba(15, 23, 42, 0.15) !important;
+  color: #475569 !important;
+  box-shadow: inset 0 -1px 0 rgba(15, 23, 42, 0.08) !important;
+}
+
+/* Transparent white utility overrides */
+.admin-root.light .bg-white\/\[0\.02\],
+.admin-root.light .bg-white\/\[0\.03\],
+.admin-root.light .bg-white\/\[0\.04\],
+.admin-root.light .bg-white\/\[0\.05\],
+.admin-root.light .bg-white\/\[0\.06\],
+.admin-root.light .bg-white\/\[0\.07\],
+.admin-root.light .bg-white\/\[0\.08\],
+.admin-root[data-admin-theme="light"] .bg-white\/\[0\.02\],
+.admin-root[data-admin-theme="light"] .bg-white\/\[0\.03\],
+.admin-root[data-admin-theme="light"] .bg-white\/\[0\.04\],
+.admin-root[data-admin-theme="light"] .bg-white\/\[0\.05\],
+.admin-root[data-admin-theme="light"] .bg-white\/\[0\.06\],
+.admin-root[data-admin-theme="light"] .bg-white\/\[0\.07\],
+.admin-root[data-admin-theme="light"] .bg-white\/\[0\.08\] {
+  background-color: rgba(15, 23, 42, 0.035) !important;
+}
+
+.admin-root.light .hover\:bg-white\/5:hover,
+.admin-root.light .hover\:bg-white\/\[0\.02\]:hover,
+.admin-root.light .hover\:bg-white\/\[0\.035\]:hover,
+.admin-root.light .hover\:bg-white\/\[0\.08\]:hover,
+.admin-root.light .hover\:bg-white\/\[0\.12\]:hover,
+.admin-root[data-admin-theme="light"] .hover\:bg-white\/5:hover,
+.admin-root[data-admin-theme="light"] .hover\:bg-white\/\[0\.02\]:hover,
+.admin-root[data-admin-theme="light"] .hover\:bg-white\/\[0\.035\]:hover,
+.admin-root[data-admin-theme="light"] .hover\:bg-white\/\[0\.08\]:hover,
+.admin-root[data-admin-theme="light"] .hover\:bg-white\/\[0\.12\]:hover {
+  background-color: rgba(15, 23, 42, 0.06) !important;
+}
+
+.admin-root.light .border-white\/5,
+.admin-root.light .border-white\/10,
+.admin-root.light .border-white\/15,
+.admin-root.light .border-white\/20,
+.admin-root[data-admin-theme="light"] .border-white\/5,
+.admin-root[data-admin-theme="light"] .border-white\/10,
+.admin-root[data-admin-theme="light"] .border-white\/15,
+.admin-root[data-admin-theme="light"] .border-white\/20 {
+  border-color: rgba(15, 23, 42, 0.09) !important;
+}
+
+/* Secondary Button in light mode */
+.admin-root.light button[class*="secondary"],
+.admin-root[data-admin-theme="light"] button[class*="secondary"] {
+  background-color: #f1f5f9 !important;
+  color: #0f172a !important;
+  border-color: rgba(15, 23, 42, 0.12) !important;
+}
+.admin-root.light button[class*="secondary"]:hover,
+.admin-root[data-admin-theme="light"] button[class*="secondary"]:hover {
+  background-color: #e2e8f0 !important;
+}
+
+/* Table rows */
+.admin-root.light tr:hover,
+.admin-root[data-admin-theme="light"] tr:hover {
+  background-color: rgba(15, 23, 42, 0.02) !important;
+}
+.admin-root.light tr,
+.admin-root[data-admin-theme="light"] tr {
+  border-color: rgba(15, 23, 42, 0.07) !important;
+}
+
+/* Login panel separator in light mode */
+.admin-root.light .bg-\[\#0f0f15\],
+.admin-root[data-admin-theme="light"] .bg-\[\#0f0f15\] {
+  background-color: #f8fafc !important;
+}
+

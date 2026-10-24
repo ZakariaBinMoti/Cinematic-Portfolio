@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Copy, Check, Mail, FileText, ArrowUpRight } from "lucide-react";
+import ThemeToggle from "@/components/ThemeToggle";
 
 export default function ContactSection({ contactData }: { contactData?: any }) {
   const [copied, setCopied] = useState(false);
@@ -159,12 +160,13 @@ export default function ContactSection({ contactData }: { contactData?: any }) {
         </div>
       </div>
 
-      <div className="mt-28 text-center text-gray-600 text-xs">
+      <div className="mt-28 flex flex-col items-center justify-center gap-4 text-center text-gray-500 text-xs">
+        <ThemeToggle />
         <p>© {new Date().getFullYear()} Zakaria Bin Moti. All rights reserved.</p>
         <a
           href="/admin/login"
           rel="nofollow"
-          className="hover:text-gray-400 transition-colors mt-2 inline-block opacity-60 hover:opacity-100"
+          className="hover:text-gray-400 transition-colors inline-block opacity-60 hover:opacity-100"
         >
           Admin Studio
         </a>

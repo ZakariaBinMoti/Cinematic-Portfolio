@@ -59,7 +59,7 @@ export default function Overlay({ scrollYProgress, heroData }: OverlayProps) {
   });
 
   return (
-    <div className="absolute inset-0 z-30 pointer-events-none">
+    <div id="hero-cinematic-overlay" className="absolute inset-0 z-30 pointer-events-none">
       {/* Section 1: Main Hero */}
       <div
         ref={section1Ref}
