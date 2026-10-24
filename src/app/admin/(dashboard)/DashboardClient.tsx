@@ -19,6 +19,8 @@ import {
   Layers,
   Award,
   BookOpen,
+  UserCheck,
+  Bot,
 } from "lucide-react";
 import { Card, Badge, Button, Kbd, PageHeader } from "../_ui";
 
@@ -50,6 +52,8 @@ interface HealthCheck {
 
 interface DashboardClientProps {
   stats: {
+    leadsCount?: number;
+    newLeadsCount?: number;
     projectsCount: number;
     projectsWithImages: number;
     caseStudiesCount: number;
@@ -100,6 +104,15 @@ export default function DashboardClient({
   userEmail,
 }: DashboardClientProps) {
   const statCards: StatItem[] = [
+    {
+      title: "Inbound Leads",
+      count: stats.leadsCount ?? 0,
+      sub: `${stats.newLeadsCount ?? 0} new from website AI`,
+      icon: UserCheck,
+      href: "/admin/leads",
+      accent: "from-emerald-500/20 to-teal-500/5",
+      glow: "rgba(16,185,129,0.15)",
+    },
     {
       title: "Projects",
       count: stats.projectsCount,
@@ -164,6 +177,11 @@ export default function DashboardClient({
         description="Monitor portfolio health, update live showcases, publish case studies, and manage SEO articles."
         actions={
           <div className="flex flex-wrap items-center gap-2">
+            <Link href="/admin/leads">
+              <Button size="sm" variant="secondary" className="gap-1.5 text-xs text-emerald-300 hover:text-white border-emerald-500/30">
+                <UserCheck className="h-3.5 w-3.5" /> Leads ({stats.newLeadsCount ?? 0} new)
+              </Button>
+            </Link>
             <Link href="/admin/case-studies?new=1">
               <Button size="sm" variant="secondary" className="gap-1.5 text-xs text-emerald-300 hover:text-white">
                 <Plus className="h-3.5 w-3.5" /> Case Study
@@ -295,6 +313,21 @@ export default function DashboardClient({
               Quick Management Shortcuts
             </h3>
             <div className="grid gap-3 sm:grid-cols-2">
+              <Link href="/admin/leads" className="group">
+                <div className="p-3.5 rounded-xl border border-emerald-500/25 bg-emerald-500/[0.04] hover:bg-emerald-500/[0.09] hover:border-emerald-500/40 transition-all flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <span className="p-2 rounded-lg bg-emerald-500/15 text-emerald-300">
+                      <UserCheck className="h-4 w-4" />
+                    </span>
+                    <div>
+                      <p className="text-sm font-medium text-white group-hover:text-emerald-200">Leads Pipeline</p>
+                      <p className="text-xs text-emerald-400/80">{stats.newLeadsCount ?? 0} new website inquiries</p>
+                    </div>
+                  </div>
+                  <Kbd>G L</Kbd>
+                </div>
+              </Link>
+
               <Link href="/admin/case-studies" className="group">
                 <div className="p-3.5 rounded-xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.06] hover:border-emerald-500/30 transition-all flex items-center justify-between">
                   <div className="flex items-center gap-3">
@@ -413,13 +446,21 @@ export default function DashboardClient({
               <div className="space-y-4">
                 {recentActivity.map((item, idx) => (
                   <div key={item.id || idx} className="flex items-start gap-3 text-xs">
-                    <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-white/5 border border-white/5 text-[var(--a-text-subtle)]">
-                      <Clock className="h-3 w-3" />
+                    <span
+                      className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border ${
+                        item.type === "lead"
+                          ? "bg-emerald-500/15 border-emerald-500/30 text-emerald-300"
+                          : "bg-white/5 border-white/5 text-[var(--a-text-subtle)]"
+                      }`}
+                    >
+                      {item.type === "lead" ? <UserCheck className="h-3 w-3" /> : <Clock className="h-3 w-3" />}
                     </span>
                     <div className="min-w-0 flex-1">
                       <p className="font-medium text-gray-200 truncate">{item.title}</p>
                       <div className="flex items-center gap-2 mt-0.5 text-[11px] text-[var(--a-text-subtle)]">
-                        <span className="capitalize">{item.type}</span>
+                        <span className={`capitalize ${item.type === "lead" ? "text-emerald-400 font-medium" : ""}`}>
+                          {item.type === "lead" ? "Inbound Lead" : item.type}
+                        </span>
                         <span>•</span>
                         <span>{item.timeAgo}</span>
                       </div>

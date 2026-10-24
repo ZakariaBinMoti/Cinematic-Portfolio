@@ -7,6 +7,7 @@ import {
   Settings,
   Award,
   BookOpen,
+  UserCheck,
   type LucideIcon,
 } from "lucide-react";
 
@@ -21,6 +22,7 @@ export interface NavItem {
 
 export const navItems: NavItem[] = [
   { name: "Dashboard", path: "/admin", icon: LayoutDashboard, description: "Overview and quick actions", shortcut: "D" },
+  { name: "Leads", path: "/admin/leads", icon: UserCheck, description: "Website AI inquiries & client leads", shortcut: "L" },
   { name: "Projects", path: "/admin/projects", icon: FolderKanban, description: "Selected work showcase", shortcut: "P" },
   { name: "Case Studies", path: "/admin/case-studies", icon: Award, description: "Client transformations & metrics", shortcut: "K" },
   { name: "Blog", path: "/admin/blog", icon: BookOpen, description: "SEO articles & guides", shortcut: "B" },

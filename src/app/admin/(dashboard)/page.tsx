@@ -6,6 +6,7 @@ import Experience from "@/models/Experience";
 import Skill from "@/models/Skill";
 import Content from "@/models/Content";
 import Post from "@/models/Post";
+import Lead from "@/models/Lead";
 import { FALLBACK_POSTS } from "@/lib/posts";
 import DashboardClient from "./DashboardClient";
 
@@ -29,12 +30,13 @@ export default async function AdminDashboard() {
   const session = await getServerSession(authOptions);
   await dbConnect();
 
-  const [projects, experiences, skills, contents, posts] = await Promise.all([
+  const [projects, experiences, skills, contents, posts, leads] = await Promise.all([
     Project.find({}).sort({ updatedAt: -1 }).lean(),
     Experience.find({}).sort({ updatedAt: -1 }).lean(),
     Skill.find({}).sort({ updatedAt: -1 }).lean(),
     Content.find({}).sort({ updatedAt: -1 }).lean(),
     Post.find({}).sort({ updatedAt: -1 }).lean(),
+    Lead.find({}).sort({ createdAt: -1 }).lean(),
   ]);
 
   const heroContent = contents.find((c: any) => c.section === "hero");
@@ -137,7 +139,17 @@ export default async function AdminDashboard() {
   // Aggregate recent activities
   const recentActivities: any[] = [];
 
-  posts.slice(0, 3).forEach((p: any) => {
+  leads.slice(0, 3).forEach((l: any) => {
+    recentActivities.push({
+      id: `lead-${l._id}`,
+      type: "lead",
+      title: l.name ? `${l.name} (${l.email})` : l.email,
+      action: "New AI Inbound Lead",
+      updatedAt: l.createdAt || new Date(),
+    });
+  });
+
+  posts.slice(0, 2).forEach((p: any) => {
     recentActivities.push({
       id: `post-${p._id}`,
       type: p.type === "case-study" ? "case-study" : "blog",
@@ -183,9 +195,14 @@ export default async function AdminDashboard() {
     timeAgo: formatTimeAgo(item.updatedAt),
   }));
 
+  const leadsCount = leads.length;
+  const newLeadsCount = leads.filter((l: any) => l.status === "new").length;
+
   return (
     <DashboardClient
       stats={{
+        leadsCount,
+        newLeadsCount,
         projectsCount,
         projectsWithImages,
         caseStudiesCount,

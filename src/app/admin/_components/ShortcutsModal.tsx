@@ -23,6 +23,7 @@ const SHORTCUT_GROUPS = [
     title: "Quick Page Jumps",
     items: [
       { label: "Go to Dashboard", keys: ["G", "D"] },
+      { label: "Go to Leads Pipeline", keys: ["G", "L"] },
       { label: "Go to Projects Manager", keys: ["G", "P"] },
       { label: "Go to Experience Timeline", keys: ["G", "E"] },
       { label: "Go to Skills Arsenal", keys: ["G", "S"] },
